@@ -1,6 +1,7 @@
 """Short DB leases, SKIP LOCKED claims, fenced completion, bounded retries.
 
-No AI calls. External result delivery occurs outside the claim/finish transactions.
+Opt-in case AI calls occur outside DB transactions.
+External result delivery also occurs outside transactions.
 """
 
 import json
@@ -42,11 +43,15 @@ class Worker:
         *,
         lease_seconds: int = 60,
         max_attempts: int = 5,
+        ai_client=None,
     ):
         if not 1 <= lease_seconds <= 3600 or not 1 <= max_attempts <= 20 or not owner:
             raise ValueError("Invalid worker bounds")
         self.sessions, self.bank_id, self.owner, self.sink = sessions, bank_id, owner, sink
         self.lease_seconds, self.max_attempts = lease_seconds, max_attempts
+        if ai_client is not None and ai_client.timeout_seconds > lease_seconds - 5:
+            raise ValueError("AI timeout must leave five seconds before lease expiry")
+        self.ai_client = ai_client
 
     def claim(self) -> Claim | None:
         with self.sessions.begin() as session:
@@ -101,6 +106,10 @@ class Worker:
     def finish(self, claim: Claim) -> bool:
         if claim.bank_id != self.bank_id or claim.owner != self.owner:
             return False
+        if claim.kind == "CASE_ANALYSIS" and self.ai_client is not None:
+            from veriq_cedar.veriq.ai_client.worker_bridge import complete_case_with_ai
+
+            return complete_case_with_ai(self, claim)
         if claim.kind == "RESULT_DELIVERY":
             with self.sessions.begin() as session:
                 if self._fenced(session, claim) is None:

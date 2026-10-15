@@ -47,6 +47,18 @@ class Settings(EnvironmentSettings):
         default=2, ge=1, le=10, validation_alias="DB_POOL_TIMEOUT_SECONDS"
     )
 
+    # Opt-in; never permits AI to determine financial outcomes or publish drafts.
+    veriq_ai_enabled: bool = Field(default=False, validation_alias="VERIQ_AI_ENABLED")
+    veriq_ai_base_url: str = Field(
+        default="http://127.0.0.1:8001", validation_alias="VERIQ_AI_BASE_URL"
+    )
+    veriq_ai_internal_key: SecretStr | None = Field(
+        default=None, validation_alias="VERIQ_AI_INTERNAL_KEY"
+    )
+    veriq_ai_timeout_seconds: float = Field(
+        default=12.0, gt=0, le=45, validation_alias="VERIQ_AI_TIMEOUT_SECONDS"
+    )
+
     @field_validator("cedar_database_url", "veriq_database_url", "simulator_database_url")
     @classmethod
     def database_url(cls, value: SecretStr) -> SecretStr:
