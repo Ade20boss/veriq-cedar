@@ -3,6 +3,7 @@ import logging
 from pydantic import ValidationError
 
 from .errors import AIServiceError
+from .alias_recovery import recover_unresolved_aliases
 from .financial_safety import NEUTRAL_CUSTOMER_DRAFT
 from .guardrails import check_extract_input, check_case_input, validate_extraction, validate_case
 from .prompts import EXTRACTION_INSTRUCTION, CASE_INSTRUCTION
@@ -22,6 +23,7 @@ async def extract_knowledge(request: AIExtractInput, provider: JSONProvider | No
         logger.warning("Extraction contract validation failed: %s", type(exc).__name__)
         raise AIServiceError("AI_INVALID_OUTPUT", "Extraction model output violates v1.0 schema.") from exc
     validate_extraction(request, result)
+    recover_unresolved_aliases(request, result)
     return result
 
 

@@ -1,6 +1,10 @@
 """Deterministic trust boundaries; never rely on the prompt alone for correctness."""
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger("veriq.ai.guardrails")
+
 from .errors import AIServiceError
 from .financial_safety import contains_unqualified_outcome, recommends_financial_action
 from .schemas import AIExtractInput, AIExtractOutput, AIInvestigationInput, AIInvestigationOutput
@@ -81,14 +85,17 @@ def validate_case(request: AIInvestigationInput, result: AIInvestigationOutput) 
         if not result.unknowns:
             _invalid("Unknown financial outcome must have explicit uncertainty.")
         texts = [
-            *(o.text for o in result.observations),
-            *(h.text for h in result.hypotheses),
-            *(a for h in result.hypotheses for a in h.alternatives),
-            *result.unknowns,
-            *result.recommended_checks,
-            result.customer_safe_update_draft,
+            *(("observations", o.text) for o in result.observations),
+            *(("hypotheses", h.text) for h in result.hypotheses),
+            *(("hypotheses.alternatives", a) for h in result.hypotheses for a in h.alternatives),
+            *(("unknowns", u) for u in result.unknowns),
+            *(("recommended_checks", c) for c in result.recommended_checks),
+            ("customer_safe_update_draft", result.customer_safe_update_draft),
         ]
-        if any(contains_unqualified_outcome(t) for t in texts):
-            _invalid("AI asserts a definitive recipient/payment outcome while bank outcome is UNKNOWN.")
+        for field, text in texts:
+            if contains_unqualified_outcome(text):
+                # Only log which output field failed; never log customer/model text.
+                logger.warning("AI unsafe financial wording field=%s", field)
+                _invalid("AI asserts a definitive recipient/payment outcome while bank outcome is UNKNOWN.")
     if any(recommends_financial_action(t) for t in [*result.recommended_checks, result.customer_safe_update_draft]):
         _invalid("AI recommended an unauthorized financial action; advisory checks only.")
