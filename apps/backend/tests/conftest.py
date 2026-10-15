@@ -39,3 +39,6 @@ async def client(app):
             transport=ASGITransport(app=app, raise_app_exceptions=False), base_url="http://test"
         ) as test_client:
             yield test_client
+
+
+pytest_plugins = ["postgres_support"]

@@ -1,9 +1,8 @@
 """Deterministic trust boundaries; never rely on the prompt alone for correctness."""
 from __future__ import annotations
 
-import re
-
 from .errors import AIServiceError
+from .financial_safety import contains_unqualified_outcome, recommends_financial_action
 from .schemas import AIExtractInput, AIExtractOutput, AIInvestigationInput, AIInvestigationOutput
 
 
@@ -65,12 +64,6 @@ def check_case_input(request: AIInvestigationInput) -> None:
     # Caller MUST enforce its own bank/customer permissions before invoking this service.
 
 
-_UNSUPPORTED_OUTCOME = re.compile(
-    r"\b(?:recipient|beneficiary)\s+(?:was|is|has been)\s+(?:definitely\s+)?credited\b"
-    r"|\b(?:transfer|payment)\s+(?:has\s+)?(?:failed|succeeded)\b"
-    r"|\b(?:transfer|payment)\s+was\s+(?:successful|reversed)\b",
-    flags=re.IGNORECASE,
-)
 
 
 def validate_case(request: AIInvestigationInput, result: AIInvestigationOutput) -> None:
@@ -87,8 +80,15 @@ def validate_case(request: AIInvestigationInput, result: AIInvestigationOutput) 
     if request.financial_outcome == "UNKNOWN":
         if not result.unknowns:
             _invalid("Unknown financial outcome must have explicit uncertainty.")
-        # Narrow protective filter; not sufficient alone to prove semantic safety.
-        texts = [*(o.text for o in result.observations), *(h.text for h in result.hypotheses),
-                 result.customer_safe_update_draft]
-        if any(_UNSUPPORTED_OUTCOME.search(t) for t in texts):
+        texts = [
+            *(o.text for o in result.observations),
+            *(h.text for h in result.hypotheses),
+            *(a for h in result.hypotheses for a in h.alternatives),
+            *result.unknowns,
+            *result.recommended_checks,
+            result.customer_safe_update_draft,
+        ]
+        if any(contains_unqualified_outcome(t) for t in texts):
             _invalid("AI asserts a definitive recipient/payment outcome while bank outcome is UNKNOWN.")
+    if any(recommends_financial_action(t) for t in [*result.recommended_checks, result.customer_safe_update_draft]):
+        _invalid("AI recommended an unauthorized financial action; advisory checks only.")

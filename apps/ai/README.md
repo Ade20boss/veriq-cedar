@@ -128,3 +128,12 @@ git push -u origin feat/ai-foundation
 ```
 
 Do not stage local `.env`, virtual environments or provider credentials.
+
+## Financial truth and customer communication safety (A2 review hardening)
+
+- The v1.0 `financial_outcome` is copied **exactly** from the caller. The AI service cannot establish credit, failure, refund or reversal.
+- An `UNKNOWN` outcome invokes conservative, normalized assertion checks across observations, hypotheses, alternatives, missing-information descriptions, recommendations and the draft. These lexical checks intentionally reject suspicious assertions, but **cannot prove the semantics of every possible sentence**. Schema validation, eligible evidence IDs, backend authoritative evidence checks and human review are still required.
+- **No model-generated customer wording is forwarded as a bank-approved communication.** The `customer_safe_update_draft` returned by the service is an outcome-neutral deterministic template, even when the model proposes different wording. It is an **unapproved draft only** and must never be automatically published. Daniel's banking backend must independently validate and authorize any customer-facing message using Cedar's latest authoritative state and its bank-controlled approval workflow.
+- The AI service contains **no publish/send API** and cannot call Cedar's notification or banking APIs. Client/frontend must not call internal AI routes directly.
+- Model recommendations that appear to instruct financial actions (including resends, reversals, refunds and account credits) are rejected rather than executed. Approved **verification checks** remain possible. These checks provide defense-in-depth, not a production safety certification.
+- Regression tests include outcome paraphrases, Unicode text evasion, assertions hidden inside alternatives/unknowns/recommendations, malicious customer drafts and improper payment-action recommendations.

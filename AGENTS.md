@@ -4,7 +4,7 @@ These instructions apply to every coding tool and all paths. The repository/spec
 
 ## Current scope
 
-Task 002-GIT explicitly authorizes reviewing/staging this existing project, creating initial main commits, connecting/pushing to https://github.com/Ade20boss/veriq-cedar, inviting Hbboss226 and Barry1003 with write access, configuring a practical PR requirement and updating collaboration/handoff documentation. Do not initialize another repository, overwrite remote commits, force-push, grant admin rights to collaborators, scaffold apps, implement business features or approve proposed v1.1 contracts. If remote history is nonempty, inspect/compare and obtain owner approval before any action that could overwrite/conflict. Authentication is through GitHub's normal browser/CLI mechanism; never request passwords/tokens in chat or commit credentials. Stop after setup/report.
+Task 003 explicitly authorizes the first proactive G0 backend slice on feat/proactive-incident-g0: internal authorized operational events, deterministic synthetic route detection, persisted suspected incidents/evidence/investigations, durable fenced jobs, permitted bank-neutral result delivery, real PostgreSQL tests/replay and documentation. Commit/push the feature branch and open a PR against main after verification; do not merge. No ledger, payment simulation, complaints/cases, frontend changes, AI incident endpoint or v1.1 HTTP contract promotion is authorized. The earlier Task 002-GIT scope is historical. Preserve teammate work and existing history.
 
 ## Recover before editing
 
@@ -36,7 +36,7 @@ For changes affecting interfaces, financial outcomes, source authority, access o
 
 ## Verification and handoff
 
-Run checks appropriate to actual changes. Later implementation retains T01–T16, PostgreSQL concurrency/role checks, AI grounding/UNKNOWN checks and joint live API replay. Record environment constraints and failures honestly. Keep secrets, local environments, uploaded data and generated caches out of Git. Before stopping, inspect contract/private-truth/ownership changes and update the handoff. Task 002 backend foundation is complete. Task 002-GIT stops after GitHub setup/report; business behavior and frontend screens remain unauthorized.
+Run checks appropriate to actual changes. Later implementation retains T01–T16, PostgreSQL concurrency/role checks, AI grounding/UNKNOWN checks and joint live API replay. Record environment constraints and failures honestly. Keep secrets, local environments, uploaded data and generated caches out of Git. Before stopping, inspect contract/private-truth/ownership changes and update the handoff. Task 002 backend foundation is complete. Task 003 stops after the G0 feature PR/report; further business behavior and frontend screens require a new authorized task.
 
 ## Task 001.1 binding corrections
 
@@ -47,4 +47,4 @@ Run checks appropriate to actual changes. Later implementation retains T01–T16
 - Preserve customer design; rebuild staff interface from relevant workflow requirements. Old React/Vite inventories are not verified current Next.js behavior. No frontend migration or code import in this task.
 - Read docs/REPOSITORY_ARCHITECTURE.md, BANK_ADAPTER_CONTRACT.md, EVENT_PROCESSING.md, FRONTEND_ALIGNMENT.md, STAFF_AND_UI_CONTRACTS.md and proposal README when continuing. Markdown is canonical; frozen source documents and canonical contracts stay unchanged.
 
-Current scope clarification: the Cedar Operations attachment is a proposed requirements source, not authorization to build every module. Read docs/MINIMUM_DEMO_SCOPE.md from repository root for the 26-addition P0 proposal and the 13 excluded secondary operations. Canonical APIs are unchanged; only Task 002 backend foundation scaffolding is now authorized.
+Current scope clarification: the Cedar Operations attachment is a proposed requirements source, not authorization to build every module. Read docs/MINIMUM_DEMO_SCOPE.md from repository root for the 26-addition P0 proposal and the 13 excluded secondary operations. Canonical APIs are unchanged; Task 003 additionally authorizes the bounded internal G0 slice described above. The remaining P0/secondary HTTP proposals are still unapproved.

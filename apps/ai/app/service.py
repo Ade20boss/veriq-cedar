@@ -3,6 +3,7 @@ import logging
 from pydantic import ValidationError
 
 from .errors import AIServiceError
+from .financial_safety import NEUTRAL_CUSTOMER_DRAFT
 from .guardrails import check_extract_input, check_case_input, validate_extraction, validate_case
 from .prompts import EXTRACTION_INSTRUCTION, CASE_INSTRUCTION
 from .providers import JSONProvider, get_provider
@@ -33,5 +34,7 @@ async def analyze_case(request: AIInvestigationInput, provider: JSONProvider | N
     except ValidationError as exc:
         logger.warning("Case contract validation failed: %s", type(exc).__name__)
         raise AIServiceError("AI_INVALID_OUTPUT", "Case model output violates v1.0 schema.") from exc
+    # Never forward provider-authored customer communication. Backend approval required.
+    result.customer_safe_update_draft = NEUTRAL_CUSTOMER_DRAFT
     validate_case(request, result)
     return result

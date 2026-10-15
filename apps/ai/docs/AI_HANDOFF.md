@@ -92,3 +92,13 @@ Sample case output is in `docs/samples/case_mock_response.json`: financial_outco
 - **A4:** pending Daniel backend and Usaamah UI integration.
 
 Git status / commit: This delivery has been adapted as an `apps/ai/` integration overlay. No commit has been made to Daniel's repository; it must be reviewed and merged intentionally. Connected GitHub identity `Barry1003` currently has pull-only permission in `Ade20boss/veriq-cedar` (invitation still pending, per repository handoff). AI owner account is Hbboss226.
+
+## A2 financial-outcome hardening review — 15 October 2026
+
+- Preserve the existing v1.0 wire DTO and endpoint paths; financial_outcome remains caller-authoritative.
+- `app/financial_safety.py` now normalizes Unicode, checks broader finality paraphrases and prevents model-written customer sentences from passing through. `app/guardrails.py` applies the checks to every text-bearing investigation field and disallows model recommendations to move money.
+- `app/service.py` discards arbitrary provider-authored `customer_safe_update_draft` wording and inserts a deterministic neutral **UNAPPROVED DRAFT**. Cedar's backend must separately approve/publish any message; AI service has no publication integration.
+- This is a **heuristic** language check and cannot catch all ways to imply finality. It cannot substitute for deterministic backend financial authority, verified evidence, allowed action boundaries or investigator approval.
+- `test_financial_safety.py` adds adversarial finality paraphrase tests across all output text fields, Unicode obfuscation, safe uncertainty language, financial action recommendations and malicious draft sanitization.
+- Local regression run (Python 3.13.5): `python -m pytest -q`: **66 passed**. Not a live LLM assessment; no real bank, PostgreSQL, or Fedora runtime was exercised here.
+- Integration blocker for Daniel: verify that he treats `customer_safe_update_draft` as **never approved and never automatically publishable**; send only authenticated, eligible evidence; independently check outcome and refs; record reviewer identity/decision before Cedar publishes.

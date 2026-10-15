@@ -6,9 +6,11 @@ from alembic import context
 from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
 
+from veriq_cedar.cedar.adapters import models as cedar_models  # noqa: F401
 from veriq_cedar.cedar.base import CedarBase
 from veriq_cedar.cedar.simulator.base import SimulatorBase
 from veriq_cedar.platform.settings import MigrationSettings
+from veriq_cedar.veriq.persistence import operational as operational_models  # noqa: F401
 from veriq_cedar.veriq.persistence.base import VeriqBase
 
 config = context.config
