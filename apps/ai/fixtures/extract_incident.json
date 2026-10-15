@@ -1,0 +1,11 @@
+{
+  "bank_id": "CED",
+  "source_id": "SRC-INC-001",
+  "source_kind": "historical_incident",
+  "chunks": [
+    {
+      "chunk_id": "historical_incidents.md#incident-14",
+      "text": "On 15 October 2026, Gateway G2 experienced repeated transaction timeouts. Engineers identified a connection-pool configuration issue. Operations corrected the configuration. This is a historical report, not proof of any current outage."
+    }
+  ]
+}

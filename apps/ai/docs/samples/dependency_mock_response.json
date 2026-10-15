@@ -1,0 +1,22 @@
+{
+  "source_id": "SRC-ARCH-001",
+  "claims": [
+    {
+      "claim_id": "CLM-001",
+      "subject": {
+        "type": "SERVICE",
+        "external_id": "G2"
+      },
+      "predicate": "USED_BY",
+      "object": "Cedar outbound transfer service",
+      "source_locator": "architecture.md#routes",
+      "quoted_evidence": "routes transfers through Gateway G2",
+      "classification": "CANDIDATE_RELATIONSHIP",
+      "needs_review": true
+    }
+  ],
+  "unresolved_mentions": [],
+  "warnings": [
+    "MOCK_PROVIDER: deterministic fixture result; no external LLM was called"
+  ]
+}
