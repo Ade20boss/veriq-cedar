@@ -1,3 +1,3 @@
-"""Expected Alembic head for runtime readiness."""
+"""Expected migration head."""
 
-SCHEMA_REVISION = "0003_financial_g1"
+SCHEMA_REVISION = "0004_pitch_g2"

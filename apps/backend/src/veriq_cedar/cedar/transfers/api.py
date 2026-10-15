@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, Request, Response
 
 from veriq_cedar.cedar.accounts.auth import CustomerDependency
+from veriq_cedar.cedar.complaints.service import ComplaintInput, Complaints
 from veriq_cedar.cedar.transfers.contracts import (
     AccountView,
     Bank,
@@ -86,3 +87,15 @@ def transfer(
 )
 def get_transfer(transferId: str, customer: CustomerDependency, bank: BankingDependency):
     return bank.get(customer, transferId)
+
+
+@router.post("/complaints", status_code=201, operation_id="post_v1_cedar_complaints")
+def create_complaint(
+    request: ComplaintInput, customer: CustomerDependency, databases: DatabaseDependency
+):
+    return Complaints(databases.sessions[DatabaseDomain.CEDAR]).create(customer, request)
+
+
+@router.get("/complaints/{caseId}", operation_id="get_v1_cedar_complaints_caseId")
+def get_complaint(caseId: str, customer: CustomerDependency, databases: DatabaseDependency):
+    return Complaints(databases.sessions[DatabaseDomain.CEDAR]).get(customer, caseId)

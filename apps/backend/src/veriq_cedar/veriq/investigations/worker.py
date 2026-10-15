@@ -119,6 +119,10 @@ class Worker:
             job = self._fenced(session, claim)
             if job is None:
                 return False
+            if job.kind == "CASE_ANALYSIS":
+                from veriq_cedar.veriq.investigations.cases import assemble_case
+
+                assemble_case(session, job)
             if job.kind == "INCIDENT_ANALYSIS":
                 inv = session.scalar(
                     select(Investigation)

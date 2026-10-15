@@ -1,0 +1,5 @@
+FICTIONAL CEDAR OPERATIONS SOP
+A sender debit and response timeout mean UNKNOWN. Never infer beneficiary credit
+or failure from a route anomaly. Preserve the complaint and available evidence
+if Veriq or AI is unavailable. A later authorized banking response is required
+for financial finality. Customer communications require human approval.

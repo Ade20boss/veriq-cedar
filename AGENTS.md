@@ -4,7 +4,7 @@ These instructions apply to every coding tool and all paths. The repository/spec
 
 ## Current scope
 
-Task 004 authorizes the bounded Cedar financial G1 slice on feat/cedar-financial-core-g1 from latest main: fictional customers/accounts/reference data, balanced append-only ledger, scoped idempotent transfers, durable sender dispatch, restricted S0/S2 synthetic network, the five accepted customer endpoints, private CLI demo sessions/seed/replay, migrations/grants/tests/docs. Preserve G0 and merged AI work. Commit/push and open a PR to main after verification; do not merge. No complaints, staff, Veriq case investigations, AI calls, reveal/status-query endpoint, reversals, reconciliation, full scenario suite, frontend or proposed v1.1 API implementation. No implementation commits directly to main.
+Task 005 explicitly authorizes the bounded integrated pitch backend on feat/pitch-backend-g2 from latest main (G0, AI, frontend and G1 PRs merged). Implement approved operational read APIs, Cedar-owned durable complaints, bank-neutral automatic BANK_CASE handoff using existing jobs, minimum real source upload/context pipeline, secure private investigator sessions and a four-act PostgreSQL/HTTP replay. Preserve existing tests and teammate implementations; no apps/ai or frontend modifications. Commit/push feature branch and PR to main; no automatic merge. P0 precedes optional AI/status verification. Never fake AI extraction/findings, confirmed incidents, customer communications or financial finality. No proposed v1.1 endpoint promotion, new infrastructure product, ledger correction or destructive reset. See docs/handoffs/PITCH_BACKEND_STATUS.md for exact implemented/missing features.
 
 ## Recover before editing
 
@@ -36,7 +36,7 @@ For changes affecting interfaces, financial outcomes, source authority, access o
 
 ## Verification and handoff
 
-Run checks appropriate to actual changes. Later implementation retains T01–T16, PostgreSQL concurrency/role checks, AI grounding/UNKNOWN checks and joint live API replay. Record environment constraints and failures honestly. Keep secrets, local environments, uploaded data and generated caches out of Git. Before stopping, inspect contract/private-truth/ownership changes and update the handoff. Task 002 backend foundation is complete. Task 004 stops after the G1 feature PR/report; further business behavior and frontend screens require a new authorized task.
+Run checks appropriate to actual changes. Later implementation retains T01–T16, PostgreSQL concurrency/role checks, AI grounding/UNKNOWN checks and joint live API replay. Record environment constraints and failures honestly. Keep secrets, local environments, uploaded data and generated caches out of Git. Before stopping, inspect contract/private-truth/ownership changes and update the handoff. Task 002 backend foundation is complete. Task 005 stops after the integrated pitch feature PR/report; further business behavior and frontend screens require a new authorized task.
 
 ## Task 001.1 binding corrections
 
@@ -47,4 +47,4 @@ Run checks appropriate to actual changes. Later implementation retains T01–T16
 - Preserve customer design; rebuild staff interface from relevant workflow requirements. Old React/Vite inventories are not verified current Next.js behavior. No frontend migration or code import in this task.
 - Read docs/REPOSITORY_ARCHITECTURE.md, BANK_ADAPTER_CONTRACT.md, EVENT_PROCESSING.md, FRONTEND_ALIGNMENT.md, STAFF_AND_UI_CONTRACTS.md and proposal README when continuing. Markdown is canonical; frozen source documents and canonical contracts stay unchanged.
 
-Current scope clarification: the Cedar Operations attachment is a proposed requirements source, not authorization to build every module. Read docs/MINIMUM_DEMO_SCOPE.md from repository root for the 26-addition P0 proposal and the 13 excluded secondary operations. Canonical APIs are unchanged; Task 003 authorized internal G0; Task 004 authorizes only the G1 subset described above. The remaining P0/secondary HTTP proposals are still unapproved.
+Current scope clarification: the Cedar Operations attachment is a proposed requirements source, not authorization to build every module. Read docs/MINIMUM_DEMO_SCOPE.md from repository root for the 26-addition P0 proposal and the 13 excluded secondary operations. Canonical APIs are unchanged; Task 003 authorized internal G0; Task 004 authorized G1; Task 005 additionally authorizes only the pitch subset described above. The remaining P0/secondary HTTP proposals are still unapproved.

@@ -1,0 +1,141 @@
+{
+  "fictional_environment": true,
+  "deterministic_network_mock": "S2; no AI called",
+  "act_i": {
+    "sources": [
+      {
+        "source_id": "cc7419b8-2261-4130-8ec3-26ab5842979e",
+        "status": "PARSED",
+        "job_id": "1da56404-432a-4e46-8fe6-263f865e3767"
+      },
+      {
+        "source_id": "8f7f7e7e-1d09-4500-9314-ac9f97b9e2b7",
+        "status": "PARSED",
+        "job_id": "a58ec5de-3d72-461f-9f8f-88973915019a"
+      },
+      {
+        "source_id": "f26997b5-a2f0-404f-bde9-57ed81ea00fe",
+        "status": "PARSED",
+        "job_id": "940d9139-d5df-42cc-8860-6fe0283ecc99"
+      },
+      {
+        "source_id": "f2fc8492-2bba-4dcd-b434-ec80467bc31a",
+        "status": "UPLOADED",
+        "job_id": "ab4fe5c9-8b24-444a-a4ae-7cba4e8232df"
+      },
+      {
+        "source_id": "3e4577e8-514c-44b4-86ba-9f6a387a4863",
+        "status": "UPLOADED",
+        "job_id": "e5700eaf-77b8-4366-bcfb-70e2530f7648"
+      }
+    ],
+    "context": {
+      "bank_id": "CED",
+      "context_version": 5,
+      "entity_counts": {
+        "BANK": 3,
+        "SERVICE": 2,
+        "ROUTE": 2
+      },
+      "relationship_counts": {
+        "CONNECTS_TO": 2,
+        "DESTINATION": 2,
+        "USES": 4,
+        "ORIGINATES_AT": 2
+      },
+      "source_count": 5,
+      "candidate_count": 0,
+      "verified_count": 0,
+      "updated_at": "2026-10-15T21:41:51.539092+01:00"
+    },
+    "relationship_count": 10
+  },
+  "act_ii": {
+    "operations": [
+      {
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "window_attempts": 25,
+        "window_timeouts": 7,
+        "baseline_attempts": 100,
+        "baseline_timeouts": 2,
+        "status": "DEGRADED"
+      },
+      {
+        "route_id": "ROUTE-CED-BIRCH-G3",
+        "service_id": "G3",
+        "window_attempts": 25,
+        "window_timeouts": 1,
+        "baseline_attempts": 100,
+        "baseline_timeouts": 2,
+        "status": "NORMAL"
+      }
+    ],
+    "incident": {
+      "id": "f3ff5530-01b3-4712-82b6-ab8b37bc5446",
+      "bank_id": "CED",
+      "route_id": "ROUTE-CED-ELM-G2",
+      "status": "SUSPECTED",
+      "first_observed_at": "2026-10-15T21:41:51.605931+01:00",
+      "finding_summary": "Deterministic route timeout threshold exceeded; operational issue suspected, cause unverified.",
+      "evidence_ids": [
+        "metric/elm_g2/2026-10-15T20:41:51.579192_00:00"
+      ],
+      "case_ids": []
+    }
+  },
+  "act_iii": {
+    "transfer": {
+      "id": "5c6af16d-35c5-4146-82da-e24b8004cb81",
+      "reference": "CED-89392d13-7315-4214-a0ef-ed670fcb37c0",
+      "amount_kobo": 5000000,
+      "beneficiary_bank_id": "ELM",
+      "beneficiary_account_id": "ELM-ACC-009",
+      "processing_stage": "RESPONSE_TIMEOUT",
+      "financial_outcome": "UNKNOWN",
+      "last_evidence_id": "gateway/8a2aad9a-2ef0-4f8c-851b-95ab9be69504/OBSERVED_TIMEOUT",
+      "created_at": "2026-10-15T21:41:51.882609+01:00",
+      "updated_at": "2026-10-15T21:41:51.986075+01:00"
+    },
+    "balance_before_kobo": 10000000,
+    "balance_after_kobo": 5000000,
+    "debit_journals": 1
+  },
+  "act_iv": {
+    "complaint": {
+      "id": "2bc7e7a6-129a-4185-a811-12110e83a8d0",
+      "reference": "CED-CASE-1011d027-03b7-4a74-894a-c65a48875126",
+      "transfer_id": "5c6af16d-35c5-4146-82da-e24b8004cb81",
+      "customer_report": "My fictional Elm transfer timed out. Please investigate.",
+      "status": "OPEN",
+      "customer_safe_updates": [],
+      "created_at": "2026-10-15T21:41:52.020430+01:00"
+    },
+    "investigation_status": "EVIDENCE_READY_AI_UNAVAILABLE",
+    "financial_outcome": "UNKNOWN",
+    "incident_ids": [
+      "f3ff5530-01b3-4712-82b6-ab8b37bc5446"
+    ],
+    "evidence_ids": [
+      "transfer/5c6af16d-35c5-4146-82da-e24b8004cb81/2026-10-15T21:41:51.986075+01:00",
+      "5d3ad431-3c38-4b56-bb88-4ddf1a3dcdc5",
+      "eb63db97-6e0a-4fc9-9f64-313637fc9f65",
+      "9180ea2f-b38b-4edf-9fc8-2996b151ff03",
+      "2b421b18-d32b-4abe-bfbc-9319df3a7fe9",
+      "a2bde215-2ed6-4aa3-8019-806f9e5661c0",
+      "case/2bc7e7a6-129a-4185-a811-12110e83a8d0",
+      "metric/elm_g2/2026-10-15T20:41:51.579192_00:00",
+      "8f7f7e7e-1d09-4500-9314-ac9f97b9e2b7/row-3",
+      "f26997b5-a2f0-404f-bde9-57ed81ea00fe/routes-0-service_id",
+      "f26997b5-a2f0-404f-bde9-57ed81ea00fe/routes-0-to_bank_id",
+      "8f7f7e7e-1d09-4500-9314-ac9f97b9e2b7/row-2",
+      "f26997b5-a2f0-404f-bde9-57ed81ea00fe/routes-0-from_bank_id"
+    ]
+  },
+  "verification": {
+    "balanced_single_debit": true,
+    "private_reads_denied": 2,
+    "automatic_case_without_investigate_request": true,
+    "ai_result": null
+  }
+}
