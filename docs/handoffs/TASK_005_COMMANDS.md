@@ -14,3 +14,15 @@
 Publication after review: stage only TASK_005_FILES.txt files, git diff --cached --check, git commit -m 'Implement integrated Cedar Veriq pitch backend and four-act replay', git push -u origin feat/pitch-backend-g2; gh pr create --base main --head feat/pitch-backend-g2 with reviewed body file. Final chat records actual SHA/PR outcome. No force push or merge.
 
 - Added bounded private telemetry producer command for the interactive frontend path; actual g2 telemetry CLI smoke passed without resetting data. Manually verified generated metadata for all17business operation IDs and multipart request body against the frozen contract. Final focused upload/logging tests2passed and complete four-act smoke passed again. No AI or reveal success is claimed.
+
+
+## PR #5 requested review corrections — executed
+
+- Verified clean starting feature branch at6ef889b, read current rules/handoffs/code/spec relationship restrictions; fetched origin and confirmed PR #5 OPEN on the same head. Network access was granted for fetch/push. No merge/rebase/force push.
+- Added adapter-specific relationship vocabulary and endpoint-type enforcement; classified/logged complaint-delivery failures using fixed codes only. Existing budgets/leases/generation fencing/backoff and receiver dedupe retained. No schema/grant/canonical contract/frontend/AI source edits.
+- Focused `python3 work/task005/run_tests.py -k 'dependency_semantics or route_adapter or complaint_failure or exhausted_expired or fixed_delivery' -x -q`:19passed/100deselected, including complete smoke. Added the stale-sender regression before the final full run.
+- Final `python3 work/task005/run_tests.py -x -q` from the chat workspace:120passed in71.66seconds;75real PostgreSQL tests and45non-server tests, no failures/errors/skips. Wrapper supplies TEST_DATABASE_ADMIN_URL to backend `.venv/bin/pytest tests -x -q`, then executes the existing role/bootstrap/grant, Alembic upgrade/current/check/offline SQL, complete g2 replay, duplicate-replay refusal, telemetry, private session provisioning, live HTTP/auth/readiness and worker startup smoke. Temporary native PostgreSQL16.2/services stopped and session file removed. Final test/replay/smoke artifacts replace the earlier100-test artifacts; old evidence remains in Git history.
+- `apps/backend/.venv/bin/ruff check apps/backend/src apps/backend/tests apps/backend/migrations` and `ruff format --check` passed (80files). Initial formatting violations were corrected before the final run. `git diff --check` passed.
+- Project-local `work/task002/tools/bin/uv lock --check --offline --cache-dir work/task002/uv-cache` (paths resolved from apps/backend):42packages; unchanged lock/dependencies.
+- From apps/ai: `../backend/.venv/bin/python -m pytest -q --junitxml=<workspace>/work/task005/review-ai-tests.xml`:66passed in3.02seconds, one existing Starlette deprecation warning; source unchanged.
+- Push is a normal follow-up commit on feat/pitch-backend-g2 to existing PR #5. Exact final SHA/publication verification is recorded in the final chat. No automatic merge.

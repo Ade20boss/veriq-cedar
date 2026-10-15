@@ -25,6 +25,7 @@ apps/backend/src/veriq_cedar/veriq/persistence/operational.py
 apps/backend/src/veriq_cedar/veriq/persistence/pitch.py
 apps/backend/tests/test_application.py
 apps/backend/tests/test_boundaries.py
+apps/backend/tests/test_complaint_delivery.py
 apps/backend/tests/test_g0.py
 apps/backend/tests/test_pitch.py
 apps/backend/tests/test_postgres.py

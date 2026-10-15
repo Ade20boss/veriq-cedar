@@ -22,6 +22,19 @@ FILES = {
     "historical_incidents.md",
     "operations_sop.txt",
 }
+# Adapter-local semantics, not a vocabulary supplied by an uploaded document.
+# These are documented topology assertions, never causal or verified findings.
+RELATIONSHIPS = {
+    "dependencies.csv": {
+        "USES": ("BANK", "SERVICE"),
+        "CONNECTS_TO": ("SERVICE", "BANK"),
+    },
+    "routes.json": {
+        "ORIGINATES_AT": ("ROUTE", "BANK"),
+        "USES": ("ROUTE", "SERVICE"),
+        "DESTINATION": ("ROUTE", "BANK"),
+    },
+}
 
 
 class EntityInput(BaseModel):
@@ -115,13 +128,15 @@ class Knowledge:
             session.flush()
 
     def _edge(self, session, source, from_id, to_id, kind, locator):
-        if (
-            session.get(Entity, (source.bank_id, from_id)) is None
-            or session.get(Entity, (source.bank_id, to_id)) is None
-        ):
+        expected = RELATIONSHIPS.get(source.filename, {}).get(kind)
+        if expected is None:
+            raise ValueError("Unsupported adapter relationship kind")
+        origin = session.get(Entity, (source.bank_id, from_id))
+        destination = session.get(Entity, (source.bank_id, to_id))
+        if origin is None or destination is None:
             raise ValueError("Unregistered relationship endpoint")
-        if not 1 <= len(kind) <= 80:
-            raise ValueError("Invalid relationship kind")
+        if (origin.kind, destination.kind) != expected:
+            raise ValueError("Invalid relationship endpoint types")
         session.add(
             Relationship(
                 bank_id=source.bank_id,

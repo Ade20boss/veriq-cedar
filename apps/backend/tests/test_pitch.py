@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session
 from veriq_cedar.cedar.accounts.auth import CustomerIdentity
 from veriq_cedar.cedar.accounts.seed import mint_session, seed, seed_customer
 from veriq_cedar.cedar.adapters.synthetic import SyntheticEvents
+from veriq_cedar.cedar.complaints.delivery import ComplaintDelivery
 from veriq_cedar.cedar.complaints.models import ComplaintOutbox
 from veriq_cedar.cedar.complaints.service import ComplaintInput, Complaints
 from veriq_cedar.cedar.simulator.network import SyntheticNetwork
@@ -28,6 +29,7 @@ from veriq_cedar.composition.g2 import components, mint_staff
 from veriq_cedar.integration.cases import CaseEvent
 from veriq_cedar.main import create_app
 from veriq_cedar.platform.database.session import DatabaseDomain, DatabaseRegistry
+from veriq_cedar.platform.logging import configure_logging
 from veriq_cedar.veriq.investigations.cases import CaseReceiver
 from veriq_cedar.veriq.knowledge.models import Entity, Relationship, Source
 from veriq_cedar.veriq.knowledge.service import MAX_BYTES, Knowledge
@@ -516,3 +518,196 @@ def test_case_expired_worker_and_sender_lease_recover_without_duplicates(pitch):
         assert session.scalar(select(func.count()).select_from(CaseInvestigation)) == 1
         assert session.scalar(select(func.count()).select_from(CaseReceipt)) == 1
         assert session.get(Job, ("CED", old.job_id)).attempts == 2
+
+
+@pytest.mark.parametrize(
+    "row",
+    [
+        "G2,ELM,UNSUPPORTED",
+        "G2,ELM,CAUSED_BY",
+        "G2,ELM,DESTINATION",  # Valid only in the route adapter.
+        "G2,ELM,uses",  # Vocabulary is exact and case-sensitive.
+        "ELM,G2,CONNECTS_TO",  # Supported word, reversed endpoint types.
+        "CED,ELM,USES",  # Bank cannot use a bank as a service.
+    ],
+)
+def test_dependency_semantics_reject_entire_file_with_provenance(pitch, row):
+    p = pitch
+    knowledge = Knowledge(p.v)
+    knowledge.register(
+        "CED",
+        "services.json",
+        "PITCH_FIXTURE",
+        (ROOT / "fixtures/onboarding/services.json").read_bytes(),
+    )
+    valid = (ROOT / "fixtures/onboarding/dependencies.csv").read_bytes()
+    knowledge.register("CED", "dependencies.csv", "PITCH_FIXTURE", valid)
+    before = knowledge.relationships("CED")
+    # Two valid rows precede the adversarial row; neither may survive the savepoint.
+    body = (
+        "from_entity_id,to_entity_id,type\nCED,G2,USES\nG2,ELM,CONNECTS_TO\n" + row + "\n"
+    ).encode()
+    result = knowledge.register("CED", "dependencies.csv", "PITCH_FIXTURE", body)
+    assert result["status"] == "FAILED"
+    assert knowledge.relationships("CED") == before
+    with p.v() as session:
+        source = session.get(Source, ("CED", result["source_id"]))
+        assert source.content == body and source.checksum == sha256(body).hexdigest()
+        assert source.error_code == "SOURCE_VALIDATION_FAILED"
+        assert source.job_state == "FAILED"
+        assert not session.scalar(select(Relationship).where(Relationship.source_id == source.id))
+    assert all(e["source_id"] != result["source_id"] for e in before)
+
+
+@pytest.mark.parametrize("field", ["service_id", "from_bank_id", "to_bank_id"])
+def test_route_adapter_rejects_wrong_endpoint_type_atomically(pitch, field):
+    p = pitch
+    knowledge = Knowledge(p.v)
+    knowledge.register(
+        "CED",
+        "services.json",
+        "PITCH_FIXTURE",
+        (ROOT / "fixtures/onboarding/services.json").read_bytes(),
+    )
+    data = json.loads((ROOT / "fixtures/onboarding/routes.json").read_bytes())
+    data["routes"][1][field] = "CED" if field == "service_id" else "G2"
+    result = knowledge.register("CED", "routes.json", "PITCH_FIXTURE", json.dumps(data).encode())
+    assert result["status"] == "FAILED"
+    assert knowledge.relationships("CED") == []
+    # The first complete route and the invalid route entity are also rolled back.
+    assert knowledge.context("CED")["entity_counts"] == {"BANK": 3, "SERVICE": 2}
+
+
+@pytest.mark.parametrize("exhaust", [False, True])
+def test_complaint_failure_diagnostics_bounded_retry_and_safe_recovery(pitch, capsys, exhaust):
+    p = pitch
+    configure_logging("INFO")
+    t = transfer(p)
+    report = "PRIVATE-COMPLAINT-CANARY never include in worker logs"
+    complaint = Complaints(p.c).create(p.ada, ComplaintInput(transfer_id=t, description=report))
+    receiver = CaseReceiver(p.v)
+    poison = "postgresql://secret-user:SECRET-TOKEN@private/db " + report
+
+    class Offline:
+        def accept(self, event):
+            # Simulate receiver commit followed by lost acknowledgement on each retry.
+            receiver.accept(event)
+            raise ConnectionError(poison)
+
+    delivery = ComplaintDelivery(p.c, Offline())
+    rounds = 5 if exhaust else 2
+    with p.c() as session:
+        original = session.scalar(select(ComplaintOutbox)).payload
+    for attempt in range(1, rounds + 1):
+        assert delivery.run_once()
+        with p.c() as session:
+            outbox = session.scalar(select(ComplaintOutbox))
+            assert outbox.state == ("DEAD_LETTER" if attempt == 5 else "RETRY_WAIT")
+            assert outbox.attempts == attempt and outbox.generation == attempt
+            assert outbox.lease_until is None and outbox.payload == original
+            assert outbox.available_at > datetime.now(UTC)
+            delivery_id = outbox.id
+        records = [json.loads(line) for line in capsys.readouterr().out.splitlines() if line]
+        record = next(r for r in records if r["event"] == "complaint_delivery.completed")
+        assert record["error_code"] == "DELIVERY_UNAVAILABLE"
+        assert record["delivery_id"] == delivery_id and record["attempts"] == attempt
+        assert record["generation"] == attempt
+        assert record["delivery_state"] == outbox.state
+        assert record["level"] == ("ERROR" if attempt == 5 else "WARNING")
+        assert all(x not in json.dumps(records) for x in (report, "SECRET-TOKEN", "postgresql"))
+        # No eager retry before persisted backoff, nor an automatic dead-letter loop.
+        assert not delivery.run_once()
+        if attempt < rounds:
+            with p.c.begin() as session:
+                session.scalar(select(ComplaintOutbox)).available_at = datetime.now(
+                    UTC
+                ) - timedelta(seconds=1)
+    delivery.receiver = receiver  # Underlying outage corrected.
+    if exhaust:
+        assert not delivery.run_once()  # Exhausted records require explicit operator replay.
+    with p.admin.begin() as connection:
+        # Controlled maintenance on this one synthetic delivery, never a data reset.
+        connection.execute(
+            text(
+                "UPDATE cedar.complaint_outbox SET state='RETRY_WAIT', attempts=:attempts, "
+                "available_at=clock_timestamp()-interval '1 second' WHERE id=:id"
+            ),
+            {"id": delivery_id, "attempts": 0 if exhaust else rounds},
+        )
+    assert delivery.run_once()
+    records = [json.loads(line) for line in capsys.readouterr().out.splitlines() if line]
+    record = next(r for r in records if r["event"] == "complaint_delivery.completed")
+    assert record["delivery_state"] == "SUCCEEDED" and "error_code" not in record
+    with p.c() as session:
+        outbox = session.scalar(select(ComplaintOutbox))
+        assert outbox.state == "SUCCEEDED" and outbox.payload == original
+        assert outbox.generation == rounds + 1
+    with p.v() as session:
+        assert session.scalar(select(func.count()).select_from(CaseReceipt)) == 1
+        assert session.scalar(select(func.count()).select_from(CaseInvestigation)) == 1
+        assert session.scalar(select(CaseInvestigation)).case_id == complaint["id"]
+    assert not delivery.run_once()
+
+
+def test_exhausted_expired_complaint_lease_logs_terminal_state(pitch, capsys):
+    p = pitch
+    configure_logging("INFO")
+    t = transfer(p)
+    Complaints(p.c).create(
+        p.ada, ComplaintInput(transfer_id=t, description="Exhausted crashed worker")
+    )
+    with p.admin.begin() as connection:
+        connection.execute(
+            text(
+                "UPDATE cedar.complaint_outbox SET state='LEASED', attempts=5, generation=5, "
+                "lease_until=clock_timestamp()-interval '1 second'"
+            )
+        )
+    delivery, _ = components(p.registry)
+    assert delivery.run_once()
+    record = json.loads(capsys.readouterr().out.strip())
+    assert record["error_code"] == "ATTEMPTS_EXHAUSTED"
+    assert record["delivery_state"] == "DEAD_LETTER" and record["attempts"] == 5
+    with p.c() as session:
+        outbox = session.scalar(select(ComplaintOutbox))
+        assert outbox.state == "DEAD_LETTER" and outbox.lease_until is None
+    with p.v() as session:
+        assert session.scalar(select(func.count()).select_from(CaseReceipt)) == 0
+    assert not delivery.run_once()
+
+
+def test_complaint_stale_failure_cannot_overwrite_recovered_delivery(pitch, capsys):
+    p = pitch
+    configure_logging("INFO")
+    t = transfer(p)
+    Complaints(p.c).create(
+        p.ada, ComplaintInput(transfer_id=t, description="Complaint sender generation fencing")
+    )
+    successor, _ = components(p.registry)
+
+    class LostLease:
+        def accept(self, event):
+            with p.admin.begin() as connection:
+                connection.execute(
+                    text(
+                        "UPDATE cedar.complaint_outbox "
+                        "SET lease_until=clock_timestamp()-interval '1 second'"
+                    )
+                )
+            assert successor.run_once()
+            raise RuntimeError("UNTRUSTED-SECRET-EXCEPTION")
+
+    assert ComplaintDelivery(p.c, LostLease()).run_once()
+    records = [json.loads(line) for line in capsys.readouterr().out.splitlines() if line]
+    assert [(r["delivery_state"], r["generation"]) for r in records] == [
+        ("SUCCEEDED", 2),
+        ("STALE_ACK", 1),
+    ]
+    assert records[-1]["error_code"] == "DELIVERY_UNEXPECTED_ERROR"
+    assert "UNTRUSTED-SECRET-EXCEPTION" not in json.dumps(records)
+    with p.c() as session:
+        row = session.scalar(select(ComplaintOutbox))
+        assert row.state == "SUCCEEDED" and row.generation == 2 and row.attempts == 2
+    with p.v() as session:
+        assert session.scalar(select(func.count()).select_from(CaseReceipt)) == 1
+        assert session.scalar(select(func.count()).select_from(CaseInvestigation)) == 1

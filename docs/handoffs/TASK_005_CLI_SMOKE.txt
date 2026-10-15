@@ -44,7 +44,7 @@ INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenera
 INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
 INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
 No new upgrade operations detected.
-{"fictional_environment": true, "accepted_event_receipts": ["afa59074-ab6f-4654-a130-4d71972a0257", "338aa0ef-137a-4a13-9755-a6787cac3ca5"]}
+{"fictional_environment": true, "accepted_event_receipts": ["edd0f701-9e85-4ae6-9831-e95b80faf6f7", "10fd7694-e410-43ac-9100-ac58ceb40b3a"]}
 Traceback (most recent call last):
   File "<frozen runpy>", line 198, in _run_module_as_main
   File "<frozen runpy>", line 88, in _run_code
@@ -65,18 +65,18 @@ Traceback (most recent call last):
     raise ValueError(
 ValueError: Pitch replay requires a fresh disposable database; no reset is performed
 Fictional investigator session provisioned; one-hour expiry. Token is only in the private file.
-INFO:     Started server process [94]
+INFO:     Started server process [418]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-INFO:     Uvicorn running on http://127.0.0.1:51605 (Press CTRL+C to quit)
-{"timestamp": "2026-10-15T20:41:59.549153+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "2dc5ad8b77a4444692cb79c673f89c93", "method": "GET", "route": "/health", "status_code": 200, "duration_ms": 27.28}
-{"timestamp": "2026-10-15T20:41:59.601468+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "2e9c58ab1e04435ba4c5981f50a0413f", "method": "GET", "route": "/ready", "status_code": 200, "duration_ms": 50.63}
-{"timestamp": "2026-10-15T20:41:59.626079+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "3373029f49b34210b4be62387e55e5df", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 401, "duration_ms": 22.34}
-{"timestamp": "2026-10-15T20:41:59.657803+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "2bc192030be740ad945802fab434fa85", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 200, "duration_ms": 30.26}
+INFO:     Uvicorn running on http://127.0.0.1:56269 (Press CTRL+C to quit)
+{"timestamp": "2026-10-15T21:06:19.070225+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "6e825bbc5cda499588784526cc6394bf", "method": "GET", "route": "/health", "status_code": 200, "duration_ms": 33.32}
+{"timestamp": "2026-10-15T21:06:19.112772+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "37b29e672004466ea5ccfd06c7ce46da", "method": "GET", "route": "/ready", "status_code": 200, "duration_ms": 40.78}
+{"timestamp": "2026-10-15T21:06:19.136580+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "05ebbea452cd4463aad35e056a176f24", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 401, "duration_ms": 22.3}
+{"timestamp": "2026-10-15T21:06:19.169656+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "e6343633df2b4fbc81b69b0cfabddc22", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 200, "duration_ms": 30.5}
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [94]
+INFO:     Finished server process [418]
 INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
 INFO [alembic.runtime.migration] Generating static SQL
 INFO [alembic.runtime.migration] Will assume transactional DDL.
