@@ -32,14 +32,23 @@ def imports(path, source=SRC):
 
 def test_veriq_cannot_import_cedar_persistence_or_simulator():
     for path in (SRC / "veriq_cedar/veriq").rglob("*.py"):
-        assert not any(x.startswith("veriq_cedar.cedar") for x in imports(path)), path
+        assert not any(
+            x.startswith(
+                (
+                    "veriq_cedar.cedar",
+                    "veriq_cedar.platform.database.session",
+                    "veriq_cedar.platform.settings",
+                    "veriq_cedar.composition",
+                )
+            )
+            for x in imports(path)
+        ), path
 
 
-def test_neutral_ports_have_no_framework_or_domain_dependencies():
+def test_neutral_contracts_have_no_http_persistence_or_domain_dependencies():
     forbidden = (
         "sqlalchemy",
         "fastapi",
-        "pydantic",
         "veriq_cedar.cedar",
         "veriq_cedar.veriq",
         "veriq_cedar.platform",
@@ -48,14 +57,19 @@ def test_neutral_ports_have_no_framework_or_domain_dependencies():
         assert not any(x.startswith(forbidden) for x in imports(path)), path
 
 
-def test_metadata_registries_are_separate_and_contain_no_business_tables():
+def test_metadata_registries_are_separate_and_only_authorized_g0_tables_exist():
     assert [base.metadata.schema for base in (CedarBase, VeriqBase, SimulatorBase)] == [
         "cedar",
         "veriq",
         "cedar_private",
     ]
     assert len({id(base.registry) for base in (CedarBase, VeriqBase, SimulatorBase)}) == 3
-    assert all(not base.metadata.tables for base in (CedarBase, VeriqBase, SimulatorBase))
+    from veriq_cedar.cedar.adapters import models  # noqa: F401
+    from veriq_cedar.veriq.persistence import operational  # noqa: F401
+
+    assert len(CedarBase.metadata.tables) == 2
+    assert len(VeriqBase.metadata.tables) == 6
+    assert not SimulatorBase.metadata.tables
 
 
 def test_readiness_revision_matches_alembic_head():

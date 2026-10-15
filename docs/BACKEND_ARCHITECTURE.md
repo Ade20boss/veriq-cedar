@@ -1,5 +1,8 @@
 # Backend architecture and proactive investigation
 
+Task 003 implementation status: the bounded internal proactive G0 subset is now implemented in apps/backend. See [PROACTIVE_G0.md](PROACTIVE_G0.md) for actual models, tables, worker/replay and tests. Internal version g0.internal.1 is task-authorized; v1.1 HTTP additions and the broader design below remain proposals. No ledger, complaints, AI endpoint or frontend is implemented by G0.
+
+
 Task 002 implementation note: apps/backend now contains configuration/lifecycle, domain-scoped database infrastructure, separate metadata bases, schema-only migration, infrastructure probes, generic neutral ports and tests. See its README and the Task 002 handoff for actual paths/results. The business-domain/event/investigation design below remains a proposal and is NOT implemented by the foundation task. All proactive/financial authority boundaries are preserved.
 
 Task 001.1 review draft. Initial architecture and stack are accepted subject to these amendments. Automatic validated triggers are owner-directed; detailed ports, schemas and scheduling policies await contract review. No runtime code is implemented.

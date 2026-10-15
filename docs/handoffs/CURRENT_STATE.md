@@ -1,59 +1,52 @@
-# Veriq Cedar current engineering handoff
+# Veriq + Cedar current engineering handoff
 
-Task 002-GIT, 15 October 2026 (Africa/Lagos). Existing monorepo published; GitHub collaboration configured. GitHub setup only: no business source, proposed contract approval or frontend migration performed. Stop after final setup-documentation push and report.
+Task 003, 15 October 2026 (Africa/Lagos). Proactive G0 implementation verified and prepared for technical review. Stop after the feature branch commit/push and PR; do not merge or start a new slice.
 
-## Checkout and publication
+## Repository and branch
 
-Working checkout: /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar. It is the original verified writable repository; the optional ~/Projects relocation remains blocked and no replacement repository was initialized.
+Existing writable checkout: /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar. No second repository, relocation or reset was created. Origin: https://github.com/Ade20boss/veriq-cedar.git. Branch: feat/proactive-incident-g0. Started from fetched main at 2019c9facb1dbb7e72d6c6287f1aede0320a05be; main was clean and identical to origin/main. Only backend, grants and related documentation are changed; AI/frontends and contracts/specs are unchanged.
 
-Origin: https://github.com/Ade20boss/veriq-cedar.git
-GitHub: https://github.com/Ade20boss/veriq-cedar
-Branch: main, tracking origin/main.
-Initial successfully pushed implementation/publication commit: a483b0ffc336431cccc4343c26046b5303a3275b.
-GitHub main and its recursive tree were verified against that commit (115 initial files).
+This handoff is included in the G0 feature commit. Obtain its exact containing/current commit with `git rev-parse HEAD`; verify remote with `git ls-remote origin refs/heads/feat/proactive-incident-g0`. The final chat report supplies the verified pushed SHA and PR. Commit/push only this feature branch, never implementation directly to main. Publication/access records from Task 002-GIT remain historical in its report. Prior collaborator invites were confirmed pending, not claimed accepted; main PR protection remains unchanged by Task 003.
 
-This handoff is part of the subsequent setup-documentation commit. Obtain the containing/current commit with `git rev-parse HEAD` or `git log -1 --oneline`, and compare to `git ls-remote origin refs/heads/main`; do not mistake the initial publication checkpoint above for a later documentation HEAD. The final setup report records the final verified HEAD. Commit/push this handoff normally; no force-push or remote overwrite is authorized.
+## Implemented state
 
-## Authentication, access and main protection
+Task 002 FastAPI/settings/logging/DI/connection foundation is retained. Task 003 adds typed internal g0.internal.1 operational metric/evidence/principal/status models, neutral event-source/result-sink protocols, finite Cedar synthetic adapter, deterministic five-minute route detector and atomic acceptance→suspected incident/evidence→investigation→jobs/status outbox. No complaint/staff action gates this workflow. G2 7/25 vs 2/100 qualifies under frozen thresholds; Birch 1/25 does not. Exact source identities, timestamps, intervals, rule/config and evidence are persisted.
 
-Official GitHub CLI 2.102.0 was installed task-locally, archive checksum verified, and browser OAuth confirmed Ade20boss with repository admin/write access. No password/token was requested in chat. CLI authentication configuration is outside the checkout; only this repository's Git credential helper was configured. Tokens/credentials/environment/cache files are not committed. Other developers use their own normal GitHub authentication.
+Worker claims one eligible PostgreSQL row with SKIP LOCKED, scopes by bank, leases with owner/generation, assembles evidence without AI, checks evidence revision, fences completion/retry and handles expired worker leases. Default 60-second leases, five attempts, deterministic bounded retries. Cedar receives only allowlisted progress and evidence references through an idempotent monotonic inbox. Investigation remains UNREVIEWED; AI unavailable means no incident AI integration exists. No financial conclusion is emitted.
 
-GitHub confirmed new write invitations (HTTP 201) for Habeeb / Hbboss226 (canonical HBboss226) and Usaamah / Barry1003. Both were confirmed in the pending invitation list; neither is claimed accepted. Invitees must accept GitHub's invitation before write access is active. No admin permissions were granted to them.
+Migration head: 0002_proactive_g0, after unchanged 0001_domain_schemas. Six Veriq tables: operational_events, incidents, incident_evidence, incident_investigations, investigation_jobs, status_deliveries. Two Cedar tables: investigation_result_receipts, investigation_status_inbox. No private simulator, banking, ledger or case table. Explicit role table grants in infra/postgres/grant-runtime.sql must be reapplied after upgrade head. Runtime code does not migrate/create/reset tables. Events/evidence/outbox/delivery receipts have no runtime UPDATE/DELETE grant. Schema/package separation is not production isolation.
 
-GitHub confirmed main protection (HTTP 200): require pull requests; required_approving_review_count=0; no mandatory status checks; no Code Owner gate; enforce_admins=false; force-pushes/deletions disabled. Owner/admin maintenance remains possible. Team review expectations for contract/cross-workstream changes remain documented even though the formal approval minimum is zero. No CI workflow/check was invented.
+See ../PROACTIVE_G0.md for exact internal contracts, table/grant matrix, lifecycle and assumptions. The accepted v1.0 contract and all proposed v1.1 files remain byte unchanged. No business HTTP endpoint is registered; infrastructure /health, /ready, /infra/openapi.json are preserved. Internal Task 003 models do not finalize any proposed HTTP API. No AI/frontend/ledger/payment simulation/complaint implementation was added.
 
-## Workstreams and re-entry
+## Verified tests and replay
 
-Daniel: feat/backend-foundation, primary apps/backend. Habeeb: feat/ai-foundation, primary apps/ai. Usaamah: feat/frontend-foundation, Cedar Customer/Operations/Veriq frontend; actual directories/import remain subject to the agreed migration plan. These are documented starting branches, not pre-created remote branches. Developers create/push their own feature branches and PR against main.
+Final full run: 61 passed, zero failures/errors/skips; 38 non-server tests and 23 actual PostgreSQL tests. This retains the foundation suite and adds G0 normal/G2/Birch detection, no complaints, automatic jobs, concurrent duplicate and distinct windows, bank/source scopes, evidence references, private-canary allowlist, actual role/private/cross-schema denial, event immutability, worker crash/reclaim/fencing, stale evidence/results, interrupted delivery, bounded retries/dead letter, transient recovery, conflicting identities and future/late-event policy. No SQLite substitute. Non-server tests use pure detector/DTOs and the retained explicit application/DB fakes plus actual refused loopback connection. Broader banking T01–T16/proposed P01–P10 are not claimed complete.
 
-Clone https://github.com/Ade20boss/veriq-cedar.git, read AGENTS/README/TEAM_ONBOARDING and current specs/contracts, inspect status/log, switch from updated main to the assigned feature branch. Use `git push -u origin HEAD` and `gh pr create --base main --fill` after an authorized change/commit. Reuse the same checkout with Codex or Antigravity; do not regenerate the project or discard teammate changes.
+Actual server: PostgreSQL 16.2 via task-local pgserver 0.1.4 native binaries, private Unix socket, dedicated disposable veriq_cedar_test_g0. Role/bootstrap/grant scripts, Alembic upgrade/current/check/offline SQL, CLI replay, reset refusal and separate worker startup passed. Replay persisted one G2 incident, one EVIDENCE_READY_AI_UNAVAILABLE/UNREVIEWED investigation, one analysis job plus two delivery jobs (all SUCCEEDED), and one latest Cedar inbox with bank_case_ids=[]. No incident was preinserted. All test PostgreSQL and worker processes were stopped. No developer database/service is left running. Compose remains unexecuted here (Docker absent; Podman runtime restricted).
 
-Pre-publication review verified original specification hashes, accepted/proposed contract bytes, 115 intended initial files, no symlinks and no credential-pattern matches. .gitignore excludes environments, caches, builds and secret .env files; placeholder .env.example files are intentional. Frozen Markdown hard line breaks were preserved rather than normalizing source documents. No application tests were rerun for this Git/docs-only task; Task 002 results below remain the last implementation verification.
+Ruff check/format passed for 48 Python files; uv lock --check passed. Dependencies unchanged from Task 002 (Python 3.12.14, exact pins and uv.lock). Details/results: TASK_003_REPORT.md, TASK_003_COMMANDS.md, TASK_003_TEST_RESULTS.xml, TASK_003_TEST_OUTPUT.txt, TASK_003_CLI_SMOKE.txt, TASK_003_DEMO_RESULT.json, TASK_003_FILES.txt.
 
-## Verified implementation
+## Startup and resumption
 
-apps/backend now has pyproject.toml, exact dependency pins/uv.lock/.python-version, ignored local .venv, example environment, app factory/lifespan, validated secret settings, domain-scoped PostgreSQL engines and non-autocommitting sessions, distinct metadata bases, schema-only Alembic migration/config/template, infrastructure error/logging foundation, seven generic neutral integration ports and tests. Cedar/Veriq business namespaces contain no business implementation. infra has digest-pinned local Compose, role bootstrap and explicit runtime grant scripts.
+Use apps/backend/README.md to install with uv sync --locked, configure ignored environment files, start PostgreSQL, apply Alembic head and explicit grants. Never use migrator credentials in runtime settings. From apps/backend:
 
-GET /health returns ok independent of database. GET /ready requires all three runtime connections, migration 0001_domain_schemas and own-schema USAGE; returns sanitized 503 if not ready. /infra/openapi.json exposes only those two operations. No /v1 business or proposed staff/auth/investigation route is implemented. No ledger/table/fixture/seed/AI service/frontend was created. Proactive behavior and financial/advisory boundaries remain future business invariants.
+```bash
+uv run --locked python -m veriq_cedar.composition.g0 worker
+uv run --locked uvicorn veriq_cedar.main:create_app --factory --host 127.0.0.1 --port 8000 --no-access-log
+```
 
-## Environment and migration state
+Run these as separate processes. The worker polls durable CED jobs automatically and recovers expired leases on restart. A live event producer/outbox is future work. For a fresh disposable synthetic database with the documented restricted runtime grants:
 
-Tested Python 3.12.14, uv 0.13.1; direct versions recorded in TASK_002_DEPENDENCIES.json and backend README/lock. .venv is local and ignored, no global package install. Runtime settings read CEDAR_DATABASE_URL, VERIQ_DATABASE_URL and SIMULATOR_DATABASE_URL; only Alembic reads MIGRATION_DATABASE_URL. Runtime grants are own-schema USAGE and migration-table SELECT, no blanket DML or cross-domain access.
+```bash
+ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g0 replay --fixture ../../contracts/demo.json
+```
 
-Real tests used isolated PostgreSQL 16.2 native binaries from task-local pgserver 0.1.4, Unix socket only. Temporary test schemas/roles/probe tables were exercised and cleaned between tests. CLI smoke applied migration/role grants in a disposable test database. Database and Uvicorn were stopped afterwards. No developer database or service is left running; apply setup from apps/backend/README.md for a new run. Test runtime/data/logs remain only under the chat work/task002 directory, not project deliverables. Compose is provided but not run here: no Docker, Podman initialization blocked by read-only runtime path.
+Test replay requires a separate fresh veriq_cedar_test_* database with TEST_DATABASE_ADMIN_URL, then `uv run --locked pytest -s tests/test_g0.py::test_replay_g2_automatic_before_complaints_and_permitted_cedar_status`. Tests create/drop only their disposable schemas/roles. CLI replay refuses existing event/inbox data and never resets a database.
 
-## Tests and commands
+Open this existing checkout in Codex/Antigravity, read AGENTS/current handoff/PROACTIVE_G0/report, inspect status/log and PR before work. Preserve teammate changes. Use feature branches/PRs to main. Daniel owns backend; Habeeb apps/ai; Usaamah frontend migration subject to prior plan. No teammate applications are imported by this slice.
 
-33 tests passed, zero failures/errors/skips in final full run, including five real PostgreSQL tests and 28 non-server tests. Real checks cover upgrade/head repeat/downgrade, autogeneration ignoring unrelated schema tables, all-three-role readiness/privileges, denied private reads, session rollback/explicit commit and unmigrated readiness. Non-server tests include explicit DB fakes, real loopback connection refusal, environment/errors/logs and static import boundaries. HTTPX is used directly with lifespan; no deprecated Starlette TestClient compatibility path.
+## Review assumptions and next safe action
 
-Live CLI smoke passed role bootstrap + grant scripts, Alembic upgrade/current/offline SQL, Uvicorn startup and real HTTP health/ready, plus 404 for unimplemented banking route. Ruff lint/format checks passed; uv lock --check and locked sync passed. All accepted/proposed contracts, source archives and earlier task reports remain unchanged. Exact commands, tests, files and failures/resolutions are in TASK_002_REPORT.md, TASK_002_COMMANDS.md and TASK_002_VERIFICATION.json. Business tests T01–T16/P01–P10 are not implemented/run.
+Review ten-minute lateness, rejection of snapshot corrections/future observations, incident lifetime unique per bank/rule version/route/service, internal DTO version, retry bounds and explicit grants. No additional signoff is fabricated. Limitations: in-process configured principals, no RLS/network auth/source attestation; finite synthetic source with no Cedar durable event outbox; no incident closing/reopening, staff recovery commands, heartbeat/remote timeout integration, production supervision/alerts or complete historical AI run store. Database claim outages require process supervision/restart. Latest deterministic bundle only is stored, with job/run/revision history. AI findings remain advisory by architecture; no AI call is made here.
 
-## Open issues and next safe task
-
-No known failing foundation tests. Compose execution and cross-version/OS support not verified. This foundation is not production security isolation; tenant/auth/business grants/real bank protocols remain future work. Original v1.1 additions still proposed. Existing frontend source/branch/migration approval remains unavailable; no frontend changes made.
-
-Technical lead reviews Task 002. Recommended next task after explicit authorization: review the minimum bank-neutral event/adapter/job DTOs, then implement the autonomous event-inbox→incident/investigation-job→permitted bank-status slice with a fake adapter, restart/deduplication/AI-down checks, independent of complaints/staff sessions. No further implementation should start automatically from this handoff.
-
-## Resume with Codex or Antigravity
-
-Open the same checkout. Read AGENTS, backend README, this handoff, Task 002 report, original contracts/specs and relevant proposed architecture. Inspect Git status and TASK_002_CHANGES hashes; preserve uncommitted files. Use locked dependencies, run the appropriate unit/real PostgreSQL checks and keep distinct runtime/migration credentials. Do not recreate the app or treat proposed v1.1 routes as approved.
+Stop for Task 003 technical review. Recommended next slice, only after authorization and required contract review: Cedar-owned durable complaint intake plus bank-neutral complaint event/targeted investigation handoff, retaining proactive incident independence and financial evidence rules. Ledger/payment/AI/UI remain separate reviewed work.

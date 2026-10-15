@@ -1,3 +1,3 @@
-"""Readiness requires this migration head; migration tests prevent head drift."""
+"""Expected Alembic head for runtime readiness."""
 
-SCHEMA_REVISION = "0001_domain_schemas"
+SCHEMA_REVISION = "0002_proactive_g0"
