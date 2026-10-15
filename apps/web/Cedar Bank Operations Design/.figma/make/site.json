@@ -1,0 +1,10 @@
+{
+  "description": "Enterprise-grade internal banking software enabling Cedar Bank staff to manage customer info, transactions, complaints, and payment exceptions securely.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
