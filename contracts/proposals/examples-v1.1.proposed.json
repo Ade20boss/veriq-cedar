@@ -1,0 +1,539 @@
+[
+  {
+    "name": "qualifying_metric_event",
+    "schema": "OperationalEventEnvelope",
+    "value": {
+      "event_id": "EVT-G2-W1",
+      "bank_id": "CED",
+      "event_type": "ROUTE_METRIC_SNAPSHOT",
+      "source_system": "CEDAR_OBSERVABILITY",
+      "occurred_at": "2026-10-15T10:00:00Z",
+      "observed_at": "2026-10-15T10:00:00Z",
+      "source_record_id": "METRIC-G2-W1",
+      "schema_version": "1.1",
+      "route_id": "ROUTE-CED-ELM-G2",
+      "service_id": "G2",
+      "payload": {
+        "metric_interval_id": "G2-W1",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "window_start": "2026-10-15T09:55:00Z",
+        "window_end": "2026-10-15T10:00:00Z",
+        "window_attempts": 25,
+        "window_timeouts": 7,
+        "baseline_attempts": 100,
+        "baseline_timeouts": 2,
+        "evidence": [
+          {
+            "record": {
+              "id": "EV-METRIC-G2-01",
+              "source_system": "CEDAR_OBSERVABILITY",
+              "kind": "ROUTE_METRIC",
+              "observed_at": "2026-10-15T10:00:00Z",
+              "occurred_at": "2026-10-15T10:00:00Z",
+              "citation": "record:METRIC-G2-W1",
+              "verified_for_purpose": true,
+              "data": {
+                "route_id": "ROUTE-CED-ELM-G2",
+                "window_attempts": 25,
+                "window_timeouts": 7,
+                "baseline_attempts": 100,
+                "baseline_timeouts": 2
+              }
+            },
+            "provenance": {
+              "bank_id": "CED",
+              "source_id": "SRC-CED-OBS",
+              "source_record_id": "METRIC-G2-W1",
+              "source_checksum_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_locator": "record:METRIC-G2-W1",
+              "chunk_id": null,
+              "recorded_at": "2026-10-15T10:00:00Z",
+              "visibility": "VERIQ_PERMITTED",
+              "permitted_purpose": "INCIDENT_INVESTIGATION"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "incident_before_complaint",
+    "schema": "InvestigationView",
+    "value": {
+      "investigation_id": "INV-INC-001",
+      "bank_id": "CED",
+      "origin": "OPERATIONAL_ANOMALY",
+      "opened_at": "2026-10-15T10:00:00Z",
+      "updated_at": "2026-10-15T10:00:00Z",
+      "status": "EVIDENCE_READY",
+      "review_status": "UNREVIEWED",
+      "version": 1,
+      "evidence_revision": 1,
+      "evidence_bundle_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "latest_trigger": {
+        "trigger_id": "TRG-G2-001",
+        "origin": "OPERATIONAL_ANOMALY",
+        "initiated_at": "2026-10-15T10:00:00Z",
+        "source_event_ids": [
+          "EVT-G2-W1"
+        ],
+        "evidence_ids": [
+          "EV-METRIC-G2-01"
+        ],
+        "rule_id": "ROUTE_TIMEOUT_RATE",
+        "rule_version": "1",
+        "window_start": "2026-10-15T09:55:00Z",
+        "window_end": "2026-10-15T10:00:00Z",
+        "actor_id": null,
+        "reason": "7/25 versus 2/100 satisfies frozen demo thresholds"
+      },
+      "latest_run_id": "RUN-INC-001",
+      "active_job_id": "JOB-INC-001",
+      "evidence": [
+        {
+          "record": {
+            "id": "EV-METRIC-G2-01",
+            "source_system": "CEDAR_OBSERVABILITY",
+            "kind": "ROUTE_METRIC",
+            "observed_at": "2026-10-15T10:00:00Z",
+            "occurred_at": "2026-10-15T10:00:00Z",
+            "citation": "record:METRIC-G2-W1",
+            "verified_for_purpose": true,
+            "data": {
+              "route_id": "ROUTE-CED-ELM-G2",
+              "window_attempts": 25,
+              "window_timeouts": 7,
+              "baseline_attempts": 100,
+              "baseline_timeouts": 2
+            }
+          },
+          "provenance": {
+            "bank_id": "CED",
+            "source_id": "SRC-CED-OBS",
+            "source_record_id": "METRIC-G2-W1",
+            "source_checksum_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_locator": "record:METRIC-G2-W1",
+            "chunk_id": null,
+            "recorded_at": "2026-10-15T10:00:00Z",
+            "visibility": "VERIQ_PERMITTED",
+            "permitted_purpose": "INCIDENT_INVESTIGATION"
+          }
+        }
+      ],
+      "evidence_gaps": [
+        "Cause and individual transfer outcomes are not established"
+      ],
+      "related_incident_ids": [],
+      "bank_case_ids": [],
+      "reviews": [],
+      "subject_type": "INCIDENT",
+      "incident_id": "INC-G2-001",
+      "ai_result": null
+    }
+  },
+  {
+    "name": "automatic_case_unknown",
+    "schema": "InvestigationView",
+    "value": {
+      "investigation_id": "INV-CASE-001",
+      "bank_id": "CED",
+      "origin": "CUSTOMER_COMPLAINT",
+      "opened_at": "2026-10-15T10:03:00Z",
+      "updated_at": "2026-10-15T10:03:00Z",
+      "status": "EVIDENCE_READY",
+      "review_status": "UNREVIEWED",
+      "version": 1,
+      "evidence_revision": 1,
+      "evidence_bundle_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "latest_trigger": {
+        "trigger_id": "TRG-CASE-001",
+        "origin": "CUSTOMER_COMPLAINT",
+        "initiated_at": "2026-10-15T10:03:00Z",
+        "source_event_ids": [
+          "EVT-CASE-001"
+        ],
+        "evidence_ids": [
+          "EV-METRIC-G2-01"
+        ],
+        "rule_id": null,
+        "rule_version": null,
+        "window_start": null,
+        "window_end": null,
+        "actor_id": null,
+        "reason": "New persisted complaint; route/time evidence supports relevance"
+      },
+      "latest_run_id": "RUN-CASE-001",
+      "active_job_id": "JOB-CASE-001",
+      "evidence": [
+        {
+          "record": {
+            "id": "EV-METRIC-G2-01",
+            "source_system": "CEDAR_OBSERVABILITY",
+            "kind": "ROUTE_METRIC",
+            "observed_at": "2026-10-15T10:00:00Z",
+            "occurred_at": "2026-10-15T10:00:00Z",
+            "citation": "record:METRIC-G2-W1",
+            "verified_for_purpose": true,
+            "data": {
+              "route_id": "ROUTE-CED-ELM-G2",
+              "window_attempts": 25,
+              "window_timeouts": 7,
+              "baseline_attempts": 100,
+              "baseline_timeouts": 2
+            }
+          },
+          "provenance": {
+            "bank_id": "CED",
+            "source_id": "SRC-CED-OBS",
+            "source_record_id": "METRIC-G2-W1",
+            "source_checksum_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_locator": "record:METRIC-G2-W1",
+            "chunk_id": null,
+            "recorded_at": "2026-10-15T10:00:00Z",
+            "visibility": "VERIQ_PERMITTED",
+            "permitted_purpose": "INCIDENT_INVESTIGATION"
+          }
+        }
+      ],
+      "evidence_gaps": [
+        "Authoritative beneficiary credit outcome"
+      ],
+      "related_incident_ids": [
+        "INC-G2-001"
+      ],
+      "bank_case_ids": [
+        "CASE-001"
+      ],
+      "reviews": [],
+      "subject_type": "BANK_CASE",
+      "ai_result": null,
+      "financial_outcome": "UNKNOWN"
+    }
+  },
+  {
+    "name": "bank_progress_before_review",
+    "schema": "BankInvestigationResult",
+    "value": {
+      "delivery_id": "DEL-INC-001-1",
+      "bank_id": "CED",
+      "investigation_id": "INV-INC-001",
+      "revision": 1,
+      "subject_type": "INCIDENT",
+      "incident_id": "INC-G2-001",
+      "bank_case_ids": [],
+      "origin": "OPERATIONAL_ANOMALY",
+      "trigger": {
+        "trigger_id": "TRG-G2-001",
+        "origin": "OPERATIONAL_ANOMALY",
+        "initiated_at": "2026-10-15T10:00:00Z",
+        "source_event_ids": [
+          "EVT-G2-W1"
+        ],
+        "evidence_ids": [
+          "EV-METRIC-G2-01"
+        ],
+        "rule_id": "ROUTE_TIMEOUT_RATE",
+        "rule_version": "1",
+        "window_start": "2026-10-15T09:55:00Z",
+        "window_end": "2026-10-15T10:00:00Z",
+        "actor_id": null,
+        "reason": "7/25 versus 2/100 satisfies frozen demo thresholds"
+      },
+      "opened_at": "2026-10-15T10:00:00Z",
+      "updated_at": "2026-10-15T10:00:00Z",
+      "status": "EVIDENCE_READY",
+      "review_status": "UNREVIEWED",
+      "evidence_ids": [
+        "EV-METRIC-G2-01"
+      ],
+      "evidence_gaps": [
+        "Cause and individual transfer outcomes are not established"
+      ],
+      "approved_findings": [],
+      "synchronization_state": "PENDING",
+      "last_synced_at": null
+    }
+  },
+  {
+    "name": "extract_request_legacy",
+    "schema": "AIExtractInput",
+    "value": {
+      "bank_id": "CED",
+      "source_id": "SRC-INC-001",
+      "source_kind": "HISTORICAL_INCIDENT",
+      "chunks": [
+        {
+          "chunk_id": "SRC-INC-001:chunk:0001",
+          "text": "Gateway G2 was reported to have delayed responses."
+        }
+      ]
+    }
+  },
+  {
+    "name": "extract_response_legacy",
+    "schema": "AIExtractOutput",
+    "value": {
+      "source_id": "SRC-INC-001",
+      "claims": [
+        {
+          "claim_id": "CLM-001",
+          "subject": {
+            "type": "SERVICE",
+            "external_id": "G2"
+          },
+          "predicate": "REPORTED_SYMPTOM",
+          "object": "delayed responses",
+          "source_locator": "SRC-INC-001:chunk:0001",
+          "quoted_evidence": "Gateway G2 was reported to have delayed responses.",
+          "classification": "SOURCE_CLAIM",
+          "needs_review": true
+        }
+      ],
+      "unresolved_mentions": [],
+      "warnings": []
+    }
+  },
+  {
+    "name": "case_request_unknown_legacy",
+    "schema": "AIInvestigationInput",
+    "value": {
+      "case_id": "CASE-001",
+      "bank_id": "CED",
+      "financial_outcome": "UNKNOWN",
+      "question": "What is known and what needs verification?",
+      "evidence": [
+        {
+          "id": "EV-METRIC-G2-01",
+          "source_system": "CEDAR_OBSERVABILITY",
+          "kind": "ROUTE_METRIC",
+          "observed_at": "2026-10-15T10:00:00Z",
+          "occurred_at": "2026-10-15T10:00:00Z",
+          "citation": "record:METRIC-G2-W1",
+          "verified_for_purpose": true,
+          "data": {
+            "route_id": "ROUTE-CED-ELM-G2",
+            "window_attempts": 25,
+            "window_timeouts": 7,
+            "baseline_attempts": 100,
+            "baseline_timeouts": 2
+          }
+        }
+      ],
+      "known_relationships": [],
+      "historical_incidents": []
+    }
+  },
+  {
+    "name": "case_response_unknown_legacy",
+    "schema": "AIInvestigationOutput",
+    "value": {
+      "case_id": "CASE-001",
+      "financial_outcome": "UNKNOWN",
+      "observations": [
+        {
+          "text": "Source-backed route telemetry shows increased response timeouts.",
+          "evidence_ids": [
+            "EV-METRIC-G2-01"
+          ]
+        }
+      ],
+      "hypotheses": [
+        {
+          "text": "G2 degradation may be relevant; the individual transfer outcome is not established.",
+          "evidence_ids": [
+            "EV-METRIC-G2-01"
+          ],
+          "alternatives": [
+            "A missing response may coexist with recipient credit."
+          ]
+        }
+      ],
+      "unknowns": [
+        "Authoritative beneficiary credit outcome"
+      ],
+      "recommended_checks": [
+        "Authorized transaction status query"
+      ],
+      "customer_safe_update_draft": "We are checking the final transfer status."
+    }
+  },
+  {
+    "name": "incident_request_case_free",
+    "schema": "AIIncidentInput",
+    "value": {
+      "incident_id": "INC-G2-001",
+      "bank_id": "CED",
+      "question": "Assess observed route degradation without inferring transfer outcomes.",
+      "trigger_evidence_ids": [
+        "EV-METRIC-G2-01"
+      ],
+      "evidence": [
+        {
+          "id": "EV-METRIC-G2-01",
+          "source_system": "CEDAR_OBSERVABILITY",
+          "kind": "ROUTE_METRIC",
+          "observed_at": "2026-10-15T10:00:00Z",
+          "occurred_at": "2026-10-15T10:00:00Z",
+          "citation": "record:METRIC-G2-W1",
+          "verified_for_purpose": true,
+          "data": {
+            "route_id": "ROUTE-CED-ELM-G2",
+            "window_attempts": 25,
+            "window_timeouts": 7,
+            "baseline_attempts": 100,
+            "baseline_timeouts": 2
+          }
+        }
+      ],
+      "route_metrics": [
+        {
+          "route_id": "ROUTE-CED-ELM-G2",
+          "window_attempts": 25,
+          "window_timeouts": 7,
+          "baseline_attempts": 100,
+          "baseline_timeouts": 2,
+          "status": "DEGRADED"
+        }
+      ],
+      "known_relationships": [],
+      "historical_incidents": []
+    }
+  },
+  {
+    "name": "incident_response_case_free",
+    "schema": "AIIncidentOutput",
+    "value": {
+      "incident_id": "INC-G2-001",
+      "observations": [
+        {
+          "text": "Observed G2 timeouts exceed the baseline.",
+          "evidence_ids": [
+            "EV-METRIC-G2-01"
+          ]
+        }
+      ],
+      "hypotheses": [
+        {
+          "text": "Route response degradation may explain missing responses.",
+          "evidence_ids": [
+            "EV-METRIC-G2-01"
+          ],
+          "alternatives": [
+            "Multiple unrelated causes remain possible."
+          ]
+        }
+      ],
+      "unknowns": [
+        "Verified operational cause",
+        "Individual recipient outcomes"
+      ],
+      "recommended_checks": [
+        "Inspect permitted gateway telemetry"
+      ]
+    }
+  },
+  {
+    "name": "case_request_after_authorized_status",
+    "schema": "AIInvestigationInput",
+    "value": {
+      "case_id": "CASE-001",
+      "bank_id": "CED",
+      "financial_outcome": "CREDIT_CONFIRMED",
+      "question": "What is known and what needs verification?",
+      "evidence": [
+        {
+          "id": "EV-STATUS-001",
+          "source_system": "CEDAR_STATUS_QUERY",
+          "kind": "AUTHORIZED_STATUS_RESPONSE",
+          "observed_at": "2026-10-15T10:10:00Z",
+          "occurred_at": "2026-10-15T10:10:00Z",
+          "citation": "record:STATUS-001",
+          "verified_for_purpose": true,
+          "data": {
+            "financial_outcome": "CREDIT_CONFIRMED"
+          }
+        }
+      ],
+      "known_relationships": [],
+      "historical_incidents": []
+    }
+  },
+  {
+    "name": "case_response_after_authorized_status",
+    "schema": "AIInvestigationOutput",
+    "value": {
+      "case_id": "CASE-001",
+      "financial_outcome": "CREDIT_CONFIRMED",
+      "observations": [
+        {
+          "text": "Authorized Cedar status response confirms credit.",
+          "evidence_ids": [
+            "EV-STATUS-001"
+          ]
+        }
+      ],
+      "hypotheses": [],
+      "unknowns": [],
+      "recommended_checks": [],
+      "customer_safe_update_draft": "The final status confirms that the recipient was credited."
+    }
+  },
+  {
+    "name": "durable_ai_down_retry",
+    "schema": "JobView",
+    "value": {
+      "job_id": "JOB-INC-001",
+      "bank_id": "CED",
+      "job_kind": "INCIDENT_ANALYSIS",
+      "investigation_id": "INV-INC-001",
+      "run_id": "RUN-INC-001",
+      "state": "RETRY_WAIT",
+      "attempt_count": 1,
+      "available_at": "2026-10-15T10:00:05Z",
+      "updated_at": "2026-10-15T10:00:00Z",
+      "last_error_code": "AI_UNAVAILABLE"
+    }
+  },
+  {
+    "name": "staff_intake",
+    "schema": "StaffCaseCreate",
+    "value": {
+      "customer_id": "CED-CUST-001",
+      "transfer_id": "TRF-001",
+      "description": "The final transfer status is still unknown.",
+      "channel": "BRANCH",
+      "classification": "TRANSFER_OUTCOME_DISPUTE"
+    }
+  },
+  {
+    "name": "sarah_escalates_existing_work",
+    "schema": "CaseEscalationInput",
+    "value": {
+      "target_department_id": "PAYMENT_OPERATIONS",
+      "target_actor_id": "STAFF-MICHAEL",
+      "reason": "Specialist review of existing automatic investigation",
+      "expected_version": 1
+    }
+  },
+  {
+    "name": "michael_requests_verification",
+    "schema": "VerificationInput",
+    "value": {
+      "bank_transaction_id": "TRF-001",
+      "kind": "TRANSACTION_STATUS",
+      "reason": "Obtain permitted final status evidence",
+      "expected_investigation_version": 1
+    }
+  },
+  {
+    "name": "shared_error",
+    "schema": "Error",
+    "value": {
+      "error": {
+        "code": "VERSION_CONFLICT",
+        "message": "Refresh the resource before retrying."
+      }
+    }
+  }
+]

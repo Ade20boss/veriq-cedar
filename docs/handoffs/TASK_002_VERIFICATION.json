@@ -1,0 +1,45 @@
+{
+  "pytest": {
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "real_postgres_tests": 5,
+  "other_tests": 28,
+  "postgres_test_runtime": {
+    "server": "postgres (PostgreSQL) 16.2",
+    "method": "pgserver 0.1.4 bundled native PostgreSQL binaries, isolated Unix socket only",
+    "pytest_exit_code": 0,
+    "database": "veriq_cedar_test_foundation",
+    "test_log": "all-tests.log"
+  },
+  "live_cli_http_smoke": {
+    "health": {
+      "status": "ok"
+    },
+    "ready": {
+      "status": "ready"
+    },
+    "banking_route_status": 404,
+    "infrastructure_paths": [
+      "/health",
+      "/ready"
+    ],
+    "cli_migration": "upgrade/current/offline SQL passed",
+    "role_and_grant_scripts": "executed successfully against real PostgreSQL"
+  },
+  "ruff": "check and format --check passed (35 Python files)",
+  "shell_script_syntax": "sh -n passed",
+  "uv_lock": "uv lock --check passed; uv sync --locked succeeded",
+  "preserved_contract_source_historical_file_count": 36,
+  "compose_execution": "NOT RUN: Docker absent; Podman runtime directory read-only. YAML syntax checked separately.",
+  "services_left_running": false,
+  "business_features": "NOT IMPLEMENTED",
+  "repository": "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar",
+  "original_git_metadata_files_preserved": 18,
+  "compose_yaml_syntax": "PASS: parsed, one service, loopback bind and digest pin checked",
+  "deliverable_files": 114,
+  "git_status": "## No commits yet on main\n?? .gitignore\n?? AGENTS.md\n?? README.md\n?? apps/\n?? contracts/\n?? docs/\n?? fixtures/\n?? infra/\n?? scripts/\n",
+  "git_remote_output": ""
+}

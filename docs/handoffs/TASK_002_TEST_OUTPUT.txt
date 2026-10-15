@@ -1,0 +1,44 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.1.1, pluggy-1.7.0 -- /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collecting ... collected 33 items
+
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_factory_and_lifespan_create_and_dispose_separate_engines PASSED [  3%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_health_never_connects_database PASSED [  6%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_readiness_dependency_injection_with_explicit_fake PASSED [  9%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_unavailable_database_uses_actual_refused_connection PASSED [ 12%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_pending_migrations_response_with_explicit_fake PASSED [ 15%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_session_dependency_is_domain_scoped_and_does_not_connect PASSED [ 18%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_no_banking_or_proposed_contract_routes PASSED [ 21%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_safe_http_validation_and_unexpected_errors PASSED [ 24%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_dependency_database_error_is_sanitized PASSED [ 27%]
+outputs/veriq-cedar/apps/backend/tests/test_application.py::test_structured_logs_omit_queries_and_exception_secrets PASSED [ 30%]
+outputs/veriq-cedar/apps/backend/tests/test_boundaries.py::test_veriq_cannot_import_cedar_persistence_or_simulator PASSED [ 33%]
+outputs/veriq-cedar/apps/backend/tests/test_boundaries.py::test_neutral_ports_have_no_framework_or_domain_dependencies PASSED [ 36%]
+outputs/veriq-cedar/apps/backend/tests/test_boundaries.py::test_metadata_registries_are_separate_and_contain_no_business_tables PASSED [ 39%]
+outputs/veriq-cedar/apps/backend/tests/test_boundaries.py::test_readiness_revision_matches_alembic_head PASSED [ 42%]
+outputs/veriq-cedar/apps/backend/tests/test_boundaries.py::test_import_guard_resolves_relative_cedar_import PASSED [ 45%]
+outputs/veriq-cedar/apps/backend/tests/test_postgres.py::test_real_migration_upgrade_idempotent_head_and_downgrade PASSED [ 48%]
+outputs/veriq-cedar/apps/backend/tests/test_postgres.py::test_real_readiness_three_runtime_roles_and_grants PASSED [ 51%]
+outputs/veriq-cedar/apps/backend/tests/test_postgres.py::test_real_veriq_and_cedar_cannot_query_private_tables PASSED [ 54%]
+outputs/veriq-cedar/apps/backend/tests/test_postgres.py::test_real_sessions_rollback_uncommitted_and_commit_explicitly PASSED [ 57%]
+outputs/veriq-cedar/apps/backend/tests/test_postgres.py::test_real_unmigrated_database_not_ready PASSED [ 60%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_missing_environment_fails_without_secret_input PASSED [ 63%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_only_explicit_psycopg_postgres_urls[sqlite:///test.db] PASSED [ 66%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_only_explicit_psycopg_postgres_urls[postgresql://x:y@localhost/db] PASSED [ 69%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_only_explicit_psycopg_postgres_urls[invalid] PASSED [ 72%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_invalid_settings_rejected[override0] PASSED [ 75%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_invalid_settings_rejected[override1] PASSED [ 78%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_invalid_settings_rejected[override2] PASSED [ 81%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_invalid_settings_rejected[override3] PASSED [ 84%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_invalid_settings_rejected[override4] PASSED [ 87%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_runtime_excludes_migration_secret PASSED [ 90%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_validation_error_does_not_echo_url PASSED [ 93%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_migration_credential_separate PASSED [ 96%]
+outputs/veriq-cedar/apps/backend/tests/test_settings.py::test_dotenv_loading_and_environment_precedence PASSED [100%]
+
+- generated xml file: /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/work/task002/all-tests.xml -
+============================== 33 passed in 1.37s ==============================

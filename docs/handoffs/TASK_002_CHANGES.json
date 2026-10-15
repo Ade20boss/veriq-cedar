@@ -1,0 +1,377 @@
+{
+  "note": "Excludes its own hash; all other changed deliverables included. Environments/cache/credentials/test database data excluded.",
+  "files": [
+    {
+      "path": ".gitignore",
+      "change": "MODIFIED",
+      "before_sha256": "8099a3bb19ff9ec13449aa1a0475bd222d7b2ecca8a8e7385761cd40d190e259",
+      "after_sha256": "9ccac4cfe03c5b8265a0db816f4f8247c7ddc3e2faf79f06f600c0295785b758"
+    },
+    {
+      "path": "AGENTS.md",
+      "change": "MODIFIED",
+      "before_sha256": "c4c50c85336f884d8f4be26bbd66290537b5661ecbad74445d66020531d32ff1",
+      "after_sha256": "257aa8d3ea5ff20502c0b4c4d6d032848bf0df544b0cb79919d054096fef3e58"
+    },
+    {
+      "path": "README.md",
+      "change": "MODIFIED",
+      "before_sha256": "5ed6a194a7103b0723f5922ebcbe050829de7243eeacdf9cde3811f76b705d94",
+      "after_sha256": "6f725a5ab19affb1f49c9d9214e2fb138a8c701d41135ce07162cf79d9441ed4"
+    },
+    {
+      "path": "apps/backend/.env.example",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "dbf4c5a110bc5769943f65e1005948bc8569cfef2a5666d087ebd6b474cded91"
+    },
+    {
+      "path": "apps/backend/.python-version",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "f50159fad3f4319868eb38717b91d55843c41e9803014c8de05e116a6d0bcfdc"
+    },
+    {
+      "path": "apps/backend/README.md",
+      "change": "MODIFIED",
+      "before_sha256": "101cd0f17c507ee726888346e93e999d99acdb0b1c73b517f4feb08aea862ace",
+      "after_sha256": "9795b48a2035b672096a79f3bd6306fc4499544c9b75b7ad653df9f4b11cd3c2"
+    },
+    {
+      "path": "apps/backend/alembic.ini",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "0e4501a995a11db2978f75e7d375a3e51029a5764ea199294b0244150d7ccab0"
+    },
+    {
+      "path": "apps/backend/migrations/env.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "340cc09741020b87c72feb942bb0a06f941d760462e90ffbc4bf56253465d143"
+    },
+    {
+      "path": "apps/backend/migrations/script.py.mako",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "8b4cb06bd85b81316f3cbc132f03e81160c95eb5708a216d3b1372a8bcfbea17"
+    },
+    {
+      "path": "apps/backend/migrations/versions/0001_domain_schemas.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "881ece817affb1887b4dfabc82464e2fce9dcf280f1716819de5f63ffde7251f"
+    },
+    {
+      "path": "apps/backend/pyproject.toml",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "c9e35e48a6020f8f05a79591ab7e20970c57b07e1b8bdc70f2e8f49bf5d08ee0"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "ff6e3106081f8b8a79751a2c33c93519e2ca3b6bc9e4abf02a3b9ce2ad6f2fba"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "790bf5a2a73816f63d10ddd76668ec6c7a92d21e0c85eca11c8b57e34de0eba8"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/accounts/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "f87741fba0f76bb7b5705ed1fc2d6da9c6c1884f5dfd658567c5012930f6d742"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/adapters/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "d54cbb90d51c5cad49fb774eb049a85aaac608acf2c6b576b410f7004cba63eb"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/base.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "1540c8b211b8c73bbaf1a8e16784f3b7040416bd02943495c1b25dee721687e5"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/complaints/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "fe392dec794623b468ba91a5a63be81e46d5cd28d335ab9c5c013af19fac2a93"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/ledger/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "b1f1824ce26dff05ad8b51c9eef6b4b132184b9947e4214834946dfbb4bede42"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/simulator/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "71e5776050fd11c2d53ed3eb79daaf3c7a428def3b95684d5b616620af9b690c"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/simulator/base.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "e78e6f807d1d4b2fad528922993553c58d989b63f4e873687bb1ae0b83ef5738"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/cedar/transfers/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "931fcdc258e2adc9b95ba5af0cd92a5f716e8d7d996aef8012c97c8873f32fb3"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/integration/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "fd5e69be81c95973c2f49a73083642fec238f825cc5bf99a1aa246463f71e19b"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/integration/ports.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "04e2d523f740577f429c4516667c0c13056cfb5559aa6fde033701432475be83"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/main.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "e13e64cda3b04a3a28860bf77404f0b816389cbe125cd520ce4ee552217fc7e9"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "3e262d7ee928407c32bd9a897e2827a5b71834716bd69431d3fca84cd58d2a17"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/database/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "a0914d7bf7370d187767aaad8d35a3ca53b6a3d7314e53fca181afabd89ac54f"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/database/base.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "d353c81f39c6771926efd630ceecf1bee608edc49fee9c25d88dc4dbe6d941c5"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/database/revision.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "7313bca0d4abbc116d226e3e8930688cea346358f0d5c49b5a0c736bc50b4d0f"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/database/session.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "0008bb1b32fe5a891a273d0df043c83efe2777048fafac7ff2244dccbf93c126"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/errors.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "29295f8d4231cbd0e6e6d9882f448984b0a7373375e021a9f1b5a632eff74fa2"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/logging.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "ca748c38b044d89ba7bb97911df3dd8ec0ba32f0f59cad7ce1bbed0800321124"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/platform/settings.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "6a1ef08345bdd655a6400311886a1b0107e32b18e9c72f1b033041f91408474d"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/veriq/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "f35ce1f6bfed6e3d958b3d9418ca1f4e7293d11ce203d1d258a8c73f797e1c4f"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/veriq/ai_client/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "8312fd483429bca991c246fe2fcc0339c8f31b407e002e53b6b756154982ad33"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/veriq/investigations/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "928f3eb561016c5cf26fd42fb4c8c0a2dec593e23aa037888fe813acc88de202"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/veriq/knowledge/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "1a4e0e4777e8df3767217711964a69fc3542a8064b335b34cdf49e4bd0718559"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/veriq/operations/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "7c257864b14e881633c8dcd71187f76bacbd0f59d95ebd6926c69c62ab6edf64"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/veriq/persistence/__init__.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "e6149407314486fe06f39c8acef6c557da17588151231546c5dfd6630fa37161"
+    },
+    {
+      "path": "apps/backend/src/veriq_cedar/veriq/persistence/base.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "5a61f5e0a0baf6cda7ac585f5b75878349cf8b849ecc3bbc55b0240a16290b4a"
+    },
+    {
+      "path": "apps/backend/tests/conftest.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "dae210fb7b0a8e2ddc27bffaca326b72f7de43f7703faf6f1ada662a42dd77c4"
+    },
+    {
+      "path": "apps/backend/tests/test_application.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "77af373d788779d8065af94c92ff4b8c078e91054753a285f5f8f7075db3e509"
+    },
+    {
+      "path": "apps/backend/tests/test_boundaries.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "405bfa1bdae46677da63ec3131f2773b8d460c8e2edbbefb2b9150f1eded9634"
+    },
+    {
+      "path": "apps/backend/tests/test_postgres.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "a9913654018c529d50de8a9774bc57accbd1a91903215bc79e31ad7664a0d0e4"
+    },
+    {
+      "path": "apps/backend/tests/test_settings.py",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "cbca1b27533061c3f491b777f149ee928c181b18254de062132dec366e4f9666"
+    },
+    {
+      "path": "apps/backend/uv.lock",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "396121fea42674ee23b6daa5b38edc6db948d8b92b3f731e8a500dc78a8c25f4"
+    },
+    {
+      "path": "docs/BACKEND_ARCHITECTURE.md",
+      "change": "MODIFIED",
+      "before_sha256": "316970736cface7ebc8c8569daa6f5478a8f99a326fdd0a457f7bf8b1783d2f0",
+      "after_sha256": "db10f0595771ff02f657adf802f48db25802eeb23c12b31b043d418f61903a1d"
+    },
+    {
+      "path": "docs/TEAM_ONBOARDING.md",
+      "change": "MODIFIED",
+      "before_sha256": "cd8758da1e0b6e43d4f11b2b3305f73746ae3b1eb23f5f48ec29fe08bf9ef3d3",
+      "after_sha256": "aae1215405eaa29cbfb163d644764adcc2737c55e07e4654b3c35d7661c0522d"
+    },
+    {
+      "path": "docs/decisions/ADR-003-backend-foundation.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "9c8d37054e7128063f2a4392bb38f805f2a2c7cfc1375e7073c02e632184f7b9"
+    },
+    {
+      "path": "docs/handoffs/CURRENT_STATE.md",
+      "change": "MODIFIED",
+      "before_sha256": "7a7292d9fac5a1338a84174261d2ed52ab62d2b847f51ec8901a4cdc4e2e6a1d",
+      "after_sha256": "2a5a652373cb42dc6739d718da1684b2503be9039d3d5c6a4fdf709d6d0c6f0c"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_CLI_SMOKE.txt",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "e1eac0bed016891cd5094f73b352d38569b39d20aabe416f4fa9940d16a37e2a"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_COMMANDS.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "99cd1c0a2319f7f6636a8a33438da93e9ad64a5b165f2f4aee17f3c346d7508e"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_DEPENDENCIES.json",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "450c9f1fe744014eca1a0c537e26ef1467029e22db50a8bd0e2ecc2479654588"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_FILE_INVENTORY.txt",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "d96c6deb5a6ac7e0ffd864a47d8bb5ec2f1ace37032d9ca241e00cab5e28d009"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_REPORT.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "43fee8e84918e1ab1f614088ff67a49593a056a5145235217058e4cd198f74a8"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_TEST_OUTPUT.txt",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "dbb629e116270b6087265bc45ca1eb3233fb752e968af25c53564b6f125e681f"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_TEST_RESULTS.xml",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "52869936cb45bfddcd1a7296f40a0195340a55a79ab45c1d87132dfbc888617a"
+    },
+    {
+      "path": "docs/handoffs/TASK_002_VERIFICATION.json",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "aa80b6c548b30f4d087f0b71eefa2ed9061b8a8c1d319991b20151a214d33b1b"
+    },
+    {
+      "path": "infra/.env.example",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "d35098ba76769d49626648ccd7027f3d526722dc467d653c9b52b23ff2b674b5"
+    },
+    {
+      "path": "infra/README.md",
+      "change": "MODIFIED",
+      "before_sha256": "929cb4ecc78e905890ce2385a1948ff0a6c20bc4b4036bfb0399678598d5221c",
+      "after_sha256": "3f300c6a88fe53de91698b08541d1b4e314133996b1f26cda95323e4d524eb13"
+    },
+    {
+      "path": "infra/compose.yaml",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "9646a381e8d7c8ca7d2dee318391aa2cbc5f044f96385df0d0a4e72c66f27179"
+    },
+    {
+      "path": "infra/postgres/010-runtime-roles.sh",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "000427623a70b038fda7bbdd619a08ddffaf07b507929f3091de2ee12136473c"
+    },
+    {
+      "path": "infra/postgres/grant-runtime.sql",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "e3cee4cbc3fdbfc3198fd82f9ee13b593722f0b116525f4cafc0ade3302caf31"
+    }
+  ]
+}

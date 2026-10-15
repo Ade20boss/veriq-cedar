@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "veriq-cedar-backend"
+version = "0.1.0"
+description = "Veriq + Cedar backend foundation; no banking endpoints yet"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+  "fastapi==0.143.2",
+  "pydantic==2.14.1",
+  "pydantic-settings==2.16.0",
+  "sqlalchemy==2.0.54",
+  "alembic==1.20.0",
+  "psycopg[binary]==3.3.6",
+  "uvicorn==0.54.0",
+]
+
+[dependency-groups]
+dev = ["pytest==9.1.1", "httpx==0.28.1", "ruff==0.17.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/veriq_cedar"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["postgres: requires a dedicated real PostgreSQL test database"]
+filterwarnings = ["error"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

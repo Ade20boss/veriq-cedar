@@ -1,0 +1,86 @@
+[
+  {
+    "source": "/home/kernelghost/Veriq_Cedar_Engineering_Specification_v1.0.md",
+    "archived_path": "docs/specs/Veriq_Cedar_Engineering_Specification_v1.0.md",
+    "sha256": "8f403ac340c117be92cf3b2f8eb1c7afb7731dae2cf17ca13dab5495350d3654",
+    "bytes": 42752
+  },
+  {
+    "source": "/home/kernelghost/Veriq_Cedar_API_Contract_v1.0.yaml",
+    "archived_path": "docs/specs/Veriq_Cedar_API_Contract_v1.0.yaml",
+    "sha256": "9286c26f862b64caf2a934a7f6b45aed82ae5fa810aa0ea1212d6ed556ec0dac",
+    "bytes": 38166
+  },
+  {
+    "source": "/home/kernelghost/Veriq_Cedar_Demo_Contract_v1.0.json",
+    "archived_path": "docs/specs/Veriq_Cedar_Demo_Contract_v1.0.json",
+    "sha256": "34c9d00664d26c281e481739ae8d5a2e2f791fc9e13d63731cca00f7785610d2",
+    "bytes": 2901
+  },
+  {
+    "source": "/home/kernelghost/Veriq_Cedar_Engineering_Specification_v1.0.pdf",
+    "archived_path": "docs/specs/Veriq_Cedar_Engineering_Specification_v1.0.pdf",
+    "sha256": "ca7bff899acba122c681da581fbca2259c66aa2f55102da12f74864e3d4b2cfe",
+    "bytes": 432657
+  },
+  {
+    "source": "/home/kernelghost/Veriq_Cedar_Engineering_Specification_v1.0.docx",
+    "archived_path": "docs/specs/Veriq_Cedar_Engineering_Specification_v1.0.docx",
+    "sha256": "7ee1218d1db5ba0fb8fc6548b411f190fece76cf203e31069be9c2c56adf4734",
+    "bytes": 38254
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/TEAM_DOCS/01_Usaamah_Frontend_Build_Spec_v1.1.docx",
+    "archived_path": "docs/specs/01_Usaamah_Frontend_Build_Spec_v1.1.docx",
+    "sha256": "60ed85e94b5f93c2f73c639cc5800b4d53b9982b737ec9b7d46ff2244467e39d",
+    "bytes": 19978
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/TEAM_DOCS/01_Usaamah_Frontend_Build_Spec_v1.1.md",
+    "archived_path": "docs/specs/01_Usaamah_Frontend_Build_Spec_v1.1.md",
+    "sha256": "da659800bf32b9d99c9abfe78a6336dd34b1aba9f794b4dddcca66e86a84db08",
+    "bytes": 14702
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/TEAM_DOCS/02_Habeeb_AI_Build_Spec_v1.1.docx",
+    "archived_path": "docs/specs/02_Habeeb_AI_Build_Spec_v1.1.docx",
+    "sha256": "d8caabbdeeed0208ee1dc4de64f304028fb2c566239e15b7598b9ec7cea042b6",
+    "bytes": 20983
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/TEAM_DOCS/02_Habeeb_AI_Build_Spec_v1.1.md",
+    "archived_path": "docs/specs/02_Habeeb_AI_Build_Spec_v1.1.md",
+    "sha256": "93bc15438890f4c8f0f58a5ab85b706fb2231695884b58d311543841e7ace91d",
+    "bytes": 16622
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/TEAM_DOCS/03_Shared_Integration_and_Agent_Handoff_v1.1.docx",
+    "archived_path": "docs/specs/03_Shared_Integration_and_Agent_Handoff_v1.1.docx",
+    "sha256": "0ac6f8eac80825e813cfae6079bc97a723098b3ef9cde5df797ac955738c48ef",
+    "bytes": 19554
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/TEAM_DOCS/03_Shared_Integration_and_Agent_Handoff_v1.1.md",
+    "archived_path": "docs/specs/03_Shared_Integration_and_Agent_Handoff_v1.1.md",
+    "sha256": "6b59c287b426cb65cf5d732f251016198e090a333dcf6258bbbe0bf7fc2432bf",
+    "bytes": 14252
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/README_FIRST.md",
+    "archived_path": "docs/specs/README_FIRST.md",
+    "sha256": "b41a15f7a3e11db24ca0c3bc57f5b2977fe0f24cb154d73c7bce8a2ff7635382",
+    "bytes": 1955
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/ADR-001_Python_Backend_Stack.md",
+    "archived_path": "docs/specs/ADR-001_Python_Backend_Stack.md",
+    "sha256": "854ecef98f42a22cbe52acdbc20eee9eea4bc753b092a7a2577420ab2ce74a74",
+    "bytes": 2462
+  },
+  {
+    "source": "/home/kernelghost/Downloads/Veriq_Cedar_Team_Build_Handoff_v1.1/CURRENT_STATE_TEMPLATE.md",
+    "archived_path": "docs/specs/CURRENT_STATE_TEMPLATE.md",
+    "sha256": "2cec906fcfb668b47673adce1e744cfad4cdf2828bf1966f971d875ac83b7111",
+    "bytes": 760
+  }
+]

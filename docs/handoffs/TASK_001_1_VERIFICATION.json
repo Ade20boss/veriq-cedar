@@ -1,0 +1,65 @@
+{
+  "recovery": {
+    "original_git_files_verified_against_task001_archive": 18,
+    "working_checkout": "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar",
+    "transfer_performed": false,
+    "requested_destination": "/home/kernelghost/Projects/veriq-cedar",
+    "reason": "Execution namespace mounts /home read-only; separate Codex workspace mount writable. Host terminal namespace unknown.",
+    "branch": "main",
+    "commits": 0,
+    "remote": null
+  },
+  "structure": {
+    "baseline_and_historical_records_unchanged": true,
+    "archived_sources_verified": 17,
+    "original_component_schemas_unchanged": 27,
+    "legacy_success_and_request_shapes_preserved": 28,
+    "p0_paths": 49,
+    "p0_operations": 54,
+    "secondary_paths": 60,
+    "secondary_operations": 67,
+    "local_schema_references_resolved": 1134,
+    "application_scaffolding_absent": true,
+    "requested_destination_exists": false,
+    "git_branch": "main",
+    "git_remote_output": "",
+    "standards_complete_openapi_validator": "NOT RUN; unavailable in preinstalled runtimes. Performed structural/reference/compatibility checks only.",
+    "business_tests": "NOT RUN; no application implementation authorized."
+  },
+  "schema_examples": {
+    "all_schema_models_compiled": 93,
+    "valid_example_count": 17,
+    "valid_examples": [
+      "qualifying_metric_event",
+      "incident_before_complaint",
+      "automatic_case_unknown",
+      "bank_progress_before_review",
+      "extract_request_legacy",
+      "extract_response_legacy",
+      "case_request_unknown_legacy",
+      "case_response_unknown_legacy",
+      "incident_request_case_free",
+      "incident_response_case_free",
+      "case_request_after_authorized_status",
+      "case_response_after_authorized_status",
+      "durable_ai_down_retry",
+      "staff_intake",
+      "sarah_escalates_existing_work",
+      "michael_requests_verification",
+      "shared_error"
+    ],
+    "invalid_example_count": 7,
+    "invalid_examples_rejected": [
+      "incident_forbids_transfer_outcome",
+      "case_requires_real_bank_case",
+      "client_cannot_grant_role",
+      "float_kobo_rejected",
+      "bool_kobo_rejected",
+      "zero_kobo_rejected",
+      "wrong_event_type_payload_pair"
+    ],
+    "paired_ai_fixture_grounding": "PASS (static fixture consistency only)",
+    "method": "Transient strict Pydantic models compiled from the used JSON Schema subset. Not a complete JSON Schema/OpenAPI validator; date-time format and cross-field business rules not proven.",
+    "application_tests": "NOT RUN; no implementation exists."
+  }
+}

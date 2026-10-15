@@ -1,0 +1,75 @@
+{
+  "baseline_operations": 28,
+  "minimal_proposed_additions": 26,
+  "minimal_total_operations": 54,
+  "minimal_total_paths": 49,
+  "secondary_additions": [
+    {
+      "method": "GET",
+      "path": "/v1/cedar/transfers",
+      "operationId": "list_owned_transfers"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/cedar/complaints",
+      "operationId": "list_owned_complaints"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/cedar/transfers/{transferId}/timeline",
+      "operationId": "get_owned_transfer_timeline"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/cedar/complaints/{caseId}/communications",
+      "operationId": "list_owned_published_communications"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/cedar/staff/cases/{bankCaseId}/resolution",
+      "operationId": "staff_resolve_case"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/cedar/staff/investigation-results/{investigationId}",
+      "operationId": "staff_investigation_result"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/cedar/staff/integration-health",
+      "operationId": "staff_integration_health"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/veriq/banks/{bankId}/sources/{sourceId}/chunks",
+      "operationId": "get_source_chunks"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/veriq/banks/{bankId}/sources/{sourceId}/jobs/{jobId}",
+      "operationId": "get_source_job"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/veriq/banks/{bankId}/investigations/{investigationId}/runs",
+      "operationId": "request_manual_reinvestigation"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/veriq/banks/{bankId}/jobs/{jobId}",
+      "operationId": "get_durable_job_progress"
+    },
+    {
+      "method": "POST",
+      "path": "/internal/veriq/banks/{bankId}/events",
+      "operationId": "accept_normalized_bank_event"
+    },
+    {
+      "method": "POST",
+      "path": "/internal/cedar/banks/{bankId}/investigation-results",
+      "operationId": "accept_permitted_investigation_result"
+    }
+  ],
+  "full_preview_total_operations": 67,
+  "schemas_shared": 93
+}

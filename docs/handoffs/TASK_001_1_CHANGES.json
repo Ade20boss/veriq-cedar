@@ -1,0 +1,197 @@
+{
+  "note": "Excludes its own hash; includes all other changed/new project files. Original accepted contracts, source archives and Task 001 history are unchanged.",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "change": "MODIFIED",
+      "before_sha256": "9892c48c7584c3c64be8ee69fbe3e5e9d2247ccbadf281fec3e7c035cad6c2b5",
+      "after_sha256": "c4c50c85336f884d8f4be26bbd66290537b5661ecbad74445d66020531d32ff1"
+    },
+    {
+      "path": "README.md",
+      "change": "MODIFIED",
+      "before_sha256": "8a80c496f201e32c235a936b43c9f729789c28d17d721a3bf2d2026219191e1d",
+      "after_sha256": "5ed6a194a7103b0723f5922ebcbe050829de7243eeacdf9cde3811f76b705d94"
+    },
+    {
+      "path": "apps/ai/README.md",
+      "change": "MODIFIED",
+      "before_sha256": "4c80d9004f0f173c1111218ce743ed1dfe4c8c274655965db33028875404481c",
+      "after_sha256": "d51cc5eae35180468ba2e15512a0bb25284e8d4e7402e4f19c86fd8f79e0d6c4"
+    },
+    {
+      "path": "apps/backend/README.md",
+      "change": "MODIFIED",
+      "before_sha256": "23b355f028bcea9b536b6e31d697126a0d48ead849018fe8ca817a459e2c10ac",
+      "after_sha256": "101cd0f17c507ee726888346e93e999d99acdb0b1c73b517f4feb08aea862ace"
+    },
+    {
+      "path": "apps/web/README.md",
+      "change": "MODIFIED",
+      "before_sha256": "512377c9a38ee6e5b1c11a49cdcb0ba823e04500366faaaa73836c32fc0b70ca",
+      "after_sha256": "927fec3fd931b285b497df01165766d36ff58f22542a57068cdfd7917ec13a3e"
+    },
+    {
+      "path": "contracts/README.md",
+      "change": "MODIFIED",
+      "before_sha256": "e2d20883b656460ec47d9677b0aa5a546afa3e2470d134abd7ade1a25ce95970",
+      "after_sha256": "fdd4a4f2f749cf231389b87946fc29a6cb177b8fe2826c1895d88185487cd4ac"
+    },
+    {
+      "path": "contracts/proposals/PRIORITY_MATRIX.json",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "15a58b95c846a1d9d4172d59cac320d60fc518f97eef9a1e2e7da8fe1d03eedd"
+    },
+    {
+      "path": "contracts/proposals/README.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "d63b3640ae85139d74a836c980b01bae9a114a196f153aaf83c2b3eb4cd694c6"
+    },
+    {
+      "path": "contracts/proposals/examples-v1.1.proposed.json",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "246b93cbf866c755257c83ecd65fb48942115a76cadf4c3a277bb58fe21e3c86"
+    },
+    {
+      "path": "contracts/proposals/openapi-v1.1.proposed.yaml",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "5d1880decc8410cd77713373cac89b9c05013b65660c3d8bfa87c54556efd182"
+    },
+    {
+      "path": "contracts/proposals/openapi-v1.1.secondary.proposed.yaml",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "81b23aa0ca718de4a75444f39ac3f884993f4c70d3d212a5f819bddbbf50ab61"
+    },
+    {
+      "path": "docs/BACKEND_ARCHITECTURE.md",
+      "change": "MODIFIED",
+      "before_sha256": "1a235057f7fd6804c24cc836e484e11caceb69c0190ba7f9d1437ea4fde52aba",
+      "after_sha256": "316970736cface7ebc8c8569daa6f5478a8f99a326fdd0a457f7bf8b1783d2f0"
+    },
+    {
+      "path": "docs/BANK_ADAPTER_CONTRACT.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "855f3e2590e26b88fdaf8c9e45711c2600a99806909f72a07a541c7c45833aee"
+    },
+    {
+      "path": "docs/CONTRACT_REVIEW.md",
+      "change": "MODIFIED",
+      "before_sha256": "f9da4c936b09655fa40296558f04bc5644f9b70b420ce6edb13895fc7fe9ded2",
+      "after_sha256": "8fe8461c2a476f88700c1f13a71324cbd170168f396de4667a65a499ec837bc6"
+    },
+    {
+      "path": "docs/DEMO_SEQUENCE_v1.1_PROPOSED.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "26e8d662bd1f3da23bfbdd3fc814c076d4e97e838801cfe813281d18cb601b19"
+    },
+    {
+      "path": "docs/EVENT_PROCESSING.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "3f80f2483fe7c1d16edfbb89c2183bfbd5306c811c06cb32903548d83df4b4e7"
+    },
+    {
+      "path": "docs/FRONTEND_ALIGNMENT.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "f110c723fb3ab9bb73b36769434c08a34b13c963e53b41ccf12b603558a1e67f"
+    },
+    {
+      "path": "docs/MINIMUM_DEMO_SCOPE.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "8e4442f261428880c3515655f98c5aab10800a1c4de93b395f647380d67674dd"
+    },
+    {
+      "path": "docs/REPOSITORY_ARCHITECTURE.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "72b3d3f7d8360ed7585cfa3310f44b533dbc6742302c4ab8cbdad1bc394052a9"
+    },
+    {
+      "path": "docs/STAFF_AND_UI_CONTRACTS.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "e1be4393e350f228a440a9619d17ea711ec6285d0c4d50da6403f8c42b8cf5bd"
+    },
+    {
+      "path": "docs/TEAM_ONBOARDING.md",
+      "change": "MODIFIED",
+      "before_sha256": "82a2a993b99d8f22904cdc843c1b61a847ab51e8c6097497c313c38659cd0918",
+      "after_sha256": "cd8758da1e0b6e43d4f11b2b3305f73746ae3b1eb23f5f48ec29fe08bf9ef3d3"
+    },
+    {
+      "path": "docs/decisions/ADR-002-proactive-adapter-and-staff-contracts.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "1719fc083a6fbcf396fe0bd19449b38a7d850b6895938059f2cdcd03dc397cb7"
+    },
+    {
+      "path": "docs/handoffs/CURRENT_STATE.md",
+      "change": "MODIFIED",
+      "before_sha256": "950469deaf152b4185da7e0dc6cf7cd09cc34cf0b9f962eca1f90478f680a7e6",
+      "after_sha256": "7a7292d9fac5a1338a84174261d2ed52ab62d2b847f51ec8901a4cdc4e2e6a1d"
+    },
+    {
+      "path": "docs/handoffs/TASK_001_1_COMMAND_LOG.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "d9b2a527852ed2f384b25997dd138a34b0ec0d5c1debfa089affacc75c4da80e"
+    },
+    {
+      "path": "docs/handoffs/TASK_001_1_FILE_INVENTORY.txt",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "d89111214424e8b642374511e9674bfacf2f8ab6d4c0d49465f793c0733e3ae9"
+    },
+    {
+      "path": "docs/handoffs/TASK_001_1_REPORT.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "59036d31ba38d099c83218c79d27cc99818cc01c40e677aeb567dc1b65d3bda8"
+    },
+    {
+      "path": "docs/handoffs/TASK_001_1_VERIFICATION.json",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "756d7d6fbcb44387913533256a0ecc8a2963d21e9c2f1d32ae5c6742c93fd5ea"
+    },
+    {
+      "path": "docs/specs/Cedar_Operations_Alignment_Feedback_2026-10-15.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "50086aee3bbfa71acb3e13594207969956f8227fd524d0bad193a130bbf75a98"
+    },
+    {
+      "path": "docs/specs/TASK_001_1_SOURCE_MANIFEST.json",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "a4bbd8c80cb9e8b959440977be0420f7c613e6185eebd31423e1c013aff9ee45"
+    },
+    {
+      "path": "docs/specs/Task_001_1_Original_Request.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "275f83b1814093d75518a77669f7144e9e3dc977f192afb410ce58c7f261b5ad"
+    },
+    {
+      "path": "docs/specs/Task_001_1_Owner_Clarifications.md",
+      "change": "ADDED",
+      "before_sha256": null,
+      "after_sha256": "59333631798b22d38913d0afb4fd4524430c6e844305a34bd626ababd0b57a47"
+    },
+    {
+      "path": "docs/specs/Veriq_Cedar_Engineering_Amendment_v1.1_PROPOSED.md",
+      "change": "MODIFIED",
+      "before_sha256": "c96e0b660d2079a44cd99c458f11bc713f4a664d5b6dcdcc5be31165e34b06a8",
+      "after_sha256": "d2664a143841dbafb9767a5ba06043cc7099507d54097c4cb5c9d4ccfda24c9b"
+    }
+  ]
+}

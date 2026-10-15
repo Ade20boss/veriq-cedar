@@ -1,0 +1,1548 @@
+openapi: 3.1.0
+info:
+  title: Veriq + Cedar Hackathon API Contract
+  version: 1.0.0
+  description: FINAL team handoff contract. All accounts, banks and records are synthetic. Bank outcomes must
+    be evidence-based. Every /v1/demo operation is demo-operator only.
+servers:
+- url: http://localhost:8000
+  description: FastAPI backend development
+tags:
+- name: CedarCustomer
+- name: VeriqInvestigator
+- name: DemoOperator
+- name: InternalAI
+security:
+- sessionAuth: []
+paths:
+  /v1/cedar/accounts/me:
+    get:
+      tags:
+      - CedarCustomer
+      summary: Current customer synthetic account
+      operationId: get_v1_cedar_accounts_me
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+  /v1/cedar/banks:
+    get:
+      tags:
+      - CedarCustomer
+      summary: List fictional recipient banks
+      operationId: get_v1_cedar_banks
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bank'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+  /v1/cedar/name-enquiries:
+    post:
+      tags:
+      - CedarCustomer
+      summary: Resolve mock recipient
+      operationId: post_v1_cedar_name-enquiries
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NameEnquiryResult'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameEnquiryInput'
+  /v1/cedar/transfers:
+    post:
+      tags:
+      - CedarCustomer
+      summary: Create idempotent synthetic transfer
+      operationId: post_v1_cedar_transfers
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferInput'
+  /v1/cedar/transfers/{transferId}:
+    get:
+      tags:
+      - CedarCustomer
+      summary: Get owned transfer and allowed outcome
+      operationId: get_v1_cedar_transfers_transferId
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: transferId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/cedar/complaints:
+    post:
+      tags:
+      - CedarCustomer
+      summary: Register complaint; independent of AI availability
+      operationId: post_v1_cedar_complaints
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Complaint'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintInput'
+  /v1/cedar/complaints/{caseId}:
+    get:
+      tags:
+      - CedarCustomer
+      summary: Get owned customer-safe complaint view
+      operationId: get_v1_cedar_complaints_caseId
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Complaint'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/sources:
+    post:
+      tags:
+      - VeriqInvestigator
+      summary: Upload bank knowledge source
+      operationId: post_v1_veriq_banks_bankId_sources
+      responses:
+        '202':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRegistration'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                file:
+                  type: string
+                  format: binary
+                source_kind:
+                  type: string
+              required:
+              - file
+              - source_kind
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: List submitted knowledge sources
+      operationId: get_v1_veriq_banks_bankId_sources
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SourceListItem'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/sources/{sourceId}/claims:
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: List source claims, evidence and candidate status
+      operationId: get_v1_veriq_banks_bankId_sources_sourceId_claims
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AIClaim'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/assertions/{assertionId}/review:
+    post:
+      tags:
+      - VeriqInvestigator
+      summary: Approve or reject assertion with audit; approval does not imply causal truth
+      operationId: post_v1_veriq_banks_bankId_assertions_assertionId_review
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionAccepted'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: assertionId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewInput'
+  /v1/veriq/banks/{bankId}/context:
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: Query Cedar living context summary
+      operationId: get_v1_veriq_banks_bankId_context
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContextSummary'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/relationships:
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: List authorized typed contextual relationships
+      operationId: get_v1_veriq_banks_bankId_relationships
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KnowledgeRelationship'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/operations:
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: Route monitoring snapshot
+      operationId: get_v1_veriq_banks_bankId_operations
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RouteHealth'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/incidents:
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: List incidents
+      operationId: get_v1_veriq_banks_bankId_incidents
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Incident'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/incidents/{incidentId}:
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: Read incident evidence and status
+      operationId: get_v1_veriq_banks_bankId_incidents_incidentId
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: incidentId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/cases/{caseId}:
+    get:
+      tags:
+      - VeriqInvestigator
+      summary: Read case timeline and investigation
+      operationId: get_v1_veriq_banks_bankId_cases_caseId
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investigation'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/cases/{caseId}/investigate:
+    post:
+      tags:
+      - VeriqInvestigator
+      summary: Assemble evidence and queue AI investigation
+      operationId: post_v1_veriq_banks_bankId_cases_caseId_investigate
+      responses:
+        '202':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionAccepted'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/veriq/banks/{bankId}/cases/{caseId}/review:
+    post:
+      tags:
+      - VeriqInvestigator
+      summary: Record investigator case review and authorized action
+      operationId: post_v1_veriq_banks_bankId_cases_caseId_review
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionAccepted'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewInput'
+  /v1/veriq/banks/{bankId}/incidents/{incidentId}/review:
+    post:
+      tags:
+      - VeriqInvestigator
+      summary: Record reviewed incident decision
+      operationId: post_v1_veriq_banks_bankId_incidents_incidentId_review
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionAccepted'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: bankId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: incidentId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewInput'
+  /v1/demo/reset:
+    post:
+      tags:
+      - DemoOperator
+      summary: Synthetic operator action
+      operationId: post_v1_demo_reset
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoAction'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+  /v1/demo/seed:
+    post:
+      tags:
+      - DemoOperator
+      summary: Synthetic operator action
+      operationId: post_v1_demo_seed
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoAction'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+  /v1/demo/stream/start:
+    post:
+      tags:
+      - DemoOperator
+      summary: Synthetic operator action
+      operationId: post_v1_demo_stream_start
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoAction'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+  /v1/demo/scenarios/{scenarioId}/arm:
+    post:
+      tags:
+      - DemoOperator
+      summary: Synthetic operator scenario control
+      operationId: post_v1_demo_scenarios_scenarioId_arm
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoAction'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: scenarioId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/demo/scenarios/{scenarioId}/run:
+    post:
+      tags:
+      - DemoOperator
+      summary: Synthetic operator scenario control
+      operationId: post_v1_demo_scenarios_scenarioId_run
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoAction'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: scenarioId
+        in: path
+        required: true
+        schema:
+          type: string
+  /v1/demo/transfers/{transferId}/reveal-status:
+    post:
+      tags:
+      - DemoOperator
+      summary: Synthetic operator scenario control
+      operationId: post_v1_demo_transfers_transferId_reveal-status
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoAction'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      parameters:
+      - name: transferId
+        in: path
+        required: true
+        schema:
+          type: string
+  /internal/ai/extract-knowledge:
+    post:
+      servers:
+      - url: http://localhost:8001
+        description: Private FastAPI AI development
+      tags:
+      - InternalAI
+      summary: Extract candidate source claims
+      operationId: post_internal_ai_extract-knowledge
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIExtractOutput'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIExtractInput'
+      security: &id001
+      - internalServiceKey: []
+  /internal/ai/analyze-case:
+    post:
+      servers:
+      - url: http://localhost:8001
+        description: Private FastAPI AI development
+      tags:
+      - InternalAI
+      summary: Produce grounded advisory case findings
+      operationId: post_internal_ai_analyze-case
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIInvestigationOutput'
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthenticated
+        '403':
+          description: Forbidden
+        '422':
+          description: Validation error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIInvestigationInput'
+      security: *id001
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: cedar_demo_session
+    internalServiceKey:
+      type: apiKey
+      in: header
+      name: X-Internal-Service-Key
+  schemas:
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+          required:
+          - code
+          - message
+      required:
+      - error
+    Bank:
+      type: object
+      additionalProperties: false
+      properties:
+        bank_id:
+          type: string
+        name:
+          type: string
+        is_fictional:
+          type: boolean
+      required:
+      - bank_id
+      - name
+      - is_fictional
+    Account:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        display_account_id:
+          type: string
+        currency:
+          type: string
+          enum:
+          - NGN
+        available_balance_kobo:
+          type: integer
+        owner_display_name:
+          type: string
+      required:
+      - id
+      - display_account_id
+      - currency
+      - available_balance_kobo
+      - owner_display_name
+    NameEnquiryInput:
+      type: object
+      additionalProperties: false
+      properties:
+        bank_id:
+          type: string
+        account_id:
+          type: string
+      required:
+      - bank_id
+      - account_id
+    NameEnquiryResult:
+      type: object
+      additionalProperties: false
+      properties:
+        bank_id:
+          type: string
+        account_id:
+          type: string
+        beneficiary_name:
+          type: string
+        verified_in_simulation:
+          type: boolean
+      required:
+      - bank_id
+      - account_id
+      - beneficiary_name
+      - verified_in_simulation
+    TransferInput:
+      type: object
+      additionalProperties: false
+      properties:
+        beneficiary_bank_id:
+          type: string
+        beneficiary_account_id:
+          type: string
+        amount_kobo:
+          type: integer
+          minimum: 1
+        narration:
+          type: string
+      required:
+      - beneficiary_bank_id
+      - beneficiary_account_id
+      - amount_kobo
+    Transfer:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        reference:
+          type: string
+        amount_kobo:
+          type: integer
+        beneficiary_bank_id:
+          type: string
+        beneficiary_account_id:
+          type: string
+        processing_stage:
+          type: string
+          enum:
+          - CREATED
+          - VALIDATED
+          - DEBIT_POSTED
+          - SUBMITTED
+          - ACKNOWLEDGED
+          - RESPONSE_TIMEOUT
+          - STATUS_QUERIED
+          - COMPLETED
+        financial_outcome: &id002
+          type: string
+          enum:
+          - UNKNOWN
+          - CREDIT_CONFIRMED
+          - FAILURE_CONFIRMED
+          - REVERSAL_POSTED
+        last_evidence_id:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - reference
+      - amount_kobo
+      - beneficiary_bank_id
+      - beneficiary_account_id
+      - processing_stage
+      - financial_outcome
+      - created_at
+      - updated_at
+    ComplaintInput:
+      type: object
+      additionalProperties: false
+      properties:
+        transfer_id:
+          type: string
+        description:
+          type: string
+          minLength: 5
+          maxLength: 2000
+      required:
+      - transfer_id
+      - description
+    Complaint:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        reference:
+          type: string
+        transfer_id:
+          type: string
+        customer_report:
+          type: string
+        status:
+          type: string
+          enum:
+          - OPEN
+          - INVESTIGATING
+          - WAITING_FOR_EVIDENCE
+          - RESOLVED
+        customer_safe_updates:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - reference
+      - transfer_id
+      - customer_report
+      - status
+      - customer_safe_updates
+      - created_at
+    SourceListItem:
+      type: object
+      additionalProperties: false
+      properties:
+        source_id:
+          type: string
+        filename:
+          type: string
+        source_kind:
+          type: string
+        status:
+          type: string
+          enum:
+          - UPLOADED
+          - PARSED
+          - STAGED
+          - ACCEPTED
+          - REJECTED
+          - FAILED
+        accepted_claims:
+          type: integer
+        flagged_claims:
+          type: integer
+        checksum_sha256:
+          type: string
+      required:
+      - source_id
+      - filename
+      - source_kind
+      - status
+      - accepted_claims
+      - flagged_claims
+    SourceRegistration:
+      type: object
+      additionalProperties: false
+      properties:
+        source_id:
+          type: string
+        status:
+          type: string
+        job_id:
+          type: string
+      required:
+      - source_id
+      - status
+      - job_id
+    ContextSummary:
+      type: object
+      additionalProperties: false
+      properties:
+        bank_id:
+          type: string
+        context_version:
+          type: integer
+        entity_counts:
+          type: object
+          additionalProperties:
+            type: integer
+        relationship_counts:
+          type: object
+          additionalProperties:
+            type: integer
+        source_count:
+          type: integer
+        candidate_count:
+          type: integer
+        verified_count:
+          type: integer
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - bank_id
+      - context_version
+      - entity_counts
+      - relationship_counts
+      - source_count
+      - candidate_count
+      - verified_count
+      - updated_at
+    KnowledgeRelationship:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        bank_id:
+          type: string
+        from_entity_id:
+          type: string
+        to_entity_id:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+          enum:
+          - CANDIDATE
+          - DOCUMENTED
+          - OBSERVED
+          - VERIFIED
+          - REJECTED
+        evidence_ids:
+          type: array
+          items:
+            type: string
+        source_id:
+          type: string
+        valid_from:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - id
+      - bank_id
+      - from_entity_id
+      - to_entity_id
+      - type
+      - status
+      - evidence_ids
+      - source_id
+    RouteHealth:
+      type: object
+      additionalProperties: false
+      properties:
+        route_id:
+          type: string
+        service_id:
+          type: string
+        window_attempts:
+          type: integer
+        window_timeouts:
+          type: integer
+        baseline_attempts:
+          type: integer
+        baseline_timeouts:
+          type: integer
+        status:
+          type: string
+          enum:
+          - NORMAL
+          - DEGRADED
+          - INSUFFICIENT_DATA
+      required:
+      - route_id
+      - window_attempts
+      - window_timeouts
+      - baseline_attempts
+      - baseline_timeouts
+      - status
+    Incident:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        bank_id:
+          type: string
+        route_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - SUSPECTED
+          - CONFIRMED
+          - REJECTED
+          - CLOSED
+        first_observed_at:
+          type: string
+          format: date-time
+        finding_summary:
+          type: string
+        evidence_ids:
+          type: array
+          items:
+            type: string
+        case_ids:
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - bank_id
+      - route_id
+      - status
+      - first_observed_at
+      - finding_summary
+      - evidence_ids
+      - case_ids
+    EvidenceRecord:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        source_system:
+          type: string
+        kind:
+          type: string
+        observed_at:
+          type: string
+          format: date-time
+        occurred_at:
+          type: string
+          format: date-time
+        citation:
+          type: string
+        verified_for_purpose:
+          type: boolean
+        data:
+          type: object
+          additionalProperties: true
+      required:
+      - id
+      - source_system
+      - kind
+      - observed_at
+      - occurred_at
+      - citation
+      - verified_for_purpose
+      - data
+    Investigation:
+      type: object
+      additionalProperties: false
+      properties:
+        case_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - REQUESTED
+          - EVIDENCE_READY
+          - AI_PENDING
+          - FINDINGS_READY
+          - EVIDENCE_READY_AI_UNAVAILABLE
+          - REVIEWED
+          - RESOLVED
+        financial_outcome: *id002
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRecord'
+        incident_ids:
+          type: array
+          items:
+            type: string
+        ai_result:
+          oneOf:
+          - $ref: '#/components/schemas/AIInvestigationOutput'
+          - type: 'null'
+      required:
+      - case_id
+      - status
+      - financial_outcome
+      - evidence
+      - incident_ids
+      - ai_result
+    AIClaim:
+      type: object
+      additionalProperties: false
+      properties:
+        claim_id:
+          type: string
+        subject:
+          type: object
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            external_id:
+              type: string
+          required:
+          - type
+          - external_id
+        predicate:
+          type: string
+        object:
+          type: string
+        source_locator:
+          type: string
+        quoted_evidence:
+          type: string
+        classification:
+          type: string
+          enum:
+          - SOURCE_CLAIM
+          - CANDIDATE_RELATIONSHIP
+        needs_review:
+          type: boolean
+      required:
+      - claim_id
+      - subject
+      - predicate
+      - object
+      - source_locator
+      - quoted_evidence
+      - classification
+      - needs_review
+    AIExtractInput:
+      type: object
+      additionalProperties: false
+      properties:
+        bank_id:
+          type: string
+        source_id:
+          type: string
+        source_kind:
+          type: string
+        chunks:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              chunk_id:
+                type: string
+              text:
+                type: string
+            required:
+            - chunk_id
+            - text
+      required:
+      - bank_id
+      - source_id
+      - source_kind
+      - chunks
+    AIExtractOutput:
+      type: object
+      additionalProperties: false
+      properties:
+        source_id:
+          type: string
+        claims:
+          type: array
+          items:
+            $ref: '#/components/schemas/AIClaim'
+        unresolved_mentions:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+      required:
+      - source_id
+      - claims
+      - unresolved_mentions
+      - warnings
+    AIObservation:
+      type: object
+      additionalProperties: false
+      properties:
+        text:
+          type: string
+        evidence_ids:
+          type: array
+          items:
+            type: string
+      required:
+      - text
+      - evidence_ids
+    AIHypothesis:
+      type: object
+      additionalProperties: false
+      properties:
+        text:
+          type: string
+        evidence_ids:
+          type: array
+          items:
+            type: string
+        alternatives:
+          type: array
+          items:
+            type: string
+      required:
+      - text
+      - evidence_ids
+      - alternatives
+    AIInvestigationInput:
+      type: object
+      additionalProperties: false
+      properties:
+        case_id:
+          type: string
+        bank_id:
+          type: string
+        financial_outcome: *id002
+        question:
+          type: string
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRecord'
+        known_relationships:
+          type: array
+          items:
+            $ref: '#/components/schemas/KnowledgeRelationship'
+        historical_incidents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Incident'
+      required:
+      - case_id
+      - bank_id
+      - financial_outcome
+      - question
+      - evidence
+      - known_relationships
+      - historical_incidents
+    AIInvestigationOutput:
+      type: object
+      additionalProperties: false
+      properties:
+        case_id:
+          type: string
+        financial_outcome: *id002
+        observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AIObservation'
+        hypotheses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AIHypothesis'
+        unknowns:
+          type: array
+          items:
+            type: string
+        recommended_checks:
+          type: array
+          items:
+            type: string
+        customer_safe_update_draft:
+          type: string
+      required:
+      - case_id
+      - financial_outcome
+      - observations
+      - hypotheses
+      - unknowns
+      - recommended_checks
+      - customer_safe_update_draft
+    ReviewInput:
+      type: object
+      additionalProperties: false
+      properties:
+        decision:
+          type: string
+          enum:
+          - CONFIRM
+          - REJECT
+          - REQUEST_MORE_EVIDENCE
+        reason:
+          type: string
+          minLength: 3
+        evidence_ids:
+          type: array
+          items:
+            type: string
+      required:
+      - decision
+      - reason
+      - evidence_ids
+    ActionAccepted:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+      required:
+      - id
+      - status
+    DemoAction:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+        run_id:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+      required:
+      - status
+      - run_id
+      - details
+x-contract-notes:
+- Authorization MUST be enforced server-side, all Veriq resources are bank scoped.
+- Paths returning financial_outcome MUST derive it from eligible deterministic evidence, not LLM inference.
+- AI evidence IDs MUST be validated against the input bundle.
+- Demo operator endpoints MUST be disabled outside synthetic demo configurations.
+- GET operations/context may be polled every 1-2 seconds in v1; SSE is optional.
+- The initial schema uses single-resource responses for some endpoints and typed arrays for collections; do
+  not invent inconsistent envelopes.
+- Potential root-cause claims remain advisory until reviewed; all content is synthetic.

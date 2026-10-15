@@ -1,0 +1,24 @@
+name: veriq-cedar
+services:
+  postgres:
+    image: postgres:16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d
+    environment:
+      POSTGRES_DB: veriq_cedar
+      POSTGRES_USER: veriq_cedar_migrator
+      POSTGRES_PASSWORD: ${MIGRATION_DB_PASSWORD:?Set MIGRATION_DB_PASSWORD in infra/.env}
+      CEDAR_DB_PASSWORD: ${CEDAR_DB_PASSWORD:?Set CEDAR_DB_PASSWORD in infra/.env}
+      VERIQ_DB_PASSWORD: ${VERIQ_DB_PASSWORD:?Set VERIQ_DB_PASSWORD in infra/.env}
+      SIMULATOR_DB_PASSWORD: ${SIMULATOR_DB_PASSWORD:?Set SIMULATOR_DB_PASSWORD in infra/.env}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/010-runtime-roles.sh:/docker-entrypoint-initdb.d/010-runtime-roles.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U veriq_cedar_migrator -d veriq_cedar"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    stop_grace_period: 10s
+volumes:
+  postgres-data:

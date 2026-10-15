@@ -1,0 +1,13 @@
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+GRANT
+GRANT
+GRANT
+GRANT
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+0001_domain_schemas (head)

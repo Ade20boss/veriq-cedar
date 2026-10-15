@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "archived_sources_verified": 14,
+  "http_paths": 27,
+  "http_operations": 28,
+  "schemas": 27,
+  "resolved_schema_references": 44,
+  "only_http_differences": "development server metadata",
+  "canonical_demo": "byte-identical",
+  "application_directories": "README only",
+  "markdown_link_destinations_checked": 0,
+  "business_tests": "NOT RUN \u2014 no implementation authorized"
+}

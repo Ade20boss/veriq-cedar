@@ -1,0 +1,99 @@
+{
+  "title": "Veriq + Cedar unified demonstration scenario contract",
+  "version": "1.0.0",
+  "status": "final hackathon baseline",
+  "artificial_environment": true,
+  "seed": 20261015,
+  "simulated_institutions": [
+    {
+      "id": "CED",
+      "name": "Cedar Bank",
+      "role": "sending_bank"
+    },
+    {
+      "id": "ELM",
+      "name": "Elm Bank",
+      "role": "receiving_bank"
+    },
+    {
+      "id": "BIR",
+      "name": "Birch Bank",
+      "role": "negative_control_bank"
+    }
+  ],
+  "hero": {
+    "scenario_id": "S2-CREDITED-RESPONSE-LOST",
+    "customer_id": "CED-CUST-001",
+    "sender_account_id": "CED-ACC-001",
+    "beneficiary_bank_id": "ELM",
+    "beneficiary_account_id": "ELM-ACC-009",
+    "amount_kobo": 5000000,
+    "expected_sender_after_timeout": "UNKNOWN",
+    "private_ground_truth": "RECIPIENT_CREDITED",
+    "authorized_later_evidence": "CREDIT_CONFIRMED",
+    "network_route": "ROUTE-CED-ELM-G2"
+  },
+  "routes": {
+    "elm_g2": {
+      "route_id": "ROUTE-CED-ELM-G2",
+      "service_id": "G2",
+      "baseline_attempts": 100,
+      "baseline_timeouts": 2,
+      "incident_window_attempts": 25,
+      "incident_window_timeouts": 7
+    },
+    "birch_g3": {
+      "route_id": "ROUTE-CED-BIRCH-G3",
+      "service_id": "G3",
+      "baseline_attempts": 100,
+      "baseline_timeouts": 2,
+      "incident_window_attempts": 25,
+      "incident_window_timeouts": 1
+    }
+  },
+  "onboarding_sources": [
+    "services.json",
+    "dependencies.csv",
+    "routes.json",
+    "historical_incidents.md",
+    "operations_sop.txt",
+    "prior_complaints.csv",
+    "baseline_metrics.jsonl"
+  ],
+  "acts": [
+    {
+      "id": "ACT_1",
+      "name": "Cedar onboarding and living context",
+      "steps": [
+        "upload structured inventory/dependencies/routes",
+        "upload unstructured incident and SOP",
+        "AI extract source-cited candidates",
+        "backend validate/stage relations",
+        "context explorer shows provenance and uncertainty",
+        "start monitor, show G2 degradation before complaint"
+      ]
+    },
+    {
+      "id": "ACT_2",
+      "name": "transfer, complaint and investigation",
+      "steps": [
+        "customer transfers 5000000 kobo to Elm",
+        "ledger debit posts and response is dropped",
+        "customer sees UNKNOWN, files case",
+        "contextual evidence package and AI case finding",
+        "investigator reviews suspected G2 relation",
+        "authorized status response returns CREDIT_CONFIRMED",
+        "customer-safe status updates"
+      ]
+    }
+  ],
+  "hard_assertions": [
+    "single unified demo and bank_id",
+    "no recipient outcome leaks before status reveal",
+    "no double debit under repeated idempotency key",
+    "no incorrect Birch/G2 incident correlation",
+    "complaint saved if AI is unavailable",
+    "all sources and AI evidence IDs resolvable",
+    "balanced ledgers and immutable events"
+  ]
+}
