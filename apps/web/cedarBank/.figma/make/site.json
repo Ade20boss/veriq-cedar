@@ -1,0 +1,10 @@
+{
+  "description": "A premium Nigerian mobile banking app offering secure account management, seamless transfers, transaction tracking, and AI-powered dispute resolution for enhanced user trust.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
