@@ -1,6 +1,10 @@
 """Real PostgreSQL four-act API acceptance and frozen-contract verification."""
 
 import json
+import os
+import subprocess
+import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from hashlib import sha256
@@ -11,6 +15,7 @@ import pytest
 import yaml
 from httpx import ASGITransport, AsyncClient
 from jsonschema import Draft202012Validator
+from psycopg import sql
 from pydantic import ValidationError
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
@@ -711,3 +716,92 @@ def test_complaint_stale_failure_cannot_overwrite_recovered_delivery(pitch, caps
     with p.v() as session:
         assert session.scalar(select(func.count()).select_from(CaseReceipt)) == 1
         assert session.scalar(select(func.count()).select_from(CaseInvestigation)) == 1
+
+
+def test_standalone_worker_emits_sanitized_json_on_actual_delivery_failure(pitch, tmp_path):
+    p = pitch
+    t = transfer(p)
+    report = "PRIVATE-COMPLAINT-WORKER-CANARY"
+    Complaints(p.c).create(p.ada, ComplaintInput(transfer_id=t, description=report))
+    role = p.registry.engines[DatabaseDomain.VERIQ].url.username
+    env = os.environ.copy()
+    env.pop("MIGRATION_DATABASE_URL", None)
+    env.update(ENVIRONMENT="test", LOG_LEVEL="INFO")
+    for domain in ("cedar", "veriq", "simulator"):
+        env[domain.upper() + "_DATABASE_URL"] = getattr(
+            p.settings, domain + "_database_url"
+        ).get_secret_value()
+    log_path = tmp_path / "standalone-worker.log"
+    process = None
+    try:
+        # A real receiver database error after successful worker readiness, not a mocked sink.
+        with p.admin.begin() as connection:
+            connection.connection.driver_connection.execute(
+                sql.SQL("REVOKE SELECT ON veriq.case_event_receipts FROM {}").format(
+                    sql.Identifier(role)
+                )
+            )
+        with log_path.open("w") as output:
+            process = subprocess.Popen(
+                [sys.executable, "-m", "veriq_cedar.composition.g2", "worker"],
+                cwd=ROOT / "apps/backend",
+                env=env,
+                stdout=output,
+                stderr=subprocess.STDOUT,
+            )
+            deadline = time.monotonic() + 15
+            while time.monotonic() < deadline:
+                if log_path.stat().st_size:
+                    break
+                assert process.poll() is None, "Standalone worker exited before delivery diagnostic"
+                time.sleep(0.05)
+            else:
+                pytest.fail("Standalone worker emitted no delivery diagnostic")
+            assert process.poll() is None
+    finally:
+        if process is not None:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=5)
+        with p.admin.begin() as connection:
+            connection.connection.driver_connection.execute(
+                sql.SQL("GRANT SELECT ON veriq.case_event_receipts TO {}").format(
+                    sql.Identifier(role)
+                )
+            )
+    output = log_path.read_text()
+    for domain in ("cedar", "veriq", "simulator"):
+        url = p.registry.engines[
+            {
+                "cedar": DatabaseDomain.CEDAR,
+                "veriq": DatabaseDomain.VERIQ,
+                "simulator": DatabaseDomain.SIMULATOR,
+            }[domain]
+        ].url
+        assert url.render_as_string(hide_password=False) not in output
+        assert url.password not in output
+    assert not any(
+        value in output
+        for value in (
+            report,
+            "postgresql",
+            "Traceback",
+            "permission denied",
+            "SELECT ",
+        )
+    )
+    records = [json.loads(line) for line in output.splitlines()]
+    record = next(r for r in records if r["event"] == "complaint_delivery.completed")
+    assert record["error_code"] == "DELIVERY_DATABASE_ERROR"
+    assert record["delivery_state"] == "RETRY_WAIT"
+    assert record["attempts"] == 1 and record["generation"] == 1
+    assert record["level"] == "WARNING"
+    with p.c() as session:
+        outbox = session.scalar(select(ComplaintOutbox))
+        assert outbox.id == record["delivery_id"] and outbox.state == "RETRY_WAIT"
+        assert outbox.attempts == 1 and outbox.generation == 1 and outbox.lease_until is None
+    with p.v() as session:
+        assert session.scalar(select(func.count()).select_from(CaseReceipt)) == 0

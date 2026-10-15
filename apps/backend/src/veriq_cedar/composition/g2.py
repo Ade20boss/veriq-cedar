@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from veriq_cedar.cedar.adapters.synthetic import CedarResultSink
 from veriq_cedar.cedar.complaints.delivery import ComplaintDelivery
 from veriq_cedar.platform.database.session import DatabaseDomain, DatabaseRegistry
+from veriq_cedar.platform.logging import configure_logging
 from veriq_cedar.platform.settings import MigrationSettings, Settings
 from veriq_cedar.veriq.investigations.cases import CaseReceiver
 from veriq_cedar.veriq.investigations.worker import Worker
@@ -49,7 +50,9 @@ def main():
     parser.add_argument("--cookie-file", type=Path)
     args = parser.parse_args()
     if args.command == "worker":
-        registry = DatabaseRegistry(Settings())
+        settings = Settings()
+        configure_logging(settings.log_level)
+        registry = DatabaseRegistry(settings)
         try:
             registry.check_ready()
             delivery, worker = components(registry)
