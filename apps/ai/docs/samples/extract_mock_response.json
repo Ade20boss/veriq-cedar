@@ -1,0 +1,22 @@
+{
+  "source_id": "SRC-INC-001",
+  "claims": [
+    {
+      "claim_id": "CLM-001",
+      "subject": {
+        "type": "SERVICE",
+        "external_id": "G2"
+      },
+      "predicate": "REPORTED_CAUSE",
+      "object": "connection-pool configuration issue",
+      "source_locator": "historical_incidents.md#incident-14",
+      "quoted_evidence": "Engineers identified a connection-pool configuration issue",
+      "classification": "SOURCE_CLAIM",
+      "needs_review": true
+    }
+  ],
+  "unresolved_mentions": [],
+  "warnings": [
+    "MOCK_PROVIDER: deterministic fixture result; no external LLM was called"
+  ]
+}

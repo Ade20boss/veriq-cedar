@@ -1,0 +1,44 @@
+{
+  "case_id": "CASE-001",
+  "financial_outcome": "UNKNOWN",
+  "observations": [
+    {
+      "text": "A sender-side debit was recorded.",
+      "evidence_ids": [
+        "EV-DEBIT-1042"
+      ]
+    },
+    {
+      "text": "A gateway response timeout was recorded.",
+      "evidence_ids": [
+        "EV-TIMEOUT-1042"
+      ]
+    },
+    {
+      "text": "Route telemetry recorded 7 timeouts across 25 attempts, compared with 2 across 100 baseline attempts.",
+      "evidence_ids": [
+        "EV-METRIC-G2-01"
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "text": "Observed route conditions may have contributed to the gateway timeout; root cause is unverified.",
+      "evidence_ids": [
+        "EV-TIMEOUT-1042",
+        "EV-METRIC-G2-01"
+      ],
+      "alternatives": [
+        "A transaction-specific response loss may be unrelated to route-wide conditions.",
+        "Recipient credit cannot be established from a timeout."
+      ]
+    }
+  ],
+  "unknowns": [
+    "Authoritative beneficiary-credit outcome is not established."
+  ],
+  "recommended_checks": [
+    "Request an authorized transfer-status verification."
+  ],
+  "customer_safe_update_draft": "We are checking the final status of your transfer."
+}

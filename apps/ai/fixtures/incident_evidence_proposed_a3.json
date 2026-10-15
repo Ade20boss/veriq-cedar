@@ -1,0 +1,23 @@
+{
+  "_notice": "INTERNAL TEST FIXTURE ONLY. NOT AN APPROVED v1.1 REQUEST BODY.",
+  "bank_id": "CED",
+  "incident_id": "INC-SUSPECTED-G2-001",
+  "trigger": "Route timeout-rate anomaly detected deterministically by Daniel's backend",
+  "route_id": "ROUTE-CED-ELM-G2",
+  "detected_status": "SUSPECTED",
+  "context": {
+    "service_id": "G2",
+    "baseline_attempts": 100,
+    "baseline_timeouts": 2,
+    "observed_attempts": 25,
+    "observed_timeouts": 7,
+    "related_historical_source_id": "SRC-INC-001",
+    "known_dependencies": ["ROUTE-CED-ELM-G2 -> G2"]
+  },
+  "evidence": [
+    {"id": "EV-METRIC-G2-01", "kind": "ROUTE_METRIC", "source": "cedar_observability"}
+  ],
+  "unknowns": ["Root cause not yet independently verified"],
+  "bank_case_id": null,
+  "private_simulator_ground_truth": "NEVER_INCLUDED"
+}

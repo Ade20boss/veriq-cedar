@@ -1,0 +1,11 @@
+{
+  "bank_id": "CED",
+  "source_id": "SRC-ALIAS-001",
+  "source_kind": "operations_notes",
+  "chunks": [
+    {
+      "chunk_id": "operations_notes.txt#section-1",
+      "text": "Operations refers to a payment component as Bluefin, but the registered service identifier is not stated."
+    }
+  ]
+}

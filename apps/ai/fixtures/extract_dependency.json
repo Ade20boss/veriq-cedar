@@ -1,0 +1,11 @@
+{
+  "bank_id": "CED",
+  "source_id": "SRC-ARCH-001",
+  "source_kind": "architecture_description",
+  "chunks": [
+    {
+      "chunk_id": "architecture.md#routes",
+      "text": "The Cedar outbound transfer service routes transfers through Gateway G2. This design may change after infrastructure upgrades."
+    }
+  ]
+}

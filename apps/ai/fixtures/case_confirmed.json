@@ -1,0 +1,93 @@
+{
+  "case_id": "CASE-002",
+  "bank_id": "CED",
+  "financial_outcome": "CREDIT_CONFIRMED",
+  "question": "What does the available evidence establish about this transfer?",
+  "evidence": [
+    {
+      "id": "EV-DEBIT-1042",
+      "source_system": "cedar_ledger",
+      "kind": "SENDER_DEBIT_POSTED",
+      "observed_at": "2026-10-15T10:01:00+01:00",
+      "occurred_at": "2026-10-15T10:00:59+01:00",
+      "citation": "ledger:journal-1042",
+      "verified_for_purpose": true,
+      "data": {
+        "transfer_id": "TRANSFER-1042",
+        "amount_kobo": 5000000,
+        "route_id": "ROUTE-CED-ELM-G2"
+      }
+    },
+    {
+      "id": "EV-TIMEOUT-1042",
+      "source_system": "cedar_gateway",
+      "kind": "GATEWAY_RESPONSE_TIMEOUT",
+      "observed_at": "2026-10-15T10:02:00+01:00",
+      "occurred_at": "2026-10-15T10:01:59+01:00",
+      "citation": "gateway:request-1042",
+      "verified_for_purpose": true,
+      "data": {
+        "transfer_id": "TRANSFER-1042",
+        "route_id": "ROUTE-CED-ELM-G2"
+      }
+    },
+    {
+      "id": "EV-METRIC-G2-01",
+      "source_system": "cedar_observability",
+      "kind": "ROUTE_METRIC",
+      "observed_at": "2026-10-15T10:02:10+01:00",
+      "occurred_at": "2026-10-15T10:02:00+01:00",
+      "citation": "metrics:route-g2-window-1",
+      "verified_for_purpose": true,
+      "data": {
+        "route_id": "ROUTE-CED-ELM-G2",
+        "window_attempts": 25,
+        "window_timeouts": 7,
+        "baseline_attempts": 100,
+        "baseline_timeouts": 2
+      }
+    },
+    {
+      "id": "EV-STATUS-1042",
+      "source_system": "cedar_status_verification",
+      "kind": "AUTHORIZED_CREDIT_CONFIRMATION",
+      "observed_at": "2026-10-15T10:20:00+01:00",
+      "occurred_at": "2026-10-15T10:18:00+01:00",
+      "citation": "status:authorized-query-1042",
+      "verified_for_purpose": true,
+      "data": {
+        "transfer_id": "TRANSFER-1042",
+        "financial_outcome": "CREDIT_CONFIRMED"
+      }
+    }
+  ],
+  "known_relationships": [
+    {
+      "id": "REL-001",
+      "bank_id": "CED",
+      "from_entity_id": "ROUTE-CED-ELM-G2",
+      "to_entity_id": "G2",
+      "type": "ROUTES_VIA",
+      "status": "DOCUMENTED",
+      "evidence_ids": [
+        "EV-ARCH-01"
+      ],
+      "source_id": "SRC-ARCH-001",
+      "valid_from": null
+    }
+  ],
+  "historical_incidents": [
+    {
+      "id": "INC-HIST-14",
+      "bank_id": "CED",
+      "route_id": "ROUTE-CED-ELM-G2",
+      "status": "CLOSED",
+      "first_observed_at": "2026-08-12T09:00:00+01:00",
+      "finding_summary": "Historical Gateway G2 report listed elevated outbound timeouts. Causes require independent current verification.",
+      "evidence_ids": [
+        "EV-HIST-14"
+      ],
+      "case_ids": []
+    }
+  ]
+}
