@@ -1,5 +1,8 @@
 # Veriq + Cedar
 
+Task 005 supplies the integrated backend pitch: genuine source uploads/context, persistent proactive read APIs, protected Cedar complaints and automatic case evidence investigations. Run the four-act CLI with actual PostgreSQL; see [pitch status and frontend wiring](docs/handoffs/PITCH_BACKEND_STATUS.md) and [backend instructions](apps/backend/README.md). G1's S2 financial outcome remains UNKNOWN; AI findings/status reveal are not simulated. Older milestone descriptions below are historical.
+
+
 Task 004 implements Cedar G1: protected customer account/name enquiry/transfer endpoints, balanced append-only accounting, durable idempotent transfer dispatch and restricted synthetic S0/S2 behavior. S2 stays UNKNOWN after its observed response timeout. See [financial design and limitations](docs/FINANCIAL_G1.md), [backend setup/replay](apps/backend/README.md) and [current handoff](docs/handoffs/CURRENT_STATE.md). G0 remains independent of transfers/complaints. AI PR #2 is merged; this task does not change or invoke that service. Earlier Task 001–003 paragraphs below are historical context.
 
 

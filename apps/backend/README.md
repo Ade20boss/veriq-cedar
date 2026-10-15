@@ -1,6 +1,9 @@
-# FastAPI backend: proactive G0 and Cedar G1
+# FastAPI backend: Cedar + Veriq pitch
 
-Task 004 adds the five approved v1.0 Cedar customer operations, fictional accounts, balanced posted ledger, durable idempotent transfers, limited private-CLI customer sessions and restricted S0/S2 network behavior. Task 002 infrastructure and proactive G0 are preserved. Complaints, staff, status reveal/verification, reversals, AI calls, frontend work and proposed v1.1 APIs remain outside this slice. Original contracts are unchanged. Use this existing checkout.
+Task 004 added the five approved v1.0 Cedar customer operations, fictional accounts, balanced posted ledger, durable idempotent transfers, limited private-CLI customer sessions and restricted S0/S2 network behavior. Task 002 infrastructure and proactive G0 are preserved. Complaints, staff, status reveal/verification, reversals, AI calls, frontend work and proposed v1.1 APIs remain outside this slice. Original contracts are unchanged. Use this existing checkout.
+
+
+Task 005 now adds the approved operational incident/route reads, independent durable complaint intake, automatic bank-neutral case handoff, institutional source uploads/context and private investigator sessions. See ../../docs/handoffs/PITCH_BACKEND_STATUS.md for the exact functional endpoint list, frontend wiring and disclosure requirements. Older task scope paragraphs describe their historical milestones; no AI provider call or later status reveal is implemented by the pitch slice.
 
 ## Install dependencies
 
@@ -171,3 +174,36 @@ uv run --locked pytest
 ```
 
 These migration tests create/drop their dedicated test schemas/roles, so use only a disposable test database. Real PostgreSQL is required for accounting, concurrency and permission verification. Direct dependencies and uv.lock are unchanged. The developer replay imports HTTPX from the existing default dev dependency group; API/worker operation does not depend on HTTPX.
+
+## Task 005 — integrated pitch
+
+After `uv sync --locked`, apply `uv run --locked alembic upgrade head` (now 0004_pitch_g2), then reapply the explicit role-grant script from repository root as documented above. No runtime seeding/migrations. Use a **fresh disposable** migrated/granted database, three restricted runtime URLs and the separate private CLI MIGRATION_DATABASE_URL:
+
+```bash
+ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g2 replay
+```
+
+This performs actual uploads → persisted context → G0 metric ingestion/incident → balanced S2 transfer/UNKNOWN → complaint → durable neutral handoff → automatic case investigation. It prints concise JSON with real IDs/counts/states/evidence IDs and verified assertions. It refuses existing sources/metrics/transfers and performs no reset. No investigate-button request or preinserted incident is used. Temporary replay sessions are removed at completion; resulting demo records remain.
+
+For interactive local work, seed/provision the customer using G1 commands above. Provision a separate investigator:
+
+```bash
+ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g2 staff-session \
+  --cookie-file /tmp/investigator.session.json
+```
+
+This is administrator-only local provisioning, not a public role/login endpoint. Both roles use the frozen cookie name cedar_demo_session but **different opaque tokens and separate role stores**. A customer token cannot access Veriq. Use separate HTTP clients/browser cookie paths `/v1/cedar` and `/v1/veriq`; tokens/files remain private and expire in one hour. No login UI or automatic frontend session journey is supplied.
+
+Run alongside Uvicorn:
+
+```bash
+uv run --locked python -m veriq_cedar.composition.g2 worker
+```
+
+The G2 process dispatches Cedar complaint outbox records and runs the existing G0 leased worker extended for CASE_ANALYSIS. It recovers queued/retry/expired work, independent of staff/AI sessions. G1's separate payment recovery worker remains available. Initial POST transfer still attempts immediate dispatch. Keep the G2 worker running for ongoing complaint automation; the pitch replay drains it in-process for reproducibility.
+
+Upload the five files under ../../fixtures/onboarding sequentially: services.json, dependencies.csv, routes.json, historical_incidents.md, operations_sop.txt. Multipart fields are **file** and **source_kind** (e.g. PITCH_FIXTURE). Only these UTF-8 filenames/adapters are supported; 262144-byte file limit, 280000-byte total multipart limit, one file/one field. A checksum-identical upload with the same bank/filename/kind returns its original source/job. Structured parsing validates registered endpoints and persists DOCUMENTED relationships. Failed structured validation preserves its source with FAILED status; no partial context survives. Unstructured originals are UPLOADED with internal AI_UNAVAILABLE state and no extracted claims. Source original/content checksum and complaint receipts remain immutable. Source jobs are synchronous bounded parser units recorded on the source; no unnecessary external queue.
+
+Actual frontend integration and same-origin proxy instructions: ../../docs/handoffs/PITCH_BACKEND_STATUS.md and ../../infra/pitch/Caddyfile. Authentication/origin checks are retained; browser wiring has not been exercised by this backend task. AI extraction/analyze-case and later financial reveal remain unavailable; report that honestly in the pitch.
+
+For an interactive frontend ACT II on an already seeded/onboarded database, emit a fresh permitted synthetic metric batch without resetting anything (from apps/backend): `ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g2 telemetry`. Keep g2 worker running. The detector automatically creates/reuses the G2 incident; this command supplies telemetry, not a manually inserted incident or staff investigation trigger. Metrics age truthfully: after ten minutes the operations endpoint reports INSUFFICIENT_DATA; emit another batch near the pitch rather than displaying stale data as current. This is a one-shot fictional source, not a continuous production monitor.

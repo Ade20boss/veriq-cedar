@@ -28,3 +28,12 @@ GRANT EXECUTE ON FUNCTION cedar.g1_lock_account(text,text), cedar.g1_post_debit(
  cedar.g1_check_projection(text,text) TO :"cedar_role";
 GRANT SELECT ON cedar_private.network_policy TO :"simulator_role";
 GRANT SELECT, INSERT ON cedar_private.recipient_credits TO :"simulator_role";
+
+-- Task 005 explicit demo access: customer complaints remain Cedar-owned.
+GRANT SELECT, INSERT ON cedar.complaints TO :"cedar_role";
+GRANT SELECT, INSERT, UPDATE ON cedar.complaint_outbox TO :"cedar_role";
+GRANT SELECT ON veriq.investigator_sessions TO :"veriq_role";
+GRANT SELECT, INSERT ON veriq.case_event_receipts, veriq.knowledge_entities,
+ veriq.knowledge_relationships TO :"veriq_role";
+GRANT SELECT, INSERT, UPDATE ON veriq.case_investigations, veriq.knowledge_sources,
+ veriq.context_versions TO :"veriq_role";

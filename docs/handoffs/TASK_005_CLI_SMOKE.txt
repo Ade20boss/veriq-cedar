@@ -1,0 +1,92 @@
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0
+INFO [alembic.runtime.migration] Running upgrade 0003_financial_g1 -> 0004_pitch_g2, Pitch staff complaints case work and institutional sources
+Revision ID: 0004_pitch_g2
+Revises: 0003_financial_g1
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+0004_pitch_g2 (head)
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+No new upgrade operations detected.
+{"fictional_environment": true, "accepted_event_receipts": ["edd0f701-9e85-4ae6-9831-e95b80faf6f7", "10fd7694-e410-43ac-9100-ac58ceb40b3a"]}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g2.py", line 118, in <module>
+    main()
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g2.py", line 89, in main
+    asyncio.run(replay(Settings(), MigrationSettings()))
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/pitch_replay.py", line 39, in replay
+    raise ValueError(
+ValueError: Pitch replay requires a fresh disposable database; no reset is performed
+Fictional investigator session provisioned; one-hour expiry. Token is only in the private file.
+INFO:     Started server process [418]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:56269 (Press CTRL+C to quit)
+{"timestamp": "2026-10-15T21:06:19.070225+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "6e825bbc5cda499588784526cc6394bf", "method": "GET", "route": "/health", "status_code": 200, "duration_ms": 33.32}
+{"timestamp": "2026-10-15T21:06:19.112772+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "37b29e672004466ea5ccfd06c7ce46da", "method": "GET", "route": "/ready", "status_code": 200, "duration_ms": 40.78}
+{"timestamp": "2026-10-15T21:06:19.136580+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "05ebbea452cd4463aad35e056a176f24", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 401, "duration_ms": 22.3}
+{"timestamp": "2026-10-15T21:06:19.169656+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "e6343633df2b4fbc81b69b0cfabddc22", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 200, "duration_ms": 30.5}
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [418]
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Generating static SQL
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0
+INFO [alembic.runtime.migration] Running upgrade 0003_financial_g1 -> 0004_pitch_g2, Pitch staff complaints case work and institutional sources
+Revision ID: 0004_pitch_g2
+Revises: 0003_financial_g1

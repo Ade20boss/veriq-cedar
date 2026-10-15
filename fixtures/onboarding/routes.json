@@ -1,0 +1,1 @@
+{"routes":[{"id":"ROUTE-CED-ELM-G2","service_id":"G2","from_bank_id":"CED","to_bank_id":"ELM"},{"id":"ROUTE-CED-BIRCH-G3","service_id":"G3","from_bank_id":"CED","to_bank_id":"BIR"}]}

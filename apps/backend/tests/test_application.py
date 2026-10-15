@@ -100,6 +100,17 @@ async def test_only_authorized_banking_and_infrastructure_routes(app, client):
         "/v1/cedar/name-enquiries",
         "/v1/cedar/transfers",
         "/v1/cedar/transfers/{transferId}",
+        "/v1/cedar/complaints",
+        "/v1/cedar/complaints/{caseId}",
+        "/v1/veriq/banks/{bankId}/operations",
+        "/v1/veriq/banks/{bankId}/incidents",
+        "/v1/veriq/banks/{bankId}/incidents/{incidentId}",
+        "/v1/veriq/banks/{bankId}/cases/{caseId}",
+        "/v1/veriq/banks/{bankId}/cases/{caseId}/investigate",
+        "/v1/veriq/banks/{bankId}/sources",
+        "/v1/veriq/banks/{bankId}/context",
+        "/v1/veriq/banks/{bankId}/relationships",
+        "/v1/veriq/banks/{bankId}/sources/{sourceId}/claims",
     }
     assert (await client.get("/v1/cedar/accounts/me")).status_code == 401
     assert (await client.get("/v1/cedar/staff/cases")).status_code == 404

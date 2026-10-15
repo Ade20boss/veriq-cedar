@@ -57,7 +57,7 @@ def test_neutral_contracts_have_no_http_persistence_or_domain_dependencies():
         assert not any(x.startswith(forbidden) for x in imports(path)), path
 
 
-def test_metadata_registries_are_separate_and_only_authorized_g0_g1_tables_exist():
+def test_metadata_registries_are_separate_and_only_authorized_g0_g1_g2_tables_exist():
     assert [base.metadata.schema for base in (CedarBase, VeriqBase, SimulatorBase)] == [
         "cedar",
         "veriq",
@@ -66,13 +66,18 @@ def test_metadata_registries_are_separate_and_only_authorized_g0_g1_tables_exist
     assert len({id(base.registry) for base in (CedarBase, VeriqBase, SimulatorBase)}) == 3
     from veriq_cedar.cedar.accounts import models as accounts  # noqa: F401
     from veriq_cedar.cedar.adapters import models  # noqa: F401
+    from veriq_cedar.cedar.complaints import models as complaints  # noqa: F401
     from veriq_cedar.cedar.ledger import models as ledger  # noqa: F401
     from veriq_cedar.cedar.simulator import models as simulator  # noqa: F401
     from veriq_cedar.cedar.transfers import models as transfers  # noqa: F401
-    from veriq_cedar.veriq.persistence import operational  # noqa: F401
+    from veriq_cedar.veriq.knowledge import models as knowledge  # noqa: F401
+    from veriq_cedar.veriq.persistence import (
+        operational,  # noqa: F401
+        pitch,  # noqa: F401
+    )
 
-    assert len(CedarBase.metadata.tables) == 15
-    assert len(VeriqBase.metadata.tables) == 6
+    assert len(CedarBase.metadata.tables) == 17
+    assert len(VeriqBase.metadata.tables) == 13
     assert len(SimulatorBase.metadata.tables) == 2
 
 

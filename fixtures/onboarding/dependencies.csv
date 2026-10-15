@@ -1,0 +1,5 @@
+from_entity_id,to_entity_id,type
+CED,G2,USES
+G2,ELM,CONNECTS_TO
+CED,G3,USES
+G3,BIR,CONNECTS_TO
