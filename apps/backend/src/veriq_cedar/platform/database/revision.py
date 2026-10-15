@@ -1,3 +1,3 @@
 """Expected Alembic head for runtime readiness."""
 
-SCHEMA_REVISION = "0002_proactive_g0"
+SCHEMA_REVISION = "0003_financial_g1"

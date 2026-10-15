@@ -1,6 +1,6 @@
-# FastAPI backend and proactive G0
+# FastAPI backend: proactive G0 and Cedar G1
 
-Task 002 infrastructure is preserved. Task 003 implements internal proactive event receipt/detection, suspected incidents, deterministic evidence investigations, durable jobs and the Cedar permitted status inbox. Banking, ledger, payment simulation, complaints, AI, frontend, auth and all proposed v1.1 HTTP endpoints remain unimplemented. Accepted contracts are unchanged. Use this existing checkout; do not initialize a replacement repository.
+Task 004 adds the five approved v1.0 Cedar customer operations, fictional accounts, balanced posted ledger, durable idempotent transfers, limited private-CLI customer sessions and restricted S0/S2 network behavior. Task 002 infrastructure and proactive G0 are preserved. Complaints, staff, status reveal/verification, reversals, AI calls, frontend work and proposed v1.1 APIs remain outside this slice. Original contracts are unchanged. Use this existing checkout.
 
 ## Install dependencies
 
@@ -51,9 +51,9 @@ docker compose --env-file infra/.env -f infra/compose.yaml exec -T postgres \
   -v simulator_role=simulator_runtime < infra/postgres/grant-runtime.sql
 ```
 
-The initial migration creates cedar, veriq and cedar_private schemas, revokes PUBLIC schema access and records revision 0001_domain_schemas. It creates no business table or role. Migration 0002_proactive_g0 adds the eight G0 tables listed in ../../docs/PROACTIVE_G0.md. Apply head, then reapply the grant script: it grants own-schema USAGE, version-table SELECT and explicit G0 table privileges only. Veriq events/evidence/outbox and Cedar delivery receipts have no runtime UPDATE/DELETE grant. No runtime CREATE, cross-domain or blanket future-table DML is granted. Future migrations must explicitly grant reviewed table privileges. Runtime code never invokes create_all or migrations.
+The initial migration creates cedar, veriq and cedar_private schemas, revokes PUBLIC schema access and records revision 0001_domain_schemas. It creates no business table or role. Migration 0002_proactive_g0 adds eight G0 tables. Migration 0003_financial_g1 adds thirteen Cedar financial/auth/reference tables and two private simulator tables, with accounting/state triggers and restricted debit/locking functions; see ../../docs/FINANCIAL_G1.md. Apply head, then reapply the grant script: it grants own-schema USAGE, version-table SELECT and explicit G0/G1 privileges only. Cedar has no direct account-balance/ledger-write grant; only its reviewed debit function can post runtime journals and balance changes. Simulator alone has access to private policy/recipient credits. Veriq events/evidence/outbox and Cedar delivery receipts have no runtime UPDATE/DELETE grant. No runtime CREATE, cross-domain or blanket future-table DML is granted. Future migrations must explicitly grant reviewed table privileges. Runtime code never invokes create_all or migrations.
 
-Alembic reads only MIGRATION_DATABASE_URL through separate MigrationSettings; runtime Settings does not contain that field. Autogeneration reflects only the three owned schemas; review generated revisions. `alembic downgrade base` is for a clean disposable foundation database, never an automatic startup/reset action; it uses no CASCADE and refuses to destroy unrelated schema objects. Update the readiness revision constant when adding a migration; a test checks it against Alembic head.
+Alembic reads only MIGRATION_DATABASE_URL through separate MigrationSettings; runtime Settings does not contain that field. Autogeneration reflects only the three owned schemas; review generated revisions. `alembic downgrade base` is for a clean disposable disposable database, never an automatic startup/reset action; it uses no CASCADE and refuses to destroy unrelated schema objects. Update the readiness revision constant when adding a migration; a test checks it against Alembic head.
 
 ## Run
 
@@ -66,9 +66,9 @@ uv run --locked uvicorn veriq_cedar.main:create_app --factory \
 
 - GET /health: process liveness, no database access.
 - GET /ready: checks SELECT 1, migration head and own-schema USAGE under all three runtime connections. Returns 503 with a sanitized error on unavailable/missing-grant/unmigrated database. It does not fix state or create tables.
-- GET /infra/openapi.json: infrastructure routes only. This is separate from the original banking contract; /v1 routes are not registered.
+- GET /infra/openapi.json: generated metadata for infrastructure plus the five implemented customer routes, including sessionAuth cookie security. Its historical URL is retained; canonical contracts/openapi.yaml remains the accepted business contract.
 
-Application events are JSON with generated request ID, route template, status and duration; bodies, raw query strings, DSNs and exception text are omitted. Keep `--no-access-log` to disable Uvicorn's separate raw URL access log. Uvicorn lifecycle logs retain its default format. Responses include X-Request-ID. Error bodies use `{error:{code,message}}`. No auth/session credentials are needed for infrastructure probes; no banking routes are exposed.
+Application events are JSON with generated request ID, route template, status and duration; bodies, raw query strings, DSNs and exception text are omitted. Keep `--no-access-log` to disable Uvicorn's separate raw URL access log. Uvicorn lifecycle logs retain its default format. Responses include X-Request-ID. Error bodies use `{error:{code,message}}`. Infrastructure probes need no session. All five customer routes require a valid server-provisioned cedar_demo_session cookie.
 
 ## Test
 
@@ -97,7 +97,7 @@ Without TEST_DATABASE_ADMIN_URL, the marked postgres tests are explicitly skippe
 
 ## Package boundaries
 
-Cedar and Veriq have separate declarative registries/schema metadata. Veriq imports no Cedar model/repository; generic integration protocols depend only on typing; the authorized g0.internal.1 transport models use Pydantic without HTTP, ORM or bank-domain dependencies. The composition root owns domain-scoped database dependencies. Shared Python process and these initial grants are not production-grade isolation. G0 table grants are explicit; network bank authentication, RLS and production deployment remain future reviewed work.
+Cedar and Veriq have separate declarative registries/schema metadata. Veriq imports no Cedar model/repository; generic integration protocols depend only on typing; the authorized g0.internal.1 transport models use Pydantic without HTTP, ORM or bank-domain dependencies. The composition root owns domain-scoped database dependencies. Shared Python process and these initial grants are not production-grade isolation. G0/G1 grants are explicit; production identity/login, RLS, remote-bank authentication and deployment remain future reviewed work.
 
 See ../../docs/handoffs/CURRENT_STATE.md and TASK_002_REPORT.md for the verified environment, exact changes and next task.
 
@@ -131,3 +131,43 @@ uv run --locked python -m veriq_cedar.composition.g0 worker
 It polls CED jobs every second while idle; no staff session is needed. It scans queued/retry/expired jobs on restart. Synthetic replay itself emits a finite event batch and drains its jobs; a live Cedar event producer/outbox is not implemented. Production supervision and network adapter authentication remain future work. The worker deliberately does not run inside each Uvicorn process.
 
 Read ../../docs/PROACTIVE_G0.md for internal contracts, lifecycle, role grants, retry bounds, late-window policy and limitations. No new dependency or HTTP endpoint was needed.
+
+## Cedar G1 customer demo
+
+Apply Alembic head and reapply infra/postgres/grant-runtime.sql as above before running this slice. The runtime app never seeds/migrates. From apps/backend with ENVIRONMENT=test and the separate MIGRATION_DATABASE_URL available only to the private CLI:
+
+```bash
+uv run --locked python -m veriq_cedar.composition.g1 seed --scenario S2
+uv run --locked python -m veriq_cedar.composition.g1 mint-session \
+  --customer CED-CUST-001 --cookie-file /tmp/ada.session.json
+```
+
+Seed uses fixture IDs CED-CUST-001, CED-ACC-001, ELM-ACC-009, fictional Birch BIR-ACC-001 and a balanced opening deposit of 10000000 kobo (₦100,000). It is idempotent and preserves spent balances; conflicting data/policy causes refusal. Session CLI writes a new mode-0600 *.session.json file containing a random one-hour token; only its SHA-256 hash is stored. Existing files are never overwritten. Session files are Git-ignored; keep them private and delete after use. The token is not printed in application logs or normal CLI stdout. No unauthenticated session-minting HTTP route exists.
+
+Use the cookie from that private file with a same-origin local client. The exact protected endpoints are GET /v1/cedar/accounts/me, GET /v1/cedar/banks, POST /v1/cedar/name-enquiries, POST /v1/cedar/transfers (Idempotency-Key header, >=8 characters), GET /v1/cedar/transfers/{transferId}. JSON request/success shapes match the accepted v1.0 subset. POST requires application/json and rejects an explicitly foreign Origin. Bank/customer scope is taken from the stored session, never a request customer ID. Responses use no-store. This is **demo auth only**: no login/refresh/revocation UI, Set-Cookie journey or cross-origin frontend configuration is implemented; production authentication and separate frontend integration still require review. For a browser deployment, secure HttpOnly/SameSite cookie issuance and HTTPS belong to that future identity journey.
+
+Run a complete database/HTTP replay in a **fresh disposable** migrated/granted database:
+
+```bash
+ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g1 replay --scenario S2
+```
+
+It privately seeds/mints a temporary session, invokes the actual account/name-enquiry/transfer handlers, reads back the database balance/transfer, asserts one debit journal and prints actual permitted results. It then deletes its temporary session. Existing transfers cause refusal; it never resets data. Expected: 10000000→5000000 kobo, RESPONSE_TIMEOUT, UNKNOWN, one debit journal. Run `--scenario S0` in a **different fresh disposable database** for COMPLETED/CREDIT_CONFIRMED after a received credit response. To prove G0 precedes the transfer, run the documented G0 replay before G1 replay in the same fresh database; G1 does not reset its incident.
+
+For regular local use, seed once, run Uvicorn as above, and run the recovery worker separately:
+
+```bash
+uv run --locked python -m veriq_cedar.composition.g1 worker
+```
+
+POST attempts immediate dispatch after its debit/instruction transaction commits; the worker recovers queued/retry/expired instructions even when the request process stops. Private `ENVIRONMENT=test ... g1 arm --scenario S0` changes only the policy for future network instructions; previously credited instructions retain their original result on replay. S2 response loss applies to Elm/G2; Birch/G3 follows the S0 comparison path. Customers cannot select either scenario.
+
+For a test-based replay, set TEST_DATABASE_ADMIN_URL to a fresh dedicated veriq_cedar_test_* database, then run:
+
+```bash
+uv run --locked pytest -s tests/test_financial.py::test_s2_database_api_replay_known_state_stays_unknown
+uv run --locked pytest tests/test_financial.py::test_s0_requires_eligible_received_response
+uv run --locked pytest
+```
+
+These migration tests create/drop their dedicated test schemas/roles, so use only a disposable test database. Real PostgreSQL is required for accounting, concurrency and permission verification. Direct dependencies and uv.lock are unchanged. The developer replay imports HTTPX from the existing default dev dependency group; API/worker operation does not depend on HTTPX.

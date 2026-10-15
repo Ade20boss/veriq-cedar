@@ -1,5 +1,8 @@
 # Veriq + Cedar
 
+Task 004 implements Cedar G1: protected customer account/name enquiry/transfer endpoints, balanced append-only accounting, durable idempotent transfer dispatch and restricted synthetic S0/S2 behavior. S2 stays UNKNOWN after its observed response timeout. See [financial design and limitations](docs/FINANCIAL_G1.md), [backend setup/replay](apps/backend/README.md) and [current handoff](docs/handoffs/CURRENT_STATE.md). G0 remains independent of transfers/complaints. AI PR #2 is merged; this task does not change or invoke that service. Earlier Task 001–003 paragraphs below are historical context.
+
+
 Task 003 adds the working proactive G0 backend slice: synthetic permitted metrics → suspected incident → durable deterministic investigation → Cedar status inbox, with zero complaints or staff initiation. See [G0 implementation and replay](docs/PROACTIVE_G0.md) and the [current handoff](docs/handoffs/CURRENT_STATE.md). No banking/AI/frontend or proposed HTTP endpoint is added. The Task 001/002 descriptions below are historical foundation context.
 
 Task 002 now implements the FastAPI backend foundation in apps/backend: settings, lifecycle, domain-scoped PostgreSQL connections, metadata registries, schema-only Alembic migration, infrastructure health/readiness, logging/errors and tests. No banking/business endpoints or v1.1 proposals are implemented. See [backend setup](apps/backend/README.md) and [current handoff](docs/handoffs/CURRENT_STATE.md).
