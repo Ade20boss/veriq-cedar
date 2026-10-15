@@ -1,6 +1,6 @@
 # Team onboarding and GitHub workflow
 
-Shared repository: https://github.com/Ade20boss/veriq-cedar. Task 002-GIT authorizes publishing the existing monorepo and setting up collaboration. See docs/handoffs/CURRENT_STATE.md for confirmed push, invitation and protection status; access is not implied by this guide.
+Shared repository: https://github.com/Ade20boss/veriq-cedar. Task 002-GIT authorizes publishing the existing monorepo and setting up collaboration. Initial publication succeeded and both Hbboss226 (GitHub canonical casing HBboss226) and Barry1003 have write invitations confirmed pending acceptance. Main protection is configured: PRs required, zero formal approving-review minimum, no CI check gate, admin enforcement off, force-push/deletion off. See docs/handoffs/CURRENT_STATE.md for the publication checkpoint; invited users must accept before authenticated writes.
 
 The current working checkout is /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar. The optional ~/Projects move is blocked by the execution environment's read-only /home mount. Continue the same writable checkout; do not initialize a replacement or overwrite another clone.
 

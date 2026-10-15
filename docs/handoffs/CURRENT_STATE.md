@@ -1,12 +1,34 @@
 # Veriq Cedar current engineering handoff
 
-Task 002-GIT in progress, 15 October 2026 (Africa/Lagos). Existing backend foundation remains implemented/tested as below. Git-only authorization: initial commit/push to https://github.com/Ade20boss/veriq-cedar, Hbboss226/Barry1003 write invitations and practical PR rule. Browser authentication and publication are not yet confirmed. This header will be replaced with verified status after remote operations. No new business/frontend functionality or contract approval is authorized.
+Task 002-GIT, 15 October 2026 (Africa/Lagos). Existing monorepo published; GitHub collaboration configured. GitHub setup only: no business source, proposed contract approval or frontend migration performed. Stop after final setup-documentation push and report.
 
-Date: 15 October 2026, Africa/Lagos. Current task: Task 002, backend foundation IMPLEMENTATION AUTHORIZED. Assistant: Codex. Status: implemented and tested; stop for technical review. No business-feature implementation authorized.
+## Checkout and publication
 
-## Checkout and Git
+Working checkout: /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar. It is the original verified writable repository; the optional ~/Projects relocation remains blocked and no replacement repository was initialized.
 
-Existing writable checkout: /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar. Requested ~/Projects/veriq-cedar remains absent; execution /home is read-only, separate Codex workspace writable. No move or second repository created. main is unborn, no commits/staging/remote/push. All source/docs remain untracked; use TASK_002_CHANGES.json rather than an empty git diff. Original Git metadata/history preserved.
+Origin: https://github.com/Ade20boss/veriq-cedar.git
+GitHub: https://github.com/Ade20boss/veriq-cedar
+Branch: main, tracking origin/main.
+Initial successfully pushed implementation/publication commit: a483b0ffc336431cccc4343c26046b5303a3275b.
+GitHub main and its recursive tree were verified against that commit (115 initial files).
+
+This handoff is part of the subsequent setup-documentation commit. Obtain the containing/current commit with `git rev-parse HEAD` or `git log -1 --oneline`, and compare to `git ls-remote origin refs/heads/main`; do not mistake the initial publication checkpoint above for a later documentation HEAD. The final setup report records the final verified HEAD. Commit/push this handoff normally; no force-push or remote overwrite is authorized.
+
+## Authentication, access and main protection
+
+Official GitHub CLI 2.102.0 was installed task-locally, archive checksum verified, and browser OAuth confirmed Ade20boss with repository admin/write access. No password/token was requested in chat. CLI authentication configuration is outside the checkout; only this repository's Git credential helper was configured. Tokens/credentials/environment/cache files are not committed. Other developers use their own normal GitHub authentication.
+
+GitHub confirmed new write invitations (HTTP 201) for Habeeb / Hbboss226 (canonical HBboss226) and Usaamah / Barry1003. Both were confirmed in the pending invitation list; neither is claimed accepted. Invitees must accept GitHub's invitation before write access is active. No admin permissions were granted to them.
+
+GitHub confirmed main protection (HTTP 200): require pull requests; required_approving_review_count=0; no mandatory status checks; no Code Owner gate; enforce_admins=false; force-pushes/deletions disabled. Owner/admin maintenance remains possible. Team review expectations for contract/cross-workstream changes remain documented even though the formal approval minimum is zero. No CI workflow/check was invented.
+
+## Workstreams and re-entry
+
+Daniel: feat/backend-foundation, primary apps/backend. Habeeb: feat/ai-foundation, primary apps/ai. Usaamah: feat/frontend-foundation, Cedar Customer/Operations/Veriq frontend; actual directories/import remain subject to the agreed migration plan. These are documented starting branches, not pre-created remote branches. Developers create/push their own feature branches and PR against main.
+
+Clone https://github.com/Ade20boss/veriq-cedar.git, read AGENTS/README/TEAM_ONBOARDING and current specs/contracts, inspect status/log, switch from updated main to the assigned feature branch. Use `git push -u origin HEAD` and `gh pr create --base main --fill` after an authorized change/commit. Reuse the same checkout with Codex or Antigravity; do not regenerate the project or discard teammate changes.
+
+Pre-publication review verified original specification hashes, accepted/proposed contract bytes, 115 intended initial files, no symlinks and no credential-pattern matches. .gitignore excludes environments, caches, builds and secret .env files; placeholder .env.example files are intentional. Frozen Markdown hard line breaks were preserved rather than normalizing source documents. No application tests were rerun for this Git/docs-only task; Task 002 results below remain the last implementation verification.
 
 ## Verified implementation
 
