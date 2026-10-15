@@ -100,9 +100,7 @@ def test_replay_g2_automatic_before_complaints_and_permitted_cedar_status(g0, mi
         assert set(session.scalars(select(Job.kind))) == {"INCIDENT_ANALYSIS", "RESULT_DELIVERY"}
         assert incident.rule_config["min_increase_points"] == 15
     with migrated.connect() as connection:
-        assert (
-            connection.execute(text("SELECT to_regclass('cedar.complaints')")).scalar_one() is None
-        )
+        assert connection.execute(text("SELECT count(*) FROM cedar.complaints")).scalar_one() == 0
     drain(worker)
     with v() as session, c() as bank_session:
         inv = session.scalar(select(Investigation))

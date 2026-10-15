@@ -1,4 +1,4 @@
-"""App factory: infrastructure only, no banking or proposed v1.1 endpoints."""
+"""App factory: infrastructure and the authorized v1.0 Cedar customer slice."""
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -6,6 +6,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Response
 from pydantic import BaseModel, ConfigDict
 
+from veriq_cedar.cedar.transfers.api import router as customer_router
+from veriq_cedar.composition.pitch_api import router as pitch_router
+from veriq_cedar.composition.pitch_upload import UploadLimit
 from veriq_cedar.platform.database.session import DatabaseDependency, DatabaseRegistry
 from veriq_cedar.platform.errors import ErrorResponse, install_exception_handlers
 from veriq_cedar.platform.logging import RequestLoggingMiddleware, configure_logging
@@ -39,6 +42,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.settings = configuration
     install_exception_handlers(app)
+    app.add_middleware(UploadLimit)
     app.add_middleware(RequestLoggingMiddleware)
 
     @app.get("/health", response_model=HealthResponse, tags=["Infrastructure"])
@@ -57,4 +61,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         response.headers["Cache-Control"] = "no-store"
         return HealthResponse(status="ready")
 
+    app.include_router(pitch_router)
+    app.include_router(customer_router)
     return app

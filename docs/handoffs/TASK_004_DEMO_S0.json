@@ -1,0 +1,37 @@
+{
+  "synthetic": true,
+  "scenario": "S0",
+  "before": {
+    "id": "CED-ACC-001",
+    "display_account_id": "CED-ACC-001",
+    "currency": "NGN",
+    "available_balance_kobo": 10000000,
+    "owner_display_name": "Ada (fictional)"
+  },
+  "name_enquiry": {
+    "bank_id": "ELM",
+    "account_id": "ELM-ACC-009",
+    "beneficiary_name": "Elm beneficiary (fictional)",
+    "verified_in_simulation": true
+  },
+  "transfer": {
+    "id": "47d8d020-38a7-4d52-aeab-b0aa63fb39ac",
+    "reference": "CED-2399f1dc-ead0-4514-a633-e778d941453b",
+    "amount_kobo": 5000000,
+    "beneficiary_bank_id": "ELM",
+    "beneficiary_account_id": "ELM-ACC-009",
+    "processing_stage": "COMPLETED",
+    "financial_outcome": "CREDIT_CONFIRMED",
+    "last_evidence_id": "gateway/aaf18daa-15f1-4314-a7ed-5e650483b7f0/CREDIT_RESPONSE",
+    "created_at": "2026-10-15T19:30:30.318626+01:00",
+    "updated_at": "2026-10-15T19:30:30.419281+01:00"
+  },
+  "after": {
+    "id": "CED-ACC-001",
+    "display_account_id": "CED-ACC-001",
+    "currency": "NGN",
+    "available_balance_kobo": 5000000,
+    "owner_display_name": "Ada (fictional)"
+  },
+  "debit_journals": 1
+}
