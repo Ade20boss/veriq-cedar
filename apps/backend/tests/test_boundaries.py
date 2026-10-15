@@ -77,7 +77,7 @@ def test_metadata_registries_are_separate_and_only_authorized_g0_g1_g2_tables_ex
     )
 
     assert len(CedarBase.metadata.tables) == 17
-    assert len(VeriqBase.metadata.tables) == 13
+    assert len(VeriqBase.metadata.tables) == 14
     assert len(SimulatorBase.metadata.tables) == 2
 
 

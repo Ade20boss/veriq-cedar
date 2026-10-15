@@ -207,3 +207,25 @@ Upload the five files under ../../fixtures/onboarding sequentially: services.jso
 Actual frontend integration and same-origin proxy instructions: ../../docs/handoffs/PITCH_BACKEND_STATUS.md and ../../infra/pitch/Caddyfile. Authentication/origin checks are retained; browser wiring has not been exercised by this backend task. AI extraction/analyze-case and later financial reveal remain unavailable; report that honestly in the pitch.
 
 For an interactive frontend ACT II on an already seeded/onboarded database, emit a fresh permitted synthetic metric batch without resetting anything (from apps/backend): `ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g2 telemetry`. Keep g2 worker running. The detector automatically creates/reuses the G2 incident; this command supplies telemetry, not a manually inserted incident or staff investigation trigger. Metrics age truthfully: after ten minutes the operations endpoint reports INSUFFICIENT_DATA; emit another batch near the pitch rather than displaying stale data as current. This is a one-shot fictional source, not a continuous production monitor.
+
+
+## Optional private AI case analysis (Task 006)
+
+Apply migration `0005_case_ai`, then reapply `infra/postgres/grant-runtime.sql` with the existing explicit role variables. HTTPX0.28.1 is now a runtime dependency; run `uv sync --locked`. Existing schema grants remain separated; the new case_ai_runs table belongs to Veriq. No Cedar/private database permission is added.
+
+By default `AI_ENABLED=false`; complaints and deterministic evidence investigation work without the AI service. Configure only the backend worker's private environment:
+
+```dotenv
+AI_ENABLED=true
+AI_BASE_URL=http://127.0.0.1:8001
+# AI_SERVICE_KEY must match the AI service INTERNAL_SERVICE_KEY. Supply privately.
+AI_TIMEOUT_SECONDS=5
+```
+
+The key is never a browser/public environment value. Enabled but missing URL/key safely keeps deterministic mode and logs AI_UNCONFIGURED. URL must be an HTTP(S) origin without a path, query or embedded credentials; use a trusted internal address. Timeout is0.1–20seconds overall; the existing default job lease is60seconds. A configured custom worker lease must exceed its AI timeout.
+
+Start Habeeb's independent service on8001 using its existing README (for the reproducible synthetic path set `LLM_PROVIDER=mock` and a private `INTERNAL_SERVICE_KEY`). Do not claim model reasoning in mock mode. Run the backend and `uv run --locked python -m veriq_cedar.composition.g2 worker` with the matching private AI settings. The worker commits deterministic evidence, queues CASE_AI, performs the network call outside transactions, validates it and exposes FINDINGS_READY through the existing authenticated case GET. HTTP handlers never wait for the AI call.
+
+The four-act `g2 replay` deliberately keeps AI disabled and remains deterministic. For the separate connected/unavailable cross-service smoke, use `TEST_DATABASE_ADMIN_URL=<fresh disposable veriq_cedar_test_* database>` and `uv run --locked pytest tests/test_ai_orchestration.py -k actual_backend_worker_http -q`. Tests migrate/grant/tear down their dedicated database; never use an existing development database. They launch real backend HTTP, standalone worker and (connected mode) the unchanged actual AI service with deterministic mock provider. Full backend/AI test commands and disclosure details are in the AI integration status document.
+
+Existing already-assembled cases from an AI-disabled worker are not automatically backfilled: new case evidence revisions assembled by an enabled worker schedule analysis. Same-event replay remains a no-op. Retrying an exhausted existing AI job needs deliberate bank/job-scoped maintenance after fixing its cause, retaining the immutable snapshot, job identity and generation. Do not reset arbitrary data or silently grant extra attempts. No source extraction, case publication or financial-status reveal is provided by this task.

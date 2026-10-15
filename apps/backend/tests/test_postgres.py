@@ -42,7 +42,7 @@ def test_real_migration_upgrade_idempotent_head_and_downgrade(migrated):
                 "WHERE schemaname IN ('cedar','veriq','cedar_private')"
             )
         ).all()
-        assert len(tables) == 32
+        assert len(tables) == 33
     # Alembic autogeneration is restricted to our owned schemas.
     with migrated.begin() as connection:
         connection.execute(text("CREATE TABLE public.unrelated_probe (value integer)"))

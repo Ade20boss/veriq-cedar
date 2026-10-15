@@ -37,3 +37,6 @@ GRANT SELECT, INSERT ON veriq.case_event_receipts, veriq.knowledge_entities,
  veriq.knowledge_relationships TO :"veriq_role";
 GRANT SELECT, INSERT, UPDATE ON veriq.case_investigations, veriq.knowledge_sources,
  veriq.context_versions TO :"veriq_role";
+
+-- Optional case-AI snapshots/results remain Veriq-owned.
+GRANT SELECT, INSERT, UPDATE ON veriq.case_ai_runs TO :"veriq_role";

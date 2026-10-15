@@ -1,9 +1,10 @@
 """Short DB leases, SKIP LOCKED claims, fenced completion, bounded retries.
 
-No AI calls. External result delivery occurs outside the claim/finish transactions.
+External result delivery and optional case AI calls occur outside DB transactions.
 """
 
 import json
+import logging
 from dataclasses import dataclass
 from datetime import timedelta
 from hashlib import sha256
@@ -12,6 +13,8 @@ from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from veriq_cedar.integration.operational import IncidentStatus, ResultSink
+from veriq_cedar.veriq.ai.client import AIError, validate_result
+from veriq_cedar.veriq.ai.orchestration import build_request, bundle_digest, digest, schedule
 from veriq_cedar.veriq.operations.service import database_now, emit_status
 from veriq_cedar.veriq.persistence.operational import (
     EventReceipt,
@@ -21,6 +24,9 @@ from veriq_cedar.veriq.persistence.operational import (
     StatusDelivery,
     SupportingEvidence,
 )
+from veriq_cedar.veriq.persistence.pitch import CaseAI, CaseInvestigation
+
+logger = logging.getLogger("veriq_cedar.veriq.ai")
 
 
 @dataclass(frozen=True)
@@ -42,11 +48,15 @@ class Worker:
         *,
         lease_seconds: int = 60,
         max_attempts: int = 5,
+        ai_client=None,
     ):
         if not 1 <= lease_seconds <= 3600 or not 1 <= max_attempts <= 20 or not owner:
             raise ValueError("Invalid worker bounds")
         self.sessions, self.bank_id, self.owner, self.sink = sessions, bank_id, owner, sink
         self.lease_seconds, self.max_attempts = lease_seconds, max_attempts
+        if ai_client is not None and ai_client.timeout >= lease_seconds:
+            raise ValueError("AI timeout must be shorter than worker lease")
+        self.ai_client = ai_client
 
     def claim(self) -> Claim | None:
         with self.sessions.begin() as session:
@@ -70,6 +80,9 @@ class Worker:
                 if job.attempts >= self.max_attempts:
                     job.state, job.last_error = "DEAD_LETTER", "ATTEMPTS_EXHAUSTED"
                     job.owner, job.lease_until = None, None
+                    if job.kind == "CASE_AI":
+                        self._ai_status(session, job, "EVIDENCE_READY_AI_UNAVAILABLE")
+                        self._ai_log(job, "ATTEMPTS_EXHAUSTED")
                     session.flush()
                     continue
                 job.state, job.owner = "LEASED", self.owner
@@ -101,6 +114,8 @@ class Worker:
     def finish(self, claim: Claim) -> bool:
         if claim.bank_id != self.bank_id or claim.owner != self.owner:
             return False
+        if claim.kind == "CASE_AI":
+            return self._finish_ai(claim)
         if claim.kind == "RESULT_DELIVERY":
             with self.sessions.begin() as session:
                 if self._fenced(session, claim) is None:
@@ -123,6 +138,11 @@ class Worker:
                 from veriq_cedar.veriq.investigations.cases import assemble_case
 
                 assemble_case(session, job)
+                if self.ai_client is not None and job.last_error != "SUPERSEDED":
+                    inv = session.get(CaseInvestigation, (job.bank_id, job.case_investigation_id))
+                    if not schedule(session, inv):
+                        job.last_error = "AI_INPUT_INVALID"
+                        self._ai_log(job, "AI_INPUT_INVALID")
             if job.kind == "INCIDENT_ANALYSIS":
                 inv = session.scalar(
                     select(Investigation)
@@ -172,16 +192,121 @@ class Worker:
             job.updated_at = database_now(session)
         return True
 
-    def fail(self, claim: Claim) -> bool:
+    def fail(self, claim: Claim, code="PROCESSING_UNAVAILABLE") -> bool:
         with self.sessions.begin() as session:
             job = self._fenced(session, claim)
             if job is None:
                 return False
             now = database_now(session)
             job.state = "DEAD_LETTER" if job.attempts >= self.max_attempts else "RETRY_WAIT"
-            job.last_error = "PROCESSING_UNAVAILABLE"
+            job.last_error = code
             job.available_at = now + timedelta(seconds=min(180, 5 * 3 ** (job.attempts - 1)))
             job.updated_at, job.owner, job.lease_until = now, None, None
+            if job.kind == "CASE_AI":
+                self._ai_status(session, job, "EVIDENCE_READY_AI_UNAVAILABLE")
+                self._ai_log(job, code)
+        return True
+
+    @staticmethod
+    def _ai_log(job, code=None, mode=None):
+        logger.log(
+            logging.WARNING if code else logging.INFO,
+            "case_ai.completed",
+            extra={
+                "job_id": job.id,
+                "attempts": job.attempts,
+                "generation": job.generation,
+                "analysis_state": job.state,
+                "error_code": code,
+                "provider_mode": mode,
+            },
+        )
+
+    @staticmethod
+    def _ai_status(session, job, state):
+        inv = session.scalar(
+            select(CaseInvestigation)
+            .where(
+                CaseInvestigation.bank_id == job.bank_id,
+                CaseInvestigation.id == job.case_investigation_id,
+            )
+            .with_for_update()
+        )
+        if (
+            inv
+            and inv.revision == job.evidence_revision
+            and inv.bundle
+            and inv.bundle["ai_result"] is None
+        ):
+            inv.state = state
+            inv.bundle = {**inv.bundle, "status": state}
+        return inv
+
+    def _ai_snapshot(self, session, job):
+        inv = session.scalar(
+            select(CaseInvestigation)
+            .where(
+                CaseInvestigation.bank_id == job.bank_id,
+                CaseInvestigation.id == job.case_investigation_id,
+            )
+            .with_for_update()
+        )
+        run = session.get(CaseAI, (job.bank_id, job.id))
+        if inv is None or inv.revision != job.evidence_revision or inv.bundle is None:
+            job.state, job.last_error = "SUCCEEDED", "SUPERSEDED"
+            job.owner, job.lease_until = None, None
+            return None
+        if (
+            run is None
+            or run.revision != inv.revision
+            or run.case_investigation_id != inv.id
+            or bundle_digest(inv.bundle) != run.bundle_digest
+            or digest(run.request) != run.request_digest
+        ):
+            raise AIError("AI_INPUT_SCOPE_INVALID")
+        # Recheck scoped persisted provenance, including after the network call.
+        current = build_request(session, inv)
+        if digest(current.model_dump(mode="json")) != run.request_digest:
+            raise AIError("AI_INPUT_SCOPE_INVALID")
+        if run.result is None:
+            inv.state = "AI_PENDING"
+            inv.bundle = {**inv.bundle, "status": "AI_PENDING"}
+        return run, current, inv
+
+    def _finish_ai(self, claim):
+        with self.sessions.begin() as session:
+            job = self._fenced(session, claim)
+            if job is None:
+                return False
+            snapshot = self._ai_snapshot(session, job)
+            if snapshot is None:
+                return True
+            run, request, inv = snapshot
+            if run.result is not None:
+                job.state, job.owner, job.lease_until = "SUCCEEDED", None, None
+                return True
+        # All session/row locks are released. Only the immutable typed snapshot leaves Veriq.
+        if self.ai_client is None:
+            raise AIError("AI_DISABLED")
+        result, mode = self.ai_client.analyze(request)
+        # Independently validate even an injected/replaced transport's returned object.
+        result = validate_result(request, result.model_dump_json().encode(), mode)
+        with self.sessions.begin() as session:
+            job = self._fenced(session, claim)
+            if job is None:
+                return False
+            snapshot = self._ai_snapshot(session, job)
+            if snapshot is None:
+                return True
+            run, current, inv = snapshot
+            run.result, run.provider_mode = result.model_dump(mode="json"), mode
+            run.completed_at = database_now(session)
+            inv.state = "FINDINGS_READY"
+            inv.bundle = {**inv.bundle, "status": "FINDINGS_READY", "ai_result": run.result}
+            job.state, job.last_error = "SUCCEEDED", None
+            job.owner, job.lease_until = None, None
+            job.updated_at = database_now(session)
+        self._ai_log(job, mode=mode)
         return True
 
     def run_once(self) -> bool:
@@ -190,6 +315,8 @@ class Worker:
             return False
         try:
             self.finish(claim)
+        except AIError as error:
+            self.fail(claim, error.code)
         except Exception:
             # Do not persist/log raw adapter/driver text or secrets. Claim failures propagate.
             self.fail(claim)

@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import logging
 import os
 import secrets
 import time
@@ -17,6 +18,7 @@ from veriq_cedar.cedar.complaints.delivery import ComplaintDelivery
 from veriq_cedar.platform.database.session import DatabaseDomain, DatabaseRegistry
 from veriq_cedar.platform.logging import configure_logging
 from veriq_cedar.platform.settings import MigrationSettings, Settings
+from veriq_cedar.veriq.ai.client import AIClient
 from veriq_cedar.veriq.investigations.cases import CaseReceiver
 from veriq_cedar.veriq.investigations.worker import Worker
 from veriq_cedar.veriq.operations.service import database_now
@@ -36,11 +38,34 @@ def mint_staff(session, bank="CED"):
     return token
 
 
-def components(registry):
+def configured_ai(settings):
+    if (
+        settings.ai_enabled
+        and settings.ai_base_url
+        and settings.ai_service_key
+        and settings.ai_service_key.get_secret_value().strip()
+    ):
+        return AIClient(
+            settings.ai_base_url.get_secret_value(),
+            settings.ai_service_key.get_secret_value(),
+            settings.ai_timeout_seconds,
+        )
+    if settings.ai_enabled:
+        logging.getLogger("veriq_cedar.veriq.ai").warning(
+            "case_ai.unconfigured", extra={"error_code": "AI_UNCONFIGURED"}
+        )
+    return None
+
+
+def components(registry, ai_client=None):
     v = registry.sessions[DatabaseDomain.VERIQ]
     c = registry.sessions[DatabaseDomain.CEDAR]
     return ComplaintDelivery(c, CaseReceiver(v)), Worker(
-        v, "CED", "pitch-worker-" + secrets.token_hex(6), CedarResultSink(c, "CED")
+        v,
+        "CED",
+        "pitch-worker-" + secrets.token_hex(6),
+        CedarResultSink(c, "CED"),
+        ai_client=ai_client,
     )
 
 
@@ -55,7 +80,7 @@ def main():
         registry = DatabaseRegistry(settings)
         try:
             registry.check_ready()
-            delivery, worker = components(registry)
+            delivery, worker = components(registry, configured_ai(settings))
             while True:
                 delivered = delivery.run_once()
                 worked = worker.run_once()

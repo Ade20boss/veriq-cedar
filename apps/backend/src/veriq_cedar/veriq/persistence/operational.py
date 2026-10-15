@@ -110,7 +110,7 @@ class Job(Identity, VeriqBase):
             ["veriq.case_investigations.bank_id", "veriq.case_investigations.id"],
         ),
         CheckConstraint(
-            "(kind='CASE_ANALYSIS' AND investigation_id IS NULL "
+            "(kind IN ('CASE_ANALYSIS','CASE_AI') AND investigation_id IS NULL "
             "AND case_investigation_id IS NOT NULL) OR "
             "(kind IN ('INCIDENT_ANALYSIS','RESULT_DELIVERY') "
             "AND investigation_id IS NOT NULL AND case_investigation_id IS NULL)",

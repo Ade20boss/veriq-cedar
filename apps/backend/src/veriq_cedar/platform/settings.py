@@ -1,6 +1,7 @@
 """Validate environment without logging credentials; migration access is CLI-only."""
 
 from typing import Literal
+from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -46,6 +47,35 @@ class Settings(EnvironmentSettings):
     db_pool_timeout_seconds: int = Field(
         default=2, ge=1, le=10, validation_alias="DB_POOL_TIMEOUT_SECONDS"
     )
+
+    ai_enabled: bool = Field(default=False, validation_alias="AI_ENABLED")
+    ai_base_url: SecretStr | None = Field(default=None, validation_alias="AI_BASE_URL")
+    ai_service_key: SecretStr | None = Field(default=None, validation_alias="AI_SERVICE_KEY")
+    ai_timeout_seconds: float = Field(
+        default=5, ge=0.1, le=20, validation_alias="AI_TIMEOUT_SECONDS"
+    )
+
+    @field_validator("ai_base_url")
+    @classmethod
+    def private_ai_url(cls, value):
+        if value is not None:
+            try:
+                url = urlsplit(value.get_secret_value())
+                valid = (
+                    url.scheme in {"http", "https"}
+                    and url.hostname
+                    and not url.username
+                    and not url.password
+                    and not url.query
+                    and not url.fragment
+                    and url.path in {"", "/"}
+                    and url.port != 0
+                )
+            except ValueError:
+                valid = False
+            if not valid:
+                raise ValueError("must be an HTTP service origin without credentials or path")
+        return value
 
     @field_validator("cedar_database_url", "veriq_database_url", "simulator_database_url")
     @classmethod

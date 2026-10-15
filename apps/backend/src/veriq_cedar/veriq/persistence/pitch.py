@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, UniqueConstraint
+from sqlalchemy import DateTime, ForeignKeyConstraint, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -35,3 +35,28 @@ class CaseReceipt(Identity, VeriqBase):
     event_id: Mapped[str] = mapped_column(String(256))
     digest: Mapped[str] = mapped_column(String(64))
     payload: Mapped[dict] = mapped_column(JSONB)
+
+
+class CaseAI(Identity, VeriqBase):
+    """Immutable input snapshot and accepted result/provenance for one durable AI job."""
+
+    __tablename__ = "case_ai_runs"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["bank_id", "id"], ["veriq.investigation_jobs.bank_id", "veriq.investigation_jobs.id"]
+        ),
+        ForeignKeyConstraint(
+            ["bank_id", "case_investigation_id"],
+            ["veriq.case_investigations.bank_id", "veriq.case_investigations.id"],
+        ),
+        UniqueConstraint("bank_id", "case_investigation_id", "revision"),
+    )
+    case_investigation_id: Mapped[str] = mapped_column(String(160))
+    revision: Mapped[int] = mapped_column(Integer)
+    request: Mapped[dict] = mapped_column(JSONB)
+    request_digest: Mapped[str] = mapped_column(String(64))
+    bundle_digest: Mapped[str] = mapped_column(String(64))
+    result: Mapped[dict | None] = mapped_column(JSONB(none_as_null=True), nullable=True)
+    provider_mode: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
