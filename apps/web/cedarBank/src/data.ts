@@ -1,36 +1,12 @@
-export type Scenario =
-  | "success"
-  | "delay"
-  | "uncertain"
-  | "timeout"
-  | "suspected-disruption"
-  | "confirmed-disruption"
-  | "complaint-credit"
-  | "credit-during-investigation"
-  | "failed"
-  | "reversal"
+export type Scenario = "success" | "delay" | "uncertain" | "timeout" | "suspected-disruption" | "confirmed-disruption" | "complaint-credit" | "credit-during-investigation" | "failed" | "reversal"
 
-export type TransactionStatus =
-  | "Completed"
-  | "Processing"
-  | "Delayed"
-  | "Outcome unknown"
-  | "Failed"
-  | "Reversal posted"
+export type TransactionStatus = "Completed" | "Processing" | "Delayed" | "Outcome unknown" | "Failed" | "Reversal posted"
 
 export type EvidenceRecord = {
   id: string
   transactionId: string
   source: "Cedar ledger" | "Payment gateway" | "Operations monitoring" | "Authorized status service"
-  eventType:
-    | "debit_recorded"
-    | "instruction_acknowledged"
-    | "response_timeout"
-    | "route_degradation_observed"
-    | "incident_confirmed"
-    | "credit_confirmed"
-    | "failure_confirmed"
-    | "reversal_confirmed"
+  eventType: "debit_recorded" | "instruction_acknowledged" | "response_timeout" | "route_degradation_observed" | "incident_confirmed" | "credit_confirmed" | "failure_confirmed" | "reversal_confirmed"
   timestamp: string
   details: string
   authority: "verified" | "observed" | "hypothesis"
@@ -54,6 +30,9 @@ export type Transaction = {
   incidentStatus?: "none" | "suspected" | "confirmed"
   explanationLevel?: 1 | 2 | 3
   lastVerifiedUpdate?: string
+  reference?: string
+  processingStage?: string
+  updatedAt?: string
 }
 
 export type CaseEvent = {
@@ -73,12 +52,7 @@ export type CaseRecord = {
   updatedAt: string
   status: "Evidence review" | "Outcome verified"
   resolved: boolean
-  finding:
-    | "No cause identified yet"
-    | "Possible processing issue"
-    | "Suspected service disruption"
-    | "Verified technical issue"
-    | "Verified financial outcome"
+  finding: "No cause identified yet" | "Possible processing issue" | "Suspected service disruption" | "Verified technical issue" | "Verified financial outcome"
   nextAction: string
   events: CaseEvent[]
 }
@@ -140,10 +114,26 @@ export const baseTransactions: Transaction[] = [
 ]
 
 export const scenarios: { id: Scenario; label: string; detail: string }[] = [
-  { id: "success", label: "Normal success", detail: "Credit confirmed immediately" },
-  { id: "delay", label: "Brief processing delay", detail: "Processing, then confirmed credit" },
-  { id: "uncertain", label: "Prolonged uncertainty", detail: "No conclusive financial outcome" },
-  { id: "timeout", label: "Payment response timeout", detail: "Observed timeout; outcome remains unknown" },
+  {
+    id: "success",
+    label: "Normal success",
+    detail: "Credit confirmed immediately",
+  },
+  {
+    id: "delay",
+    label: "Brief processing delay",
+    detail: "Processing, then confirmed credit",
+  },
+  {
+    id: "uncertain",
+    label: "Prolonged uncertainty",
+    detail: "No conclusive financial outcome",
+  },
+  {
+    id: "timeout",
+    label: "Payment response timeout",
+    detail: "Observed timeout; outcome remains unknown",
+  },
   {
     id: "suspected-disruption",
     label: "Suspected route disruption",
@@ -164,11 +154,22 @@ export const scenarios: { id: Scenario; label: string; detail: string }[] = [
     label: "Credit during investigation",
     detail: "Later evidence updates both transfer and case",
   },
-  { id: "failed", label: "Confirmed failure", detail: "Failure confirmed by authorized evidence" },
-  { id: "reversal", label: "Reversal posted", detail: "Debit independently reversed" },
+  {
+    id: "failed",
+    label: "Confirmed failure",
+    detail: "Failure confirmed by authorized evidence",
+  },
+  {
+    id: "reversal",
+    label: "Reversal posted",
+    detail: "Debit independently reversed",
+  },
 ]
 
-export function createTransferEvidence(transactionId: string, scenario: Scenario): EvidenceRecord[] {
+export function createTransferEvidence(
+  transactionId: string,
+  scenario: Scenario,
+): EvidenceRecord[] {
   const records: EvidenceRecord[] = [
     {
       id: `${transactionId}-E1`,
@@ -190,14 +191,24 @@ export function createTransferEvidence(transactionId: string, scenario: Scenario
     },
   ]
 
-  if (["uncertain", "timeout", "suspected-disruption", "confirmed-disruption", "complaint-credit", "credit-during-investigation"].includes(scenario)) {
+  if (
+    [
+      "uncertain",
+      "timeout",
+      "suspected-disruption",
+      "confirmed-disruption",
+      "complaint-credit",
+      "credit-during-investigation",
+    ].includes(scenario)
+  ) {
     records.push({
       id: `${transactionId}-E3`,
       transactionId,
       source: "Payment gateway",
       eventType: "response_timeout",
       timestamp: "Today, 10:31 AM",
-      details: "The final payment response was not received within the expected window.",
+      details:
+        "The final payment response was not received within the expected window.",
       authority: "observed",
     })
   }
@@ -208,7 +219,8 @@ export function createTransferEvidence(transactionId: string, scenario: Scenario
       source: "Operations monitoring",
       eventType: "route_degradation_observed",
       timestamp: "Today, 10:33 AM",
-      details: "Monitoring detected unusual response delays on this payment route.",
+      details:
+        "Monitoring detected unusual response delays on this payment route.",
       authority: "hypothesis",
     })
   }
@@ -219,7 +231,8 @@ export function createTransferEvidence(transactionId: string, scenario: Scenario
       source: "Operations monitoring",
       eventType: "incident_confirmed",
       timestamp: "Today, 10:34 AM",
-      details: "Authorized operations records confirmed a temporary processing disruption.",
+      details:
+        "Authorized operations records confirmed a temporary processing disruption.",
       authority: "verified",
     })
   }
