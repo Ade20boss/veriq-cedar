@@ -1,16 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Check } from "lucide-react"
 import {
   naira,
   type CaseRecord,
   type NotificationRecord,
-  type Scenario,
   type Transaction,
 } from "../../data"
-import { accountNumber } from "./constants"
-import { BottomNav, DemoSheet } from "./components/SharedComponents"
+import { BottomNav } from "./components/SharedComponents"
 import { Login, Splash } from "./screens/AuthScreens"
 import {
   DetailsScreen,
@@ -39,6 +37,7 @@ import {
   parseNairaToKobo,
   type Account,
   type Bank,
+  type Complaint,
   type Transfer,
 } from "../../lib/api"
 
@@ -46,9 +45,6 @@ export default function CustomerApp() {
   const [screen, setScreen] = useState<Screen>("splash")
   const [previous, setPrevious] = useState<Screen>("home")
   const [balanceVisible, setBalanceVisible] = useState(true)
-  const [passwordVisible, setPasswordVisible] = useState(false)
-  const [scenario, setScenario] = useState<Scenario>("uncertain")
-  const [demoOpen, setDemoOpen] = useState(false)
   const [toast, setToast] = useState("")
   const [loading, setLoading] = useState(false)
   const [account, setAccount] = useState<Account | null>(null)
@@ -59,8 +55,7 @@ export default function CustomerApp() {
   const [bank, setBank] = useState("")
   const [recipientAccount, setRecipientAccount] = useState("")
   const [amount, setAmount] = useState("50000")
-  const [narration, setNarration] = useState("For Tolu")
-  const [pin, setPin] = useState("1234")
+  const [narration, setNarration] = useState("Demo transfer")
   const [issue, setIssue] = useState("")
   const [description, setDescription] = useState("")
   const [search, setSearch] = useState("")
@@ -70,31 +65,38 @@ export default function CustomerApp() {
   const [sessionError, setSessionError] = useState("")
   const [beneficiaryName, setBeneficiaryName] = useState("")
   const [idempotencyKey, setIdempotencyKey] = useState("")
+  const [balanceStale, setBalanceStale] = useState(false)
+  const transferInFlight = useRef(false)
 
-  useEffect(() => {
-    let cancelled = false
-    Promise.all([customerApi.getAccount(), customerApi.getBanks()])
-      .then(([nextAccount, nextBanks]) => {
-        if (cancelled) return
-        setAccount(nextAccount)
-        setBanks(nextBanks)
-        setScreen("home")
-      })
-      .catch((error: unknown) => {
-        if (cancelled) return
-        setSessionError(
-          error instanceof ApiError && error.status === 401
-            ? "A Cedar demo session is required. Start the backend with a server-provisioned cedar_demo_session cookie, then retry."
-            : error instanceof ApiError
-              ? error.message
-              : "Cedar banking is unavailable.",
-        )
-        setScreen("login")
-      })
-    return () => {
-      cancelled = true
+  const loadSession = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [nextAccount, nextBanks] = await Promise.all([
+        customerApi.getAccount(),
+        customerApi.getBanks(),
+      ])
+      setAccount(nextAccount)
+      setBanks(nextBanks)
+      setBalanceStale(false)
+      setSessionError("")
+      setScreen("home")
+    } catch (error) {
+      setSessionError(
+        error instanceof ApiError && error.status === 401
+          ? "A Cedar demo session is required or has expired. Ask the demo operator to provision it, then retry."
+          : error instanceof ApiError
+            ? error.message
+            : "Cedar banking is unavailable.",
+      )
+      setScreen("login")
+    } finally {
+      setLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    void loadSession()
+  }, [loadSession])
 
   useEffect(() => {
     if (!toast) return
@@ -111,7 +113,10 @@ export default function CustomerApp() {
     window.scrollTo(0, 0)
   }
 
-  const transferToTransaction = (transfer: Transfer): Transaction => {
+  const transferToTransaction = (
+    transfer: Transfer,
+    metadata?: Pick<Transaction, "title" | "narration">,
+  ): Transaction => {
     const status: Transaction["status"] =
       transfer.financial_outcome === "CREDIT_CONFIRMED"
         ? "Completed"
@@ -124,7 +129,7 @@ export default function CustomerApp() {
               : "Processing"
     return {
       id: transfer.id,
-      title: beneficiaryName || "Beneficiary",
+      title: metadata?.title || transfer.beneficiary_account_id,
       subtitle: `Bank transfer • ${new Date(transfer.created_at).toLocaleString()}`,
       amount: transfer.amount_kobo / 100,
       direction: "debit",
@@ -134,10 +139,11 @@ export default function CustomerApp() {
         banks.find((item) => item.bank_id === transfer.beneficiary_bank_id)
           ?.name ?? transfer.beneficiary_bank_id,
       account: transfer.beneficiary_account_id,
-      narration,
+      narration: metadata?.narration,
       reference: transfer.reference,
       processingStage: transfer.processing_stage,
       updatedAt: new Date(transfer.updated_at).toLocaleString(),
+      beneficiaryBankId: transfer.beneficiary_bank_id,
       financialOutcome:
         transfer.financial_outcome === "CREDIT_CONFIRMED"
           ? "credit_confirmed"
@@ -151,6 +157,39 @@ export default function CustomerApp() {
     }
   }
 
+  const complaintToCase = (complaint: Complaint, issueLabel: string): CaseRecord => ({
+    id: complaint.id,
+    reference: complaint.reference,
+    transactionId: complaint.transfer_id,
+    issue: issueLabel,
+    description: complaint.customer_report,
+    createdAt: new Date(complaint.created_at).toLocaleString(),
+    updatedAt: new Date(complaint.created_at).toLocaleString(),
+    status:
+      complaint.status === "WAITING_FOR_EVIDENCE"
+        ? "Waiting for evidence"
+        : complaint.status === "INVESTIGATING"
+          ? "Investigating"
+          : complaint.status === "RESOLVED"
+            ? "Resolved"
+            : "Open",
+    resolved: complaint.status === "RESOLVED",
+    finding: "No cause identified yet",
+    nextAction: complaint.customer_safe_updates.length
+      ? complaint.customer_safe_updates[complaint.customer_safe_updates.length - 1]
+      : "No customer-safe investigation update has been published yet.",
+    customerSafeUpdates: complaint.customer_safe_updates,
+    events: [
+      {
+        id: `${complaint.id}-received`,
+        title: "Complaint received",
+        detail: "Cedar stored your report and linked it to this transfer.",
+        time: new Date(complaint.created_at).toLocaleString(),
+        verified: true,
+      },
+    ],
+  })
+
   const addNotification = (notification: NotificationRecord) => {
     setNotifications((current) =>
       current.some((item) => item.id === notification.id)
@@ -160,12 +199,14 @@ export default function CustomerApp() {
   }
 
   const submitTransfer = async () => {
+    if (transferInFlight.current) return
     const amountKobo = parseNairaToKobo(amount)
     if (!amountKobo || !account) {
       setFormError("Enter a valid amount.")
       return
     }
     setFormError("")
+    transferInFlight.current = true
     setLoading(true)
     setScreen("submitting")
     const key = idempotencyKey || crypto.randomUUID()
@@ -180,19 +221,32 @@ export default function CustomerApp() {
         },
         key,
       )
-      const mapped = transferToTransaction(result)
+      const mapped = transferToTransaction(result, {
+        title: beneficiaryName,
+        narration,
+      })
       setTransactions((current) => [mapped, ...current])
       setSelectedId(mapped.id)
-      setLoading(false)
+      setIdempotencyKey("")
+      try {
+        setAccount(await customerApi.getAccount())
+        setBalanceStale(false)
+      } catch {
+        setBalanceStale(true)
+      }
       setScreen("status")
     } catch (error) {
-      setLoading(false)
       setScreen("authorize")
       setFormError(
-        error instanceof ApiError
+        error instanceof ApiError && error.status === 0
+          ? "The transfer response is uncertain. Retry this same transfer to safely reuse its idempotency key."
+          : error instanceof ApiError
           ? error.message
           : "The transfer response is ambiguous. Retry with the same request.",
       )
+    } finally {
+      transferInFlight.current = false
+      setLoading(false)
     }
   }
 
@@ -203,7 +257,7 @@ export default function CustomerApp() {
       const result = await customerApi.getTransfer(selected.id)
       setTransactions((items) =>
         items.map((item) =>
-          item.id === selected.id ? transferToTransaction(result) : item,
+          item.id === selected.id ? transferToTransaction(result, item) : item,
         ),
       )
       setToast("Latest status loaded")
@@ -218,7 +272,7 @@ export default function CustomerApp() {
     }
   }
 
-  const submitComplaint = () => {
+  const submitComplaint = async () => {
     if (!selected) return
     if (!issue) {
       setFormError("Select the option that best describes the issue")
@@ -235,62 +289,51 @@ export default function CustomerApp() {
       navigate("case")
       return
     }
-    const caseId = `VRQ-${new Date().getFullYear()}-${String(cases.length + 1842).padStart(6, "0")}`
-    const caseRecord: CaseRecord = {
-      id: caseId,
-      transactionId: selected.id,
-      issue,
-      description,
-      createdAt: "Today, 10:35 AM",
-      updatedAt: "Today, 10:36 AM",
-      status: "Evidence review",
-      resolved: false,
-      finding:
-        selected.incidentStatus === "suspected"
-          ? "Suspected service disruption"
-          : selected.incidentStatus === "confirmed"
-            ? "Verified technical issue"
-            : selected.evidence?.some(
-                  (item) => item.eventType === "response_timeout",
-                )
-              ? "Possible processing issue"
-              : "No cause identified yet",
-      nextAction:
-        "Cedar needs to request the latest authorized payment status before the financial outcome can be established.",
-      events: [
-        {
-          id: `${caseId}-received`,
-          title: "Complaint received",
-          detail: "Your report was saved and linked to the transaction.",
-          time: "10:35 AM",
-          verified: true,
-        },
-        {
-          id: `${caseId}-matched`,
-          title: "Transaction reference matched",
-          detail: "The transaction was matched to your Cedar account.",
-          time: "10:35 AM",
-          verified: true,
-        },
-        {
-          id: `${caseId}-debit`,
-          title: "Sender debit verified",
-          detail: "The debit and submitted payment instruction were confirmed.",
-          time: "10:36 AM",
-          verified: true,
-        },
-        {
-          id: `${caseId}-verification`,
-          title: "Additional status verification requested",
-          detail: "Awaiting an authorized downstream status response.",
-          time: "Current",
-          verified: false,
-        },
-      ],
+    const report = [issue, description.trim()].filter(Boolean).join(" — ")
+    if (report.length < 5) {
+      setFormError("Describe the issue in at least 5 characters")
+      return
     }
-    setCases((current) => [caseRecord, ...current])
-    setFormError("")
-    navigate("complaint-confirmation")
+    setLoading(true)
+    try {
+      const complaint = await customerApi.createComplaint({
+        transfer_id: selected.id,
+        description: report,
+      })
+      const caseRecord = complaintToCase(complaint, issue)
+      setCases((current) => [caseRecord, ...current])
+      setFormError("")
+      navigate("complaint-confirmation")
+    } catch (error) {
+      setFormError(
+        error instanceof ApiError
+          ? error.message
+          : "The complaint could not be saved.",
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const refreshComplaint = async () => {
+    const current = cases.find((item) => item.transactionId === selectedId)
+    if (!current) return
+    setLoading(true)
+    try {
+      const complaint = await customerApi.getComplaint(current.id)
+      setCases((items) =>
+        items.map((item) =>
+          item.id === current.id
+            ? complaintToCase(complaint, item.issue)
+            : item,
+        ),
+      )
+      setToast("Complaint status refreshed")
+    } catch (error) {
+      setToast(error instanceof ApiError ? error.message : "Complaint status could not be loaded")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const openDetails = (id: string) => {
@@ -302,13 +345,8 @@ export default function CustomerApp() {
   if (screen === "login")
     return (
       <Login
-        passwordVisible={passwordVisible}
-        setPasswordVisible={setPasswordVisible}
-        onLogin={() => {
-          setSessionError(
-            "A server-provisioned Cedar demo session is required; retry after starting the backend session.",
-          )
-        }}
+        onLogin={() => void loadSession()}
+        loading={loading}
         error={sessionError}
       />
     )
@@ -326,11 +364,13 @@ export default function CustomerApp() {
             onNavigate={navigate}
             openDetails={openDetails}
             copyAccount={() => {
-              navigator.clipboard?.writeText(accountNumber.replace(/ /g, ""))
+              navigator.clipboard?.writeText(account?.display_account_id ?? "")
               setToast("Account number copied")
             }}
-            openDemo={() => setDemoOpen(true)}
             hasUpdate={notifications.some((item) => !item.read)}
+            ownerName={account?.owner_display_name ?? "Cedar customer"}
+            displayAccountId={account?.display_account_id ?? "Unavailable"}
+            balanceStale={balanceStale}
           />
         )}
         {screen === "transfer" && (
@@ -354,7 +394,10 @@ export default function CustomerApp() {
               setIdempotencyKey("")
             }}
             narration={narration}
-            setNarration={setNarration}
+            setNarration={(value) => {
+              setNarration(value)
+              setIdempotencyKey("")
+            }}
             resolved={resolved}
             beneficiaryName={beneficiaryName}
             banks={banks}
@@ -395,6 +438,7 @@ export default function CustomerApp() {
                 navigate("review")
               }
             }}
+            sourceAccount={account?.display_account_id ?? "Cedar account"}
           />
         )}
         {screen === "review" && (
@@ -404,6 +448,7 @@ export default function CustomerApp() {
             amount={Number(amount)}
             narration={narration}
             beneficiaryName={beneficiaryName}
+            sourceAccount={account?.display_account_id ?? "Cedar account"}
             onBack={() => navigate("transfer")}
             onConfirm={() => navigate("authorize")}
           />
@@ -411,8 +456,7 @@ export default function CustomerApp() {
         {screen === "authorize" && (
           <AuthorizeScreen
             amount={Number(amount)}
-            pin={pin}
-            setPin={setPin}
+            beneficiaryName={beneficiaryName}
             error={formError}
             loading={loading}
             onBack={() => navigate("review")}
@@ -422,8 +466,8 @@ export default function CustomerApp() {
         {screen === "submitting" && (
           <ProcessingTransferScreen
             amount={Number(amount)}
-            recipient="Tolu Adebayo"
-            bank={bank}
+            recipient={beneficiaryName}
+            bank={banks.find((item) => item.bank_id === bank)?.name ?? bank}
           />
         )}
         {screen === "status" && selected && (
@@ -484,8 +528,9 @@ export default function CustomerApp() {
             setDescription={setDescription}
             error={formError}
             onBack={() => navigate("details")}
-            onSubmit={submitComplaint}
+            onSubmit={() => void submitComplaint()}
             onViewCase={() => navigate("case")}
+            loading={loading}
           />
         )}
         {screen === "complaint-confirmation" && cases[0] && selected && (
@@ -515,7 +560,7 @@ export default function CustomerApp() {
               record={cases.find((item) => item.transactionId === selectedId)!}
               transaction={selected}
               loading={loading}
-              onRefresh={checkStatus}
+              onRefresh={() => void refreshComplaint()}
               onBack={() => navigate("complaints")}
               onTransaction={() => navigate("details")}
               onSupport={() => navigate("support")}
@@ -537,13 +582,6 @@ export default function CustomerApp() {
           />
         )}
         {showNav && <BottomNav current={screen} onNavigate={navigate} />}
-        {demoOpen && (
-          <DemoSheet
-            scenario={scenario}
-            setScenario={setScenario}
-            close={() => setDemoOpen(false)}
-          />
-        )}
         {toast && (
           <div className="toast">
             <Check size={16} />

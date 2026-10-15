@@ -37,8 +37,10 @@ export function HomeScreen({
   onNavigate,
   openDetails,
   copyAccount,
-  openDemo,
   hasUpdate,
+  ownerName,
+  displayAccountId,
+  balanceStale,
 }: {
   balance: number
   balanceVisible: boolean
@@ -47,8 +49,10 @@ export function HomeScreen({
   onNavigate: (s: Screen) => void
   openDetails: (id: string) => void
   copyAccount: () => void
-  openDemo: () => void
   hasUpdate: boolean
+  ownerName: string
+  displayAccountId: string
+  balanceStale: boolean
 }) {
   const quickActions: Array<{
     Icon: LucideIcon
@@ -76,10 +80,10 @@ export function HomeScreen({
   return (
     <div className="screen home-screen">
       <header className="home-header">
-        <div className="avatar small">AO</div>
+        <div className="avatar small">{ownerName.split(" ").map((part) => part[0]).join("").slice(0, 2)}</div>
         <div className="grow">
           <span>Good morning</span>
-          <strong>Ada</strong>
+          <strong>{ownerName}</strong>
         </div>
         <button
           className="icon-button tinted"
@@ -89,12 +93,6 @@ export function HomeScreen({
           {hasUpdate && <i className="notification-dot" />}
         </button>
       </header>
-      <button className="demo-banner" onClick={openDemo}>
-        <span>
-          <SlidersHorizontal size={16} /> Demo scenario controls
-        </span>
-        <ChevronDown size={17} />
-      </button>
       <section className="balance-card">
         <div className="balance-orb one" />
         <div className="balance-orb two" />
@@ -110,7 +108,7 @@ export function HomeScreen({
         <div className="account-meta">
           <span>Cedar Everyday</span>
           <i />
-          <span>103 ••• 9104</span>
+          <span>{displayAccountId}</span>
         </div>
         <div className="balance-actions">
           <button onClick={copyAccount}>
@@ -118,6 +116,7 @@ export function HomeScreen({
           </button>
         </div>
       </section>
+      {balanceStale && <p className="legal-note">Balance refresh is unavailable; the displayed server balance may be stale.</p>}
       <section>
         <div className="quick-grid">
           {quickActions.map(({ Icon, label, action }) => (
@@ -303,7 +302,7 @@ export function DetailsScreen({
             value={
               transaction.account
                 ? `••••••${transaction.account.slice(-4)}`
-                : "•••• 1042"
+                : "Not available"
             }
           />
           <InfoRow label="Date & time" value={transaction.date} />

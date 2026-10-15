@@ -129,6 +129,7 @@ export function ReportScreen({
     onBack,
     onSubmit,
     onViewCase,
+    loading,
 }: {
     transaction: Transaction
     existingCase?: CaseRecord
@@ -140,6 +141,7 @@ export function ReportScreen({
     onBack: () => void
     onSubmit: () => void
     onViewCase: () => void
+    loading: boolean
 }) {
     return (
         <div className="screen">
@@ -214,7 +216,7 @@ export function ReportScreen({
                         even if investigation services are temporarily unavailable.
                     </p>
                 </div>
-                <Button onClick={onSubmit}>Submit complaint</Button>
+                <Button loading={loading} onClick={onSubmit}>Submit complaint</Button>
                 <p className="powered centered">
                     Investigation workflow powered by <strong>Veriq</strong>
                 </p>
@@ -243,13 +245,13 @@ export function ComplaintConfirmation({
                 <span className="eyebrow">COMPLAINT RECEIVED</span>
                 <h1>Your complaint has been received.</h1>
                 <p>
-                    We've securely recorded your report and started reviewing the
-                    available transaction evidence.
+                    Cedar securely recorded your report and linked it to the
+                    selected transaction. Investigation delivery may still be pending.
                 </p>
                 <div className="reference-card">
                     <small>CASE REFERENCE</small>
-                    <strong>{record.id}</strong>
-                    <button onClick={() => navigator.clipboard?.writeText(record.id)}>
+                    <strong>{record.reference || record.id}</strong>
+                    <button onClick={() => navigator.clipboard?.writeText(record.reference || record.id)}>
                         <Copy size={16} /> Copy
                     </button>
                 </div>
@@ -260,13 +262,13 @@ export function ComplaintConfirmation({
                     />
                     <InfoRow label="Issue category" value={record.issue} />
                     <InfoRow label="Created" value={record.createdAt} />
-                    <InfoRow label="Status" value="Evidence review" />
+                    <InfoRow label="Status" value={record.status} />
                 </div>
                 <div className="info-box">
                     <Clock3 size={18} />
                     <p>
-                        We'll notify you when there is a meaningful, verified update. We
-                        won't promise an outcome before the evidence is clear.
+                        No customer-safe update has been published yet. Refresh this
+                        complaint to check Cedar's latest saved status.
                     </p>
                 </div>
                 <Button onClick={onTrack}>
@@ -362,7 +364,7 @@ export function CaseScreen({
                 <div className="case-summary">
                     <div>
                         <small>CASE REFERENCE</small>
-                        <strong>{record.id}</strong>
+                        <strong>{record.reference || record.id}</strong>
                     </div>
                     <StatusPill status={record.status} />
                     <h2>{naira(transaction.amount)}</h2>
@@ -371,11 +373,11 @@ export function CaseScreen({
                     </p>
                 </div>
                 <section className="investigation-summary">
-                    <span>INVESTIGATION SUMMARY</span>
+                    <span>CEDAR COMPLAINT STATUS</span>
                     <p>
-                        {record.resolved
-                            ? `The debit and beneficiary credit for this ${naira(transaction.amount)} transfer have both been verified. The original complaint history remains available.`
-                            : `We've confirmed that ${naira(transaction.amount)} was debited and the payment instruction was acknowledged. The recipient's credit has not yet been verified.`}
+                        {record.customerSafeUpdates?.length
+                            ? record.customerSafeUpdates[record.customerSafeUpdates.length - 1]
+                            : "Cedar has stored this complaint. No customer-safe investigation update has been published."}
                     </p>
                     <small>Last meaningful update · {record.updatedAt}</small>
                 </section>
@@ -384,11 +386,7 @@ export function CaseScreen({
                         <ShieldCheck size={20} />
                         <span>CURRENT FINDING · {record.finding.toUpperCase()}</span>
                     </div>
-                    <p>
-                        {record.resolved
-                            ? "Authorized evidence confirms that Tolu Adebayo was credited. Your transaction record has been updated."
-                            : `We've confirmed that ${naira(transaction.amount)} was debited from your account. We're still checking whether the recipient was credited.`}
-                    </p>
+                    <p>The transfer remains {transaction.financialOutcome?.replaceAll("_", " ") || "unknown"}. Complaint status does not independently change its financial outcome.</p>
                 </div>
                 <div className="timeline-card">
                     <h3>What has been checked</h3>

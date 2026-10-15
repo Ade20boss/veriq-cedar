@@ -24,6 +24,15 @@ export type Transfer = {
   created_at: string
   updated_at: string
 }
+export type Complaint = {
+  id: string
+  reference: string
+  transfer_id: string
+  customer_report: string
+  status: "OPEN" | "INVESTIGATING" | "WAITING_FOR_EVIDENCE" | "RESOLVED"
+  customer_safe_updates: string[]
+  created_at: string
+}
 
 export class ApiError extends Error {
   constructor(
@@ -36,16 +45,14 @@ export class ApiError extends Error {
   }
 }
 
-const apiBaseUrl = (
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000"
-).replace(/\/$/, "")
+const apiBaseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").replace(/\/$/, "")
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   let response: Response
   try {
     response = await fetch(`${apiBaseUrl}${path}`, {
       ...init,
-      credentials: "include",
+      credentials: "same-origin",
       headers: { Accept: "application/json", ...init.headers },
     })
   } catch {
@@ -100,6 +107,14 @@ export const customerApi = {
     }),
   getTransfer: (transferId: string) =>
     request<Transfer>(`/v1/cedar/transfers/${encodeURIComponent(transferId)}`),
+  createComplaint: (input: { transfer_id: string; description: string }) =>
+    request<Complaint>("/v1/cedar/complaints", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    }),
+  getComplaint: (caseId: string) =>
+    request<Complaint>(`/v1/cedar/complaints/${encodeURIComponent(caseId)}`),
 }
 
 export function parseNairaToKobo(value: string): number | null {

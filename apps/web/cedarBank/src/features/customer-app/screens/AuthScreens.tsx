@@ -1,4 +1,4 @@
-import { ArrowRight, Eye, EyeOff, Fingerprint, ShieldCheck } from "lucide-react"
+import { ArrowRight, Fingerprint, ShieldCheck } from "lucide-react"
 import { Button, CedarMark, Field, TextInput } from "../../../ui"
 
 export function Splash() {
@@ -13,14 +13,12 @@ export function Splash() {
 }
 
 export function Login({
-  passwordVisible,
-  setPasswordVisible,
   onLogin,
+  loading,
   error,
 }: {
-  passwordVisible: boolean
-  setPasswordVisible: (v: boolean) => void
   onLogin: () => void
+  loading?: boolean
   error?: string
 }) {
   return (
@@ -33,9 +31,7 @@ export function Login({
         <div className="welcome">
           <span className="eyebrow light">WELCOME BACK</span>
           <h1>
-            Good to see you,
-            <br />
-            Ada.
+            Cedar customer session
           </h1>
           <p>
             {error ||
@@ -45,10 +41,10 @@ export function Login({
       </div>
       <section className="login-card">
         <div className="customer-row">
-          <div className="avatar">AO</div>
+          <div className="avatar">CB</div>
           <div>
-            <strong>Ada Okafor</strong>
-            <span>Customer ID •••• 4102</span>
+            <strong>Server-provisioned session</strong>
+            <span>No browser credentials are collected</span>
           </div>
           <button className="text-button">Switch</button>
         </div>
@@ -61,7 +57,7 @@ export function Login({
             />
           </div>
         </Field>
-        <Button onClick={onLogin}>
+        <Button loading={loading} onClick={onLogin}>
                     Retry session check <ArrowRight size={18} />
         </Button>
         <button className="biometric" onClick={onLogin}>

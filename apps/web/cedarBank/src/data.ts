@@ -33,6 +33,7 @@ export type Transaction = {
   reference?: string
   processingStage?: string
   updatedAt?: string
+  beneficiaryBankId?: string
 }
 
 export type CaseEvent = {
@@ -45,16 +46,18 @@ export type CaseEvent = {
 
 export type CaseRecord = {
   id: string
+  reference?: string
   transactionId: string
   issue: string
   description: string
   createdAt: string
   updatedAt: string
-  status: "Evidence review" | "Outcome verified"
+  status: "Open" | "Investigating" | "Waiting for evidence" | "Resolved" | "Evidence review" | "Outcome verified"
   resolved: boolean
   finding: "No cause identified yet" | "Possible processing issue" | "Suspected service disruption" | "Verified technical issue" | "Verified financial outcome"
   nextAction: string
   events: CaseEvent[]
+  customerSafeUpdates?: string[]
 }
 
 export type NotificationRecord = {

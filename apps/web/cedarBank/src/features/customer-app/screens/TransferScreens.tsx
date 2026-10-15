@@ -51,8 +51,8 @@ export function ProcessingTransferScreen({
           <div className="complete">
             <Check size={13} />
             <span>
-              <strong>Authorization confirmed</strong>
-              <small>Your demo passcode was accepted</small>
+              <strong>Session confirmed</strong>
+              <small>Your server-provisioned customer session is in use</small>
             </span>
           </div>
           <div className="active">
@@ -96,6 +96,7 @@ export function TransferScreen(props: {
   error: string
   onBack: () => void
   onContinue: () => void
+  sourceAccount: string
 }) {
   return (
     <div className="screen">
@@ -107,7 +108,7 @@ export function TransferScreen(props: {
           </div>
           <div>
             <span>FROM</span>
-            <strong>Cedar Current • 9104</strong>
+            <strong>{props.sourceAccount}</strong>
             <small>{naira(props.balance)} available</small>
           </div>
           <ChevronDown size={18} />
@@ -195,6 +196,7 @@ export function ReviewScreen({
   amount,
   narration,
   beneficiaryName,
+  sourceAccount,
   onBack,
   onConfirm,
 }: {
@@ -203,6 +205,7 @@ export function ReviewScreen({
   amount: number
   narration: string
   beneficiaryName: string
+  sourceAccount: string
   onBack: () => void
   onConfirm: () => void
 }) {
@@ -213,14 +216,14 @@ export function ReviewScreen({
         <div className="review-hero">
           <span>YOU'RE SENDING</span>
           <strong>{naira(amount)}</strong>
-          <div className="recipient-avatar">TA</div>
+          <div className="recipient-avatar">{beneficiaryName.split(" ").map((part) => part[0]).join("").slice(0, 2)}</div>
           <h2>{beneficiaryName}</h2>
           <p>
             {bank} · ••••••{account.slice(-4)}
           </p>
         </div>
         <div className="detail-card">
-          <InfoRow label="From" value="Cedar Current • 9104" />
+          <InfoRow label="From" value={sourceAccount} />
           <InfoRow label="Narration" value={narration || "Not provided"} />
           <InfoRow label="Transfer fee" value="₦0.00 (fictional)" />
           <div className="divider" />
@@ -244,16 +247,14 @@ export function ReviewScreen({
 
 export function AuthorizeScreen({
   amount,
-  pin,
-  setPin,
+  beneficiaryName,
   error,
   loading,
   onBack,
   onSubmit,
 }: {
   amount: number
-  pin: string
-  setPin: (v: string) => void
+  beneficiaryName: string
   error: string
   loading: boolean
   onBack: () => void
@@ -268,36 +269,19 @@ export function AuthorizeScreen({
         </div>
         <h1>Authorize {naira(amount)}</h1>
         <p>
-          Enter the 4-digit demo passcode to approve this simulated transfer to
-          Tolu Adebayo.
+          Confirm this fictional transfer to {beneficiaryName}. The backend
+          authenticates the existing server-provisioned session; this screen does
+          not verify a banking PIN.
         </p>
-        <div className="pin-display">
-          {[0, 1, 2, 3].map((n) => (
-            <span key={n} className={pin.length > n ? "filled" : ""} />
-          ))}
-        </div>
-        <TextInput
-          className="hidden-pin"
-          aria-label="Demo passcode"
-          autoFocus
-          inputMode="numeric"
-          maxLength={4}
-          value={pin}
-          onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-        />
-        <div className="demo-code">
-          DEMO PASSCODE <strong>1234</strong>
-        </div>
         {error && <span className="field-error centered">{error}</span>}
         <Button
           loading={loading}
-          disabled={pin.length !== 4}
           onClick={onSubmit}
         >
           {loading ? "Submitting securely…" : "Authorize transfer"}
         </Button>
         <p className="safety centered">
-          <ShieldCheck size={15} /> Never use a real banking PIN in this demo.
+          <ShieldCheck size={15} /> Never enter a real banking PIN in this demo.
         </p>
       </div>
     </div>
@@ -380,7 +364,7 @@ export function StatusScreen({
         <div className="amount-summary">
           <span>AMOUNT</span>
           <strong>{naira(transaction.amount)}</strong>
-          <p>Tolu Adebayo · {transaction.bank}</p>
+          <p>{transaction.title} · {transaction.bank}</p>
           <small>
             {transaction.reference || transaction.id} ·{" "}
             {transaction.processingStage || transaction.status}

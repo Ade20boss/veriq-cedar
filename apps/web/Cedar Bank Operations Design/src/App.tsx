@@ -3,11 +3,22 @@
 import {
   FormEvent,
   ReactNode,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react"
+import {
+  VeriqApiError,
+  veriqApi,
+  type ContextSummary,
+  type Incident,
+  type Investigation,
+  type KnowledgeRelationship,
+  type RouteHealth,
+  type SourceListItem,
+} from "./lib/veriq-api"
 
 type RoleKey = "sarah" | "michael" | "bob" | "grace"
 type Screen = "signin" | "loading" | "app"
@@ -4456,7 +4467,169 @@ function TransactionEvidence({
   )
 }
 
-function VeriqWorkbench({
+function LiveVeriqWorkspace({ openCase }: { openCase: (caseId: string) => void }) {
+  const [operations, setOperations] = useState<RouteHealth[]>([])
+  const [incidents, setIncidents] = useState<Incident[]>([])
+  const [sources, setSources] = useState<SourceListItem[]>([])
+  const [context, setContext] = useState<ContextSummary | null>(null)
+  const [relationships, setRelationships] = useState<KnowledgeRelationship[]>([])
+  const [caseId, setCaseId] = useState("")
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError("")
+    try {
+      const [nextOperations, nextIncidents, nextSources, nextContext, nextRelationships] = await Promise.all([
+        veriqApi.operations(),
+        veriqApi.incidents(),
+        veriqApi.sources(),
+        veriqApi.context(),
+        veriqApi.relationships(),
+      ])
+      setOperations(nextOperations)
+      setIncidents(nextIncidents)
+      setSources(nextSources)
+      setContext(nextContext)
+      setRelationships(nextRelationships)
+    } catch (caught) {
+      setError(caught instanceof VeriqApiError && caught.status === 401
+        ? "An investigator session is required or has expired. Ask the demo operator to provision the private staff cookie."
+        : caught instanceof Error ? caught.message : "Veriq data could not be loaded.")
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    let active = true
+    Promise.all([
+      veriqApi.operations(),
+      veriqApi.incidents(),
+      veriqApi.sources(),
+      veriqApi.context(),
+      veriqApi.relationships(),
+    ]).then(([nextOperations, nextIncidents, nextSources, nextContext, nextRelationships]) => {
+      if (!active) return
+      setOperations(nextOperations)
+      setIncidents(nextIncidents)
+      setSources(nextSources)
+      setContext(nextContext)
+      setRelationships(nextRelationships)
+    }).catch((caught) => {
+      if (!active) return
+      setError(caught instanceof VeriqApiError && caught.status === 401
+        ? "An investigator session is required or has expired. Ask the demo operator to provision the private staff cookie."
+        : caught instanceof Error ? caught.message : "Veriq data could not be loaded.")
+    }).finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
+  }, [])
+
+  const upload = async (file: File) => {
+    setUploading(true)
+    setError("")
+    try {
+      const result = await veriqApi.uploadSource(file)
+      if (result.status === "FAILED") setError(`${file.name} was accepted but parsing failed.`)
+      await load()
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Source upload failed.")
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <>
+      <div className="external-app-banner">
+        <span className="veriq-logo"><Icon name="shield" size={18} /></span>
+        <div><strong>Veriq Workbench · Live institutional intelligence</strong><p>Bank-scoped data from the persisted CED context. AI findings and human approvals are not enabled.</p></div>
+        <Button variant="secondary" onClick={() => void load()}>{loading ? "Loading…" : "Refresh"}</Button>
+      </div>
+      {error && <section className="content-card"><strong>{error}</strong></section>}
+      <section className="page-heading"><div><p className="eyebrow teal">Operational monitoring</p><h1>Cedar intelligence workspace</h1><p>Current route health, suspected incidents, documented context and exact case lookup.</p></div></section>
+      <div className="metrics-grid">
+        <MetricCard label="Routes" value={String(operations.length)} meta={operations.some((item) => item.status === "DEGRADED") ? "Degraded route observed" : "No current degraded route"} />
+        <MetricCard label="Incidents" value={String(incidents.length)} meta="Persisted operational incidents" tone="amber" />
+        <MetricCard label="Sources" value={String(context?.source_count ?? sources.length)} meta={`Context version ${context?.context_version ?? 0}`} />
+        <MetricCard label="Relationships" value={String(relationships.length)} meta="Documented, not verified" />
+      </div>
+      <section className="content-card operations-table-card">
+        <div className="card-header"><div><h2>Route health</h2><p>Stale observations are reported as insufficient data</p></div></div>
+        <table className="operations-table"><thead><tr><th>Route</th><th>Service</th><th>Window</th><th>Baseline</th><th>Status</th></tr></thead><tbody>{operations.map((item) => <tr key={item.route_id}><td><strong className="case-id">{item.route_id}</strong></td><td>{item.service_id || "—"}</td><td>{item.window_timeouts}/{item.window_attempts} timeouts</td><td>{item.baseline_timeouts}/{item.baseline_attempts} timeouts</td><td><Badge tone={item.status === "DEGRADED" ? "warning" : item.status === "NORMAL" ? "success" : "neutral"}>{item.status.replace(/_/g, " ")}</Badge></td></tr>)}</tbody></table>
+      </section>
+      <section className="content-card operations-table-card">
+        <div className="card-header"><div><h2>Incidents</h2><p>Threshold crossings are suspected route events, not verified causes</p></div></div>
+        <table className="operations-table"><thead><tr><th>ID</th><th>Route</th><th>Status</th><th>Observed</th><th>Cases</th></tr></thead><tbody>{incidents.map((item) => <tr key={item.id}><td><strong className="case-id">{item.id}</strong></td><td>{item.route_id}</td><td>{item.status}</td><td>{new Date(item.first_observed_at).toLocaleString()}</td><td>{item.case_ids.map((id) => <button key={id} className="link-button" onClick={() => openCase(id)}>{id}</button>)}</td></tr>)}</tbody></table>
+      </section>
+      <section className="content-card">
+        <div className="card-header"><div><h2>Open exact investigation</h2><p>Use the Cedar complaint ID returned to the customer; there is no case-list endpoint.</p></div></div>
+        <div className="search-field"><Icon name="search" /><input value={caseId} onChange={(event) => setCaseId(event.target.value)} placeholder="Cedar complaint ID" /><Button disabled={!caseId.trim()} onClick={() => openCase(caseId.trim())}>Open case</Button></div>
+      </section>
+      <section className="content-card operations-table-card">
+        <div className="card-header"><div><h2>Institutional sources</h2><p>Upload the five approved pitch fixtures in documented order.</p></div><label className="button secondary">{uploading ? "Uploading…" : "Upload source"}<input hidden type="file" disabled={uploading} onChange={(event) => { const file = event.target.files?.[0]; if (file) void upload(file) }} /></label></div>
+        <table className="operations-table"><thead><tr><th>Filename</th><th>Kind</th><th>Status</th><th>Source ID</th></tr></thead><tbody>{sources.map((item) => <tr key={item.source_id}><td>{item.filename}</td><td>{item.source_kind}</td><td><Badge tone={item.status === "FAILED" ? "error" : item.status === "PARSED" ? "success" : "info"}>{item.status}</Badge></td><td>{item.source_id}</td></tr>)}</tbody></table>
+      </section>
+    </>
+  )
+}
+
+function VeriqWorkbench({ reference, navigate }: { reference: string; approvedEvidence: boolean; navigate: (id: string) => void }) {
+  const [investigation, setInvestigation] = useState<Investigation | null>(null)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(true)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError("")
+    try {
+      setInvestigation(await veriqApi.investigation(reference))
+    } catch (caught) {
+      setError(caught instanceof VeriqApiError && caught.status === 404
+        ? "This complaint has not reached the Veriq investigation store yet. Keep the G2 worker running and retry shortly."
+        : caught instanceof Error ? caught.message : "Investigation could not be loaded.")
+    } finally {
+      setLoading(false)
+    }
+  }, [reference])
+
+  useEffect(() => {
+    let active = true
+    veriqApi.investigation(reference).then((result) => {
+      if (active) setInvestigation(result)
+    }).catch((caught) => {
+      if (!active) return
+      setError(caught instanceof VeriqApiError && caught.status === 404
+        ? "This complaint has not reached the Veriq investigation store yet. Keep the G2 worker running and retry shortly."
+        : caught instanceof Error ? caught.message : "Investigation could not be loaded.")
+    }).finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
+  }, [reference])
+
+  return (
+    <>
+      <div className="external-app-banner">
+        <span className="veriq-logo"><Icon name="shield" size={18} /></span>
+        <div><strong>Veriq Workbench · Separate intelligence platform</strong><p>Cedar remains the system of record for the complaint and financial outcome.</p></div>
+        <Button variant="secondary" onClick={() => navigate("veriq")}>Back to Veriq</Button>
+      </div>
+      <section className="workbench-heading"><div><p className="eyebrow">Investigation workspace</p><h1>{reference}</h1><p>Exact Cedar complaint-linked case</p></div>{investigation && <Badge tone="info">{investigation.status.replace(/_/g, " ")}</Badge>}</section>
+      {loading && <LoadingSkeleton />}
+      {error && <section className="content-card"><strong>{error}</strong><p>No substitute or fixture case was shown.</p><Button onClick={() => void load()}>Retry</Button></section>}
+      {investigation && <div className="workbench-layout">
+        <section className="content-card workbench-primary"><div className="card-header"><div><h2>Persisted investigation</h2><p>AI result is {investigation.ai_result === null ? "unavailable" : "present"}</p></div></div><div className="workbench-facts"><div><span>Case ID</span><strong>{investigation.case_id}</strong></div><div><span>Financial outcome</span><strong>{investigation.financial_outcome}</strong></div><div><span>Evidence records</span><strong>{investigation.evidence.length}</strong></div><div><span>Linked incidents</span><strong>{investigation.incident_ids.length}</strong></div></div><div className="workbench-finding"><span>Authority boundary</span><h3>No generated causal conclusion</h3><p>Operational evidence may support correlation, but only Cedar-authorized evidence can establish an individual transfer outcome.</p></div></section>
+        <aside className="content-card incident-panel"><div className="card-header"><div><h2>Linked incidents</h2><p>Persisted route-level records</p></div></div>{investigation.incident_ids.length ? investigation.incident_ids.map((id) => <div className="incident-id" key={id}><span className="record-type incident">Suspected incident</span><strong>{id}</strong></div>) : <p>No incident correlation is currently recorded.</p>}</aside>
+        <section className="content-card record-separation"><div className="card-header"><div><h2>Evidence</h2><p>Source identity, citation and purpose verification remain distinct</p></div></div><div className="separation-grid">{investigation.evidence.map((item) => <div key={item.id}><span className="record-type veriq">{item.kind}</span><strong>{item.source_system}</strong><p>{item.citation}</p><small>{item.verified_for_purpose ? "Verified for stated purpose" : "Not purpose-verified"}</small></div>)}</div></section>
+      </div>}
+    </>
+  )
+}
+
+// Retained only as a visual reference while the live workbench above replaces its route.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function LegacyVeriqWorkbench({
   reference,
   approvedEvidence,
   navigate,
@@ -4939,6 +5112,8 @@ function AppShell({
           navigate={navigate}
         />
       )
+    if (active === "veriq")
+      return <LiveVeriqWorkspace openCase={(caseId) => navigate(`veriq-workbench:${caseId}`)} />
     return <FuturePage id={active} allowed={allowed} navigate={navigate} />
   }
   return (

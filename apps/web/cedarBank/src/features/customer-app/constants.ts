@@ -1,4 +1,3 @@
-export const accountNumber = "1034 829 104"
 export const banks: Array<{ bank_id: string; name: string }> = []
 export const issueTypes = [
   "I was debited, but the recipient hasn't received the money",
