@@ -91,9 +91,17 @@ async def test_session_dependency_is_domain_scoped_and_does_not_connect(app, cli
     assert (await client.get("/test-session")).json() == {"cedar_engine": True}
 
 
-async def test_no_banking_or_proposed_contract_routes(app, client):
-    assert set(app.openapi()["paths"]) == {"/health", "/ready"}
-    assert (await client.get("/v1/cedar/accounts/me")).status_code == 404
+async def test_only_authorized_banking_and_infrastructure_routes(app, client):
+    assert set(app.openapi()["paths"]) == {
+        "/health",
+        "/ready",
+        "/v1/cedar/accounts/me",
+        "/v1/cedar/banks",
+        "/v1/cedar/name-enquiries",
+        "/v1/cedar/transfers",
+        "/v1/cedar/transfers/{transferId}",
+    }
+    assert (await client.get("/v1/cedar/accounts/me")).status_code == 401
     assert (await client.get("/v1/cedar/staff/cases")).status_code == 404
     assert (await client.get("/docs")).status_code == 404
     assert (await client.get("/infra/openapi.json")).status_code == 200

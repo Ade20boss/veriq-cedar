@@ -15,3 +15,16 @@ GRANT SELECT, INSERT, UPDATE ON TABLE veriq.incident_investigations,
   veriq.investigation_jobs TO :"veriq_role";
 GRANT SELECT, INSERT ON TABLE cedar.investigation_result_receipts TO :"cedar_role";
 GRANT SELECT, INSERT, UPDATE ON TABLE cedar.investigation_status_inbox TO :"cedar_role";
+
+-- Task 004: sender-visible financial tables; private/ledger mutation is NOT granted.
+GRANT SELECT ON cedar.customers, cedar.accounts, cedar.beneficiaries, cedar.demo_sessions,
+ cedar.ledger_accounts, cedar.ledger_journals, cedar.ledger_entries,
+ cedar.transfers, cedar.transfer_idempotency, cedar.banking_events,
+ cedar.payment_instructions, cedar.transfer_attempts, cedar.payment_evidence TO :"cedar_role";
+GRANT INSERT, UPDATE ON cedar.transfers, cedar.payment_instructions TO :"cedar_role";
+GRANT INSERT ON cedar.transfer_idempotency, cedar.banking_events,
+ cedar.transfer_attempts, cedar.payment_evidence TO :"cedar_role";
+GRANT EXECUTE ON FUNCTION cedar.g1_lock_account(text,text), cedar.g1_post_debit(text,text),
+ cedar.g1_check_projection(text,text) TO :"cedar_role";
+GRANT SELECT ON cedar_private.network_policy TO :"simulator_role";
+GRANT SELECT, INSERT ON cedar_private.recipient_credits TO :"simulator_role";
