@@ -1,5 +1,8 @@
 # Autonomous events and durable investigation jobs
 
+Task 003 implementation status: the bounded internal proactive G0 subset is now implemented in apps/backend. See [PROACTIVE_G0.md](PROACTIVE_G0.md) for actual models, tables, worker/replay and tests. Internal version g0.internal.1 is task-authorized; v1.1 HTTP additions and the broader design below remain proposals. No ledger, complaints, AI endpoint or frontend is implemented by G0.
+
+
 Task 001.1 review proposal implementing the owner's proactive requirement. Staff are consumers/reviewers of automatically initiated work. Neither a complaint nor Sarah/Michael pressing Start is a precondition for incident detection or investigation.
 
 ## Subject, investigation, run and job identities

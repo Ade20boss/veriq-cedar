@@ -1,0 +1,50 @@
+{
+  "synthetic": true,
+  "incidents": [
+    {
+      "id": "9afbfbbb-08ef-4bc9-bb2d-04308399aa8f",
+      "bank_id": "CED",
+      "state": "SUSPECTED",
+      "route_id": "ROUTE-CED-ELM-G2",
+      "service_id": "G2"
+    }
+  ],
+  "investigation_id": "bea0684e-0eab-42db-866f-b9ee6b5380b5",
+  "investigation_status": "EVIDENCE_READY_AI_UNAVAILABLE",
+  "review_status": "UNREVIEWED",
+  "jobs": [
+    {
+      "job_id": "067a3fb7-7f3f-45fa-888b-2aae7e08a2eb",
+      "kind": "INCIDENT_ANALYSIS",
+      "state": "SUCCEEDED"
+    },
+    {
+      "job_id": "aec6331e-be34-4b89-8a27-f6606cae29fb",
+      "kind": "RESULT_DELIVERY",
+      "state": "SUCCEEDED"
+    },
+    {
+      "job_id": "571b3b34-71e8-4cb1-af84-551d3a8a8184",
+      "kind": "RESULT_DELIVERY",
+      "state": "SUCCEEDED"
+    }
+  ],
+  "cedar_status": {
+    "bank_id": "CED",
+    "revision": 2,
+    "route_id": "ROUTE-CED-ELM-G2",
+    "emitted_at": "2026-10-15T16:28:14.721919+01:00",
+    "service_id": "G2",
+    "delivery_id": "5b21a0b9-3329-4012-9ecc-40738dfe91e4",
+    "incident_id": "9afbfbbb-08ef-4bc9-bb2d-04308399aa8f",
+    "evidence_ids": [
+      "metric/elm_g2/2026-10-15T15:28:14.625177_00:00"
+    ],
+    "bank_case_ids": [],
+    "review_status": "UNREVIEWED",
+    "incident_status": "SUSPECTED",
+    "contract_version": "g0.internal.1",
+    "investigation_id": "bea0684e-0eab-42db-866f-b9ee6b5380b5",
+    "investigation_status": "EVIDENCE_READY_AI_UNAVAILABLE"
+  }
+}

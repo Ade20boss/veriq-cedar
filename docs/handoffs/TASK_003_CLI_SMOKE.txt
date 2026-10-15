@@ -1,0 +1,31 @@
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+0002_proactive_g0 (head)
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+No new upgrade operations detected.
+usage: g0.py [-h] [--fixture FIXTURE] {replay,worker}
+g0.py: error: Replay requires empty operational event state; refuses to reset

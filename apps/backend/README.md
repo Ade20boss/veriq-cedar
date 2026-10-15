@@ -1,6 +1,6 @@
-# FastAPI backend foundation
+# FastAPI backend and proactive G0
 
-Task 002 implements infrastructure only. Banking, ledger, simulator, complaints, context, event workers, investigations, auth and all v1.1 business endpoints remain unimplemented. Accepted contracts are unchanged. Use this existing checkout; do not initialize a replacement repository.
+Task 002 infrastructure is preserved. Task 003 implements internal proactive event receipt/detection, suspected incidents, deterministic evidence investigations, durable jobs and the Cedar permitted status inbox. Banking, ledger, payment simulation, complaints, AI, frontend, auth and all proposed v1.1 HTTP endpoints remain unimplemented. Accepted contracts are unchanged. Use this existing checkout; do not initialize a replacement repository.
 
 ## Install dependencies
 
@@ -51,7 +51,7 @@ docker compose --env-file infra/.env -f infra/compose.yaml exec -T postgres \
   -v simulator_role=simulator_runtime < infra/postgres/grant-runtime.sql
 ```
 
-The initial migration creates cedar, veriq and cedar_private schemas, revokes PUBLIC schema access and records revision 0001_domain_schemas. It creates no business table or role. The separate grant script grants each runtime role USAGE only on its own schema and SELECT on the Alembic version table. It grants no CREATE or blanket future-table DML. Future migrations must explicitly grant reviewed table privileges. Runtime code never invokes create_all or migrations.
+The initial migration creates cedar, veriq and cedar_private schemas, revokes PUBLIC schema access and records revision 0001_domain_schemas. It creates no business table or role. Migration 0002_proactive_g0 adds the eight G0 tables listed in ../../docs/PROACTIVE_G0.md. Apply head, then reapply the grant script: it grants own-schema USAGE, version-table SELECT and explicit G0 table privileges only. Veriq events/evidence/outbox and Cedar delivery receipts have no runtime UPDATE/DELETE grant. No runtime CREATE, cross-domain or blanket future-table DML is granted. Future migrations must explicitly grant reviewed table privileges. Runtime code never invokes create_all or migrations.
 
 Alembic reads only MIGRATION_DATABASE_URL through separate MigrationSettings; runtime Settings does not contain that field. Autogeneration reflects only the three owned schemas; review generated revisions. `alembic downgrade base` is for a clean disposable foundation database, never an automatic startup/reset action; it uses no CASCADE and refuses to destroy unrelated schema objects. Update the readiness revision constant when adding a migration; a test checks it against Alembic head.
 
@@ -93,10 +93,41 @@ Then from apps/backend set TEST_DATABASE_ADMIN_URL in your shell to the admin UR
 uv run --locked pytest
 ```
 
-Without TEST_DATABASE_ADMIN_URL, the five marked postgres tests are explicitly skipped. With it they execute real migrations, privilege checks, live readiness and session commit/rollback; no SQLite substitute. The remaining tests use offline configuration, explicit dependency fakes, actual loopback connection refusal, HTTPX ASGI transport with lifespan, and AST import checks. No business tests T01–T16 or investigation workflows are claimed implemented.
+Without TEST_DATABASE_ADMIN_URL, the marked postgres tests are explicitly skipped. With it they execute real migrations, privilege checks, live readiness and session commit/rollback; no SQLite substitute. The remaining tests use offline configuration, explicit dependency fakes, actual loopback connection refusal, HTTPX ASGI transport with lifespan, and AST import checks. Task 003 adds real G0 acceptance tests, including the reproducible test replay below. Full banking tests T01–T16 and the broader proposed P01–P10 suite remain outside this slice.
 
 ## Package boundaries
 
-Cedar and Veriq have separate declarative registries/schema metadata. Veriq imports no Cedar model/repository; generic integration protocols depend only on typing and define no proposed wire DTOs. The composition root owns domain-scoped database dependencies. Shared Python process and these initial grants are not production-grade isolation. Business table privileges, bank/tenant auth and production deployment remain future reviewed work.
+Cedar and Veriq have separate declarative registries/schema metadata. Veriq imports no Cedar model/repository; generic integration protocols depend only on typing; the authorized g0.internal.1 transport models use Pydantic without HTTP, ORM or bank-domain dependencies. The composition root owns domain-scoped database dependencies. Shared Python process and these initial grants are not production-grade isolation. G0 table grants are explicit; network bank authentication, RLS and production deployment remain future reviewed work.
 
 See ../../docs/handoffs/CURRENT_STATE.md and TASK_002_REPORT.md for the verified environment, exact changes and next task.
+
+## G0 demonstration and durable worker
+
+After dependency/database/migration/grant setup above, use a **fresh disposable** database. The CLI refuses to reset existing event/inbox state and requires ENVIRONMENT=test for replay. It emits permitted frozen G2 and Birch metrics through the Cedar synthetic adapter; detection and job scheduling occur automatically in the receiver transaction. No incident seed, complaint or staff command exists.
+
+From apps/backend, with all four database URLs configured (runtime URLs must use restricted roles):
+
+```bash
+ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g0 replay \
+  --fixture ../../contracts/demo.json
+```
+
+Expected: one CED/Elm/G2 SUSPECTED incident, an UNREVIEWED investigation with EVIDENCE_READY_AI_UNAVAILABLE, three SUCCEEDED jobs (analysis and two status deliveries), and one latest Cedar status inbox record with bank_case_ids=[]. Birch/G3 remains unaffected. The CLI emits permitted IDs/status only. The fixture's hero/private fields are excluded from event exports.
+
+For a test-based clean replay, create the dedicated test database described above and set TEST_DATABASE_ADMIN_URL, then:
+
+```bash
+uv run --locked pytest -s tests/test_g0.py::test_replay_g2_automatic_before_complaints_and_permitted_cedar_status
+```
+
+This starts from empty migrated tables, uses three real restricted roles, passes events through the adapter and cleans up its own test schemas/roles. Do not run migration tests against existing development data.
+
+Run the autonomous durable worker as a separate process alongside the API:
+
+```bash
+uv run --locked python -m veriq_cedar.composition.g0 worker
+```
+
+It polls CED jobs every second while idle; no staff session is needed. It scans queued/retry/expired jobs on restart. Synthetic replay itself emits a finite event batch and drains its jobs; a live Cedar event producer/outbox is not implemented. Production supervision and network adapter authentication remain future work. The worker deliberately does not run inside each Uvicorn process.
+
+Read ../../docs/PROACTIVE_G0.md for internal contracts, lifecycle, role grants, retry bounds, late-window policy and limitations. No new dependency or HTTP endpoint was needed.

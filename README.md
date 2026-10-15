@@ -1,5 +1,7 @@
 # Veriq + Cedar
 
+Task 003 adds the working proactive G0 backend slice: synthetic permitted metrics → suspected incident → durable deterministic investigation → Cedar status inbox, with zero complaints or staff initiation. See [G0 implementation and replay](docs/PROACTIVE_G0.md) and the [current handoff](docs/handoffs/CURRENT_STATE.md). No banking/AI/frontend or proposed HTTP endpoint is added. The Task 001/002 descriptions below are historical foundation context.
+
 Task 002 now implements the FastAPI backend foundation in apps/backend: settings, lifecycle, domain-scoped PostgreSQL connections, metadata registries, schema-only Alembic migration, infrastructure health/readiness, logging/errors and tests. No banking/business endpoints or v1.1 proposals are implemented. See [backend setup](apps/backend/README.md) and [current handoff](docs/handoffs/CURRENT_STATE.md).
 
 The original checkout remains at the writable outputs/veriq-cedar fallback because the execution /home mount cannot create ~/Projects/veriq-cedar. No second repository or move was created. The project owner has created https://github.com/Ade20boss/veriq-cedar. Task 002-GIT published the existing monorepo to main and verified its files. Both named developers have write invitations pending acceptance; main requires PRs, without mandatory CI, and retains owner/admin maintenance bypass. See the current handoff for publication and access status.

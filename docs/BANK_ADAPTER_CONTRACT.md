@@ -1,5 +1,8 @@
 # Proposed reusable bank adapter contract
 
+Task 003 implementation status: the bounded internal proactive G0 subset is now implemented in apps/backend. See [PROACTIVE_G0.md](PROACTIVE_G0.md) for actual models, tables, worker/replay and tests. Internal version g0.internal.1 is task-authorized; v1.1 HTTP additions and the broader design below remain proposals. No ledger, complaints, AI endpoint or frontend is implemented by G0.
+
+
 Task 001.1 proposal. Veriq core consumes normalized, source-backed DTOs and capabilities; it never depends on Cedar ORM/repositories/private tables. Cedar is the first implementation, supplied at composition time. A fake second bank adapter must be able to run the same core tests. Interfaces below are signatures for review, not Python implementations.
 
 ## Common contract

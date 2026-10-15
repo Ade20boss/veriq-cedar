@@ -1,7 +1,9 @@
 """Structural extension points, not v1.1 wire-schema implementations.
 
-Concrete request/result types and adapter methods remain subject to contract review.
-The generic operation accepts no Cedar ORM/session dependency. No port is implemented.
+Task 003 concrete internal event/result models and narrow methods live in operational.py.
+Other request/result types and adapter methods remain subject to contract review.
+The generic operation accepts no Cedar ORM/session dependency.
+These generic future ports have no concrete implementation.
 """
 
 from typing import Protocol, TypeVar
