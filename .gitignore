@@ -32,3 +32,6 @@ dist/
 # Keep uv downloads/cache project-local in restricted environments
 .uv-cache/
 .uv-python/
+
+# Opaque private CLI demo credentials
+*.session.json

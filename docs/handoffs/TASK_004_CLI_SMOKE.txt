@@ -1,0 +1,157 @@
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+CREATE DATABASE
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+0003_financial_g1 (head)
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+No new upgrade operations detected.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g1.py", line 164, in <module>
+    main()
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g1.py", line 42, in main
+    asyncio.run(replay(Settings(), MigrationSettings(), args.scenario))
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g1.py", line 92, in replay
+    raise ValueError(
+ValueError: Replay refuses existing transfers; use a fresh disposable database
+{"synthetic": true, "command": "seed", "status": "completed"}
+{"synthetic": true, "command": "mint-session", "status": "completed"}
+usage: g1.py [-h] [--scenario {S0,S2}] [--customer CUSTOMER]
+             [--cookie-file COOKIE_FILE]
+             {seed,mint-session,arm,worker,replay}
+g1.py: error: Private synthetic setup requires ENVIRONMENT=test
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Generating static SQL
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0
+CREATE DATABASE
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+0003_financial_g1 (head)
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+No new upgrade operations detected.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g1.py", line 164, in <module>
+    main()
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g1.py", line 42, in main
+    asyncio.run(replay(Settings(), MigrationSettings(), args.scenario))
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g1.py", line 92, in replay
+    raise ValueError(
+ValueError: Replay refuses existing transfers; use a fresh disposable database
+{"synthetic": true, "command": "seed", "status": "completed"}
+{"synthetic": true, "command": "mint-session", "status": "completed"}
+usage: g1.py [-h] [--scenario {S0,S2}] [--customer CUSTOMER]
+             [--cookie-file COOKIE_FILE]
+             {seed,mint-session,arm,worker,replay}
+g1.py: error: Private synthetic setup requires ENVIRONMENT=test
+INFO:     Started server process [377]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:36357 (Press CTRL+C to quit)
+{"timestamp": "2026-10-15T18:30:53.708301+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "a7cef758b8f64752ae1bd124be89459d", "method": "GET", "route": "/health", "status_code": 200, "duration_ms": 40.77}
+{"timestamp": "2026-10-15T18:30:53.771220+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "2d4a17a9b092459db45b55c29c53f415", "method": "GET", "route": "/ready", "status_code": 200, "duration_ms": 60.58}
+{"timestamp": "2026-10-15T18:30:53.791625+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "d07d75538c9646fdb6f097e377fa48a0", "method": "GET", "route": "/v1/cedar/accounts/me", "status_code": 401, "duration_ms": 16.97}
+{"timestamp": "2026-10-15T18:30:53.843153+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "59824c79d52647d38d0376b21c3c441f", "method": "GET", "route": "/v1/cedar/accounts/me", "status_code": 200, "duration_ms": 48.47}
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [377]
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Generating static SQL
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0

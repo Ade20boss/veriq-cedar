@@ -2,7 +2,14 @@
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKeyConstraint, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKeyConstraint,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -98,9 +105,21 @@ class Job(Identity, VeriqBase):
             ["bank_id", "investigation_id"],
             ["veriq.incident_investigations.bank_id", "veriq.incident_investigations.id"],
         ),
+        ForeignKeyConstraint(
+            ["bank_id", "case_investigation_id"],
+            ["veriq.case_investigations.bank_id", "veriq.case_investigations.id"],
+        ),
+        CheckConstraint(
+            "(kind='CASE_ANALYSIS' AND investigation_id IS NULL "
+            "AND case_investigation_id IS NOT NULL) OR "
+            "(kind IN ('INCIDENT_ANALYSIS','RESULT_DELIVERY') "
+            "AND investigation_id IS NOT NULL AND case_investigation_id IS NULL)",
+            name="job_subject",
+        ),
         UniqueConstraint("bank_id", "kind", "dedupe_key"),
     )
-    investigation_id: Mapped[str] = mapped_column(String(160))
+    investigation_id: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    case_investigation_id: Mapped[str | None] = mapped_column(String(160), nullable=True)
     run_id: Mapped[str] = mapped_column(String(160))
     kind: Mapped[str] = mapped_column(String(40))
     dedupe_key: Mapped[str] = mapped_column(String(160))
