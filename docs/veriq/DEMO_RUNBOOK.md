@@ -90,6 +90,58 @@ For the separate Cedar operational demonstration, use the existing local backend
 
 The supported Cedar operations and S2 response-timeout rehearsal remain documented in `apps/web/cedarBank/INTEGRATION_HANDOFF.md`.
 
+## Cedar Customer Banking — live S2 rehearsal
+
+This is a separate customer-facing demonstration from the synthetic Veriq onboarding flow. It uses the real local FastAPI customer endpoints and the same-origin Caddy gateway.
+
+Start the customer app and gateway:
+
+```bash
+cd apps/web/cedarBank
+PORT=3001 pnpm dev
+
+cd ../..
+caddy run --config infra/pitch/Caddyfile
+```
+
+Start the backend separately if it is not already running:
+
+```bash
+cd apps/backend
+uv run --locked uvicorn veriq_cedar.main:create_app --factory --host 127.0.0.1 --port 8000 --no-access-log
+```
+
+Open `http://localhost:8080/`. The customer app does not mint browser sessions. Before recording, the demo operator must provision a private disposable customer session for `CED-CUST-001` with the documented local CLI and install only that `cedar_demo_session` cookie for the customer origin/path. Never use an investigator cookie in this browser and never paste a token into source, localStorage, screenshots or logs.
+
+Provisioning command (run from `apps/backend`, writing a new private file):
+
+```bash
+ENVIRONMENT=test uv run --locked python -m veriq_cedar.composition.g1 mint-session \
+  --customer CED-CUST-001 --cookie-file /tmp/ada-customer.session.json
+```
+
+Recording clicks:
+
+1. Open the customer URL and confirm the session-backed Cedar dashboard shows Ada (fictional), account `CED-ACC-001`, NGN and the backend-derived available balance.
+2. Choose **Send money**, select **Elm Bank**, enter `ELM-ACC-009`, and enter `50000` NGN.
+3. Continue through beneficiary enquiry and confirm the returned fictional beneficiary name on the review screen.
+4. Confirm the transfer. The backend response should show `RESPONSE_TIMEOUT` and financial outcome `UNKNOWN`.
+5. Explain: “Your account was debited, but we're still confirming the final transfer outcome. You can check the transaction status for updates.” Do not call it failed or successful.
+6. Open transaction details, refresh status, then report the issue and submit the complaint. The complaint reference is displayed by the customer UI.
+7. For the investigator act, use a separately provisioned investigator session and the authorized Cedar-scoped route `/v1/veriq/banks/CED/cases/{caseId}`. The case should remain evidence-backed and explicit about `AI unavailable`; an empty `incident_ids` list is valid and must not be filled in by the frontend.
+
+Verified local rehearsal record (2026-10-16):
+
+- Account: `CED-ACC-001`, Ada (fictional), balance after the posted debit: `5,000,000` kobo.
+- Banks: Elm Bank (`ELM`) and Birch Bank (`BIR`).
+- Name enquiry: `ELM-ACC-009` returned `Elm beneficiary (fictional)`.
+- Transfer: `5525e2e0-849a-4571-a14c-b7df2f3db49c`, reference `CED-8dcd98d5-699e-49aa-8d2f-4882bb254fb5`, amount `5,000,000` kobo, stage `RESPONSE_TIMEOUT`, outcome `UNKNOWN`.
+- Complaint: `15d3a206-53a4-4a81-8206-aea76f87faa6`, reference `CED-CASE-60a4415f-36a7-4b1d-802c-453ad9a3a91d`, status `OPEN`, linked to the transfer above.
+- Authorized investigator retrieval returned `EVIDENCE_READY_AI_UNAVAILABLE`, `UNKNOWN`, seven evidence items, `incident_ids: []`, and `ai_result: null`.
+- Repeating `POST /v1/cedar/transfers` with the same `Idempotency-Key: local-s2-transfer-001` returned the same transfer and did not create a second debit.
+
+If the browser has no customer cookie, the honest fallback is the session-required screen. Do not add a fake login or local success state. The protected API flow can still be verified with the private operator session file and same-origin gateway.
+
 ## Validation record
 
 Passed:
@@ -132,3 +184,23 @@ Blocked by platform environment:
 Overall: **READY WITH LIMITATIONS**. The safest recording path is the explicit synthetic Veriq journey above. If the Figma build environment is unavailable, use the running Next dev server; if the Veriq workspace demo is unavailable, record the separately documented Cedar customer-to-investigation flow.
 
 No migrations, seeders, database changes, accepted contract changes, Cedar changes, Payload admin route changes or credentials were used.
+
+## Customer checkpoint validation
+
+Passed:
+
+- `pnpm exec tsc --noEmit` in `apps/web/cedarBank`.
+- `pnpm build` in `apps/web/cedarBank`.
+- `caddy validate --config infra/pitch/Caddyfile` (valid; formatting warning only).
+- Customer gateway root returned HTTP 200 on `http://localhost:8080/`.
+- Protected customer API journey passed through `localhost:8080`: account, banks, name enquiry, idempotent transfer, transfer retrieval, complaint retrieval and refreshed account balance.
+- Correct customer session isolation check: the same account request without a cookie returned HTTP 401.
+- Correct investigator-scoped case retrieval passed through `localhost:8082` and direct backend with a separate investigator cookie.
+- Headless Firefox rendered the customer session-required state at 1366×900 and 390×844. The mobile capture was taken during the splash transition; repeat after the splash delay for a full session-state capture.
+
+Limitations:
+
+- There is no approved browser session bootstrap/login endpoint. A demo operator must privately provision and install the customer cookie.
+- Browser automation with cookie installation and console collection was not available in this environment; authenticated API checks were run directly with the private session file, without printing its token.
+- `localhost:8081` returned HTTP 502 during this checkpoint because the Cedar Operations dev server was not running. Cedar Operations was not modified; start its existing app on port 3000 before recording the staff act.
+- Complaint and investigator data are synthetic backend records; no real banking system or customer data is involved.
