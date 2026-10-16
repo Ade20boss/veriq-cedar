@@ -1,0 +1,1 @@
+export const APP_PASSWORD_MIN_LENGTH = 3
