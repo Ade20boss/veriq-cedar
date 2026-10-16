@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import test from "node:test"
 import {
   cancelNameEnquiry,
+  disposeNameEnquiry,
   isCurrentNameEnquiry,
   startNameEnquiry,
 } from "../src/features/customer-app/flow-guards.js"
@@ -147,6 +148,37 @@ test("cancelled enquiry clears loading and a fresh enquiry can complete", async 
   assert.equal(acceptedName, "Fresh")
   assert.equal(loading, false)
 })
+
+test("unmount aborts an enquiry without accepting a late result or updating loading", async () => {
+  const response = deferred()
+  const generation = { current: 0 }
+  const controller = { current: null }
+  const loadingUpdates = []
+  let accepted = false
+  const pending = startNameEnquiry({
+    generationRef: generation,
+    controllerRef: controller,
+    bankId: "ELM",
+    accountId: "ELM-ACC-009",
+    getSelection: () => ({ bankId: "ELM", accountId: "ELM-ACC-009" }),
+    enquire: () => response.promise,
+    setLoading: (value) => loadingUpdates.push(value),
+    onSuccess: () => {
+      accepted = true
+    },
+    onError: () => {
+      throw new Error("unexpected")
+    },
+  })
+  const signal = controller.current.signal
+  disposeNameEnquiry(generation, controller)
+  response.resolve({ beneficiary_name: "Late" })
+  await pending
+  assert.equal(signal.aborted, true)
+  assert.equal(accepted, false)
+  assert.deepEqual(loadingUpdates, [true])
+})
+
 test("transaction insights use processing stage and preserve UNKNOWN", () => {
   const timeout = getTransactionInsight(
     {
@@ -207,6 +239,11 @@ test("pending transfer recovery requires the originating account", () => {
       record.replace("originatingAccountId", "legacyAccount"),
       "CED-ACC-001",
     ),
+    null,
+  )
+  assert.equal(parsePendingTransfer("{malformed", "CED-ACC-001"), null)
+  assert.equal(
+    parsePendingTransfer(record.replace("5000000", "-1"), "CED-ACC-001"),
     null,
   )
 })

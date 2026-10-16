@@ -7,10 +7,14 @@ export function isCurrentNameEnquiry(snapshot, current) {
 }
 
 export function cancelNameEnquiry(generationRef, controllerRef, clearLoading) {
+  disposeNameEnquiry(generationRef, controllerRef)
+  clearLoading()
+}
+
+export function disposeNameEnquiry(generationRef, controllerRef) {
   generationRef.current += 1
   controllerRef.current?.abort()
   controllerRef.current = null
-  clearLoading()
 }
 
 export function startNameEnquiry({

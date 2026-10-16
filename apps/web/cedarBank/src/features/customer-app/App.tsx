@@ -31,7 +31,11 @@ import {
   SupportScreen,
 } from "./screens/SupportScreens"
 import type { Screen } from "./types"
-import { cancelNameEnquiry, startNameEnquiry } from "./flow-guards.js"
+import {
+  cancelNameEnquiry,
+  disposeNameEnquiry,
+  startNameEnquiry,
+} from "./flow-guards.js"
 import {
   clearStoredPendingTransfer,
   readPendingTransfer,
@@ -150,6 +154,13 @@ export default function CustomerApp() {
   useEffect(() => {
     void loadSession()
   }, [loadSession])
+
+  useEffect(
+    () => () => {
+      disposeNameEnquiry(nameEnquiryGeneration, nameEnquiryController)
+    },
+    [],
+  )
 
   useEffect(() => {
     if (!toast) return

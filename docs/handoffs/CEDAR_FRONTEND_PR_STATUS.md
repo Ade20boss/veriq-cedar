@@ -4,7 +4,7 @@
 
 ## Review corrections
 
-- Name enquiry: the old rule invalidated/aborted a request but left loading true because the obsolete request's `finally` was generation-guarded. Cancellation now clears loading immediately; the fresh request owns loading until it completes. A dynamic regression exercises cancelled first request, fresh second submission, stale completion and successful fresh response.
+- Name enquiry: the old rule invalidated/aborted a request but left loading true because the obsolete request's `finally` was generation-guarded. Cancellation now clears loading immediately; the fresh request owns loading until it completes. Unmount aborts without a state update. Dynamic regressions exercise cancelled first request, fresh second submission, stale completion, successful fresh response and late completion after unmount.
 - Pending transfer: the old global `v1` key was deleted when a different account read it and was automatically rejected after 24 hours. The new `v2` key is per account; only its owner can recover or clear it. A legacy record migrates only for its owner, while another account leaves it untouched. No frontend-only expiry remains because the current backend's persisted `(bank_id, customer_id, key)` idempotency record has no time-based expiry. This preserves an unresolved key, but is not a backend transaction-history service; manually clearing localStorage still loses browser recovery metadata.
 - Port mapping: the checked-in Caddyfile now routes Customer 3000→8080, Operations 3001→8081 and Veriq 3002→8082. The running local demo processes are still assigned Customer 3001/Operations 3000 under a separately running gateway; they were not moved or restarted. An isolated staging test on ports 3100/3101 behind temporary 8180/8181 gateways served the expected Customer/Operations HTML; 8182 served the existing Veriq app. Thus the route topology and app identity were checked beyond Caddy syntax, but the live 3000/3001 processes remain to be relaunched under the new mapping at a safe operator-approved time.
 
@@ -12,7 +12,7 @@ No frozen API contract, backend code, auth, migration, AI service, balance, tran
 
 ## Verification
 
-- Customer `node --test tests/customer-regressions.test.mjs`: 6/6 passed.
+- Customer `node --test tests/customer-regressions.test.mjs`: 7/7 passed, including malformed recovery records and unmount cleanup.
 - Customer `pnpm exec tsc --noEmit`: passed; production `pnpm run build`: passed.
 - Operations `node --test tests/investigation-switching.test.mjs`: 1/1 passed; `pnpm run typecheck`, `pnpm run lint`, production `pnpm run build`: passed.
 - `caddy validate --config infra/pitch/Caddyfile`: passed after formatting, without a warning.
