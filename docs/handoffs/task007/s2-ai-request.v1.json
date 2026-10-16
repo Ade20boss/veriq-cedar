@@ -1,0 +1,296 @@
+{
+  "bank_id": "CED",
+  "case_id": "eb83cd1f-9929-443a-a0f3-75b5155035e8",
+  "evidence": [
+    {
+      "id": "transfer/ae13da02-2a82-4106-a33a-2ca99378e521/2026-10-16T01:55:49.664227+01:00",
+      "data": {
+        "stage": "RESPONSE_TIMEOUT",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "amount_kobo": 5000000,
+        "transfer_id": "ae13da02-2a82-4106-a33a-2ca99378e521",
+        "financial_outcome": "UNKNOWN",
+        "beneficiary_bank_id": "ELM",
+        "beneficiary_account_id": "ELM-ACC-009"
+      },
+      "kind": "TRANSFER_STATE",
+      "citation": "cedar.transfers/ae13da02-2a82-4106-a33a-2ca99378e521",
+      "observed_at": "2026-10-16T01:55:49.664227+01:00",
+      "occurred_at": "2026-10-16T01:55:49.519870+01:00",
+      "source_system": "cedar.transfer_orchestrator",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "f50de3c1-70b1-4cd5-aa00-3809cf52566b",
+      "data": {
+        "stage": "CREATED",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "transfer_id": "ae13da02-2a82-4106-a33a-2ca99378e521",
+        "financial_outcome": "UNKNOWN"
+      },
+      "kind": "TRANSFER_STAGE",
+      "citation": "cedar.banking_events/f50de3c1-70b1-4cd5-aa00-3809cf52566b",
+      "observed_at": "2026-10-16T01:55:49.529810+01:00",
+      "occurred_at": "2026-10-16T01:55:49.529810+01:00",
+      "source_system": "cedar.transfer_orchestrator",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "59d8628e-2d58-4e37-9267-fa761194cb7c",
+      "data": {
+        "stage": "VALIDATED",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "transfer_id": "ae13da02-2a82-4106-a33a-2ca99378e521",
+        "financial_outcome": "UNKNOWN"
+      },
+      "kind": "TRANSFER_STAGE",
+      "citation": "cedar.banking_events/59d8628e-2d58-4e37-9267-fa761194cb7c",
+      "observed_at": "2026-10-16T01:55:49.539636+01:00",
+      "occurred_at": "2026-10-16T01:55:49.539636+01:00",
+      "source_system": "cedar.transfer_orchestrator",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "7e7de490-0c16-47c6-818a-daea31cc2e9e",
+      "data": {
+        "stage": "DEBIT_POSTED",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "transfer_id": "ae13da02-2a82-4106-a33a-2ca99378e521",
+        "financial_outcome": "UNKNOWN"
+      },
+      "kind": "TRANSFER_STAGE",
+      "citation": "cedar.banking_events/7e7de490-0c16-47c6-818a-daea31cc2e9e",
+      "observed_at": "2026-10-16T01:55:49.553568+01:00",
+      "occurred_at": "2026-10-16T01:55:49.553568+01:00",
+      "source_system": "cedar.transfer_orchestrator",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "9d1056ca-baff-4585-9886-f12b0a0d8239",
+      "data": {
+        "stage": "SUBMITTED",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "transfer_id": "ae13da02-2a82-4106-a33a-2ca99378e521",
+        "financial_outcome": "UNKNOWN"
+      },
+      "kind": "TRANSFER_STAGE",
+      "citation": "cedar.banking_events/9d1056ca-baff-4585-9886-f12b0a0d8239",
+      "observed_at": "2026-10-16T01:55:49.597462+01:00",
+      "occurred_at": "2026-10-16T01:55:49.597462+01:00",
+      "source_system": "cedar.transfer_orchestrator",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "00da33c8-2ee1-456c-9713-8f14b0112d14",
+      "data": {
+        "stage": "RESPONSE_TIMEOUT",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "transfer_id": "ae13da02-2a82-4106-a33a-2ca99378e521",
+        "financial_outcome": "UNKNOWN"
+      },
+      "kind": "TRANSFER_STAGE",
+      "citation": "cedar.banking_events/00da33c8-2ee1-456c-9713-8f14b0112d14",
+      "observed_at": "2026-10-16T01:55:49.664227+01:00",
+      "occurred_at": "2026-10-16T01:55:49.664227+01:00",
+      "source_system": "cedar.transfer_orchestrator",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "case/eb83cd1f-9929-443a-a0f3-75b5155035e8",
+      "data": {
+        "case_id": "eb83cd1f-9929-443a-a0f3-75b5155035e8",
+        "customer_report": "Synthetic integration verification transfer enquiry."
+      },
+      "kind": "CUSTOMER_REPORT",
+      "citation": "cedar.complaints/eb83cd1f-9929-443a-a0f3-75b5155035e8",
+      "observed_at": "2026-10-16T01:55:56.987673+01:00",
+      "occurred_at": "2026-10-16T01:55:56.987673+01:00",
+      "source_system": "cedar.complaints",
+      "verified_for_purpose": false
+    },
+    {
+      "id": "metric/elm_g2/2026-10-16T00:55:49.073999_00:00",
+      "data": {
+        "attempts": 25,
+        "route_id": "ROUTE-CED-ELM-G2",
+        "timeouts": 7,
+        "service_id": "G2",
+        "window_end": "2026-10-16T00:55:49.073999Z",
+        "window_start": "2026-10-16T00:50:49.073999Z",
+        "correlation_rule": "exact bank/route/service; window plus five minutes; suspected only"
+      },
+      "kind": "ROUTE_METRIC_SNAPSHOT",
+      "citation": "synthetic-route-aggregates/routes/elm_g2#7435a490b0a9844db7ec0caf17dd3f6862f2204f6a293cdcfff69ed4c45c79af",
+      "observed_at": "2026-10-16T00:55:49.073999Z",
+      "occurred_at": "2026-10-16T00:55:49.073999Z",
+      "source_system": "cedar.synthetic.metrics",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "abf46b68-8e57-44ec-b706-5e98dfd94349/routes-0-from_bank_id",
+      "data": {
+        "type": "ORIGINATES_AT",
+        "status": "DOCUMENTED",
+        "to_entity_id": "CED",
+        "from_entity_id": "ROUTE-CED-ELM-G2"
+      },
+      "kind": "DOCUMENTED_RELATIONSHIP",
+      "citation": "routes.json#routes-0-from_bank_id@sha256:a07f8bd67f4b16560854853516ccdde52c27828891beed9d252021d4c6d3f039",
+      "observed_at": "2026-10-16T01:55:48.981879+01:00",
+      "occurred_at": "2026-10-16T01:55:48.981879+01:00",
+      "source_system": "veriq.knowledge",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "abf46b68-8e57-44ec-b706-5e98dfd94349/routes-0-service_id",
+      "data": {
+        "type": "USES",
+        "status": "DOCUMENTED",
+        "to_entity_id": "G2",
+        "from_entity_id": "ROUTE-CED-ELM-G2"
+      },
+      "kind": "DOCUMENTED_RELATIONSHIP",
+      "citation": "routes.json#routes-0-service_id@sha256:a07f8bd67f4b16560854853516ccdde52c27828891beed9d252021d4c6d3f039",
+      "observed_at": "2026-10-16T01:55:48.981879+01:00",
+      "occurred_at": "2026-10-16T01:55:48.981879+01:00",
+      "source_system": "veriq.knowledge",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "abf46b68-8e57-44ec-b706-5e98dfd94349/routes-0-to_bank_id",
+      "data": {
+        "type": "DESTINATION",
+        "status": "DOCUMENTED",
+        "to_entity_id": "ELM",
+        "from_entity_id": "ROUTE-CED-ELM-G2"
+      },
+      "kind": "DOCUMENTED_RELATIONSHIP",
+      "citation": "routes.json#routes-0-to_bank_id@sha256:a07f8bd67f4b16560854853516ccdde52c27828891beed9d252021d4c6d3f039",
+      "observed_at": "2026-10-16T01:55:48.981879+01:00",
+      "occurred_at": "2026-10-16T01:55:48.981879+01:00",
+      "source_system": "veriq.knowledge",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "6c4b1602-8898-4bff-8500-913b1d1d0e68/row-3",
+      "data": {
+        "type": "CONNECTS_TO",
+        "status": "DOCUMENTED",
+        "to_entity_id": "ELM",
+        "from_entity_id": "G2"
+      },
+      "kind": "DOCUMENTED_RELATIONSHIP",
+      "citation": "dependencies.csv#row-3@sha256:3e5e2ab8db0d688c3c138e81153f734df04ad2a3d2a0dc45c58dc496c007bbb3",
+      "observed_at": "2026-10-16T01:55:48.950017+01:00",
+      "occurred_at": "2026-10-16T01:55:48.950017+01:00",
+      "source_system": "veriq.knowledge",
+      "verified_for_purpose": true
+    },
+    {
+      "id": "6c4b1602-8898-4bff-8500-913b1d1d0e68/row-2",
+      "data": {
+        "type": "USES",
+        "status": "DOCUMENTED",
+        "to_entity_id": "G2",
+        "from_entity_id": "CED"
+      },
+      "kind": "DOCUMENTED_RELATIONSHIP",
+      "citation": "dependencies.csv#row-2@sha256:3e5e2ab8db0d688c3c138e81153f734df04ad2a3d2a0dc45c58dc496c007bbb3",
+      "observed_at": "2026-10-16T01:55:48.950017+01:00",
+      "occurred_at": "2026-10-16T01:55:48.950017+01:00",
+      "source_system": "veriq.knowledge",
+      "verified_for_purpose": true
+    }
+  ],
+  "question": "Review this bank-permitted case snapshot. Describe supported observations, advisory hypotheses and alternatives, unresolved facts and authorized evidence checks. Customer reports are unverified; DOCUMENTED topology is not verified causality. Preserve the bank financial outcome. Do not publish messages or perform financial actions.",
+  "financial_outcome": "UNKNOWN",
+  "known_relationships": [
+    {
+      "id": "0b6494a5-46d9-4f93-b7c5-718ed9448854",
+      "type": "ORIGINATES_AT",
+      "status": "DOCUMENTED",
+      "bank_id": "CED",
+      "source_id": "abf46b68-8e57-44ec-b706-5e98dfd94349",
+      "valid_from": null,
+      "evidence_ids": [
+        "abf46b68-8e57-44ec-b706-5e98dfd94349/routes-0-from_bank_id"
+      ],
+      "to_entity_id": "CED",
+      "from_entity_id": "ROUTE-CED-ELM-G2"
+    },
+    {
+      "id": "412921ac-d017-4e4d-add5-9050a0512f2b",
+      "type": "USES",
+      "status": "DOCUMENTED",
+      "bank_id": "CED",
+      "source_id": "abf46b68-8e57-44ec-b706-5e98dfd94349",
+      "valid_from": null,
+      "evidence_ids": [
+        "abf46b68-8e57-44ec-b706-5e98dfd94349/routes-0-service_id"
+      ],
+      "to_entity_id": "G2",
+      "from_entity_id": "ROUTE-CED-ELM-G2"
+    },
+    {
+      "id": "6044042f-d953-489a-a32d-de4738b1f370",
+      "type": "DESTINATION",
+      "status": "DOCUMENTED",
+      "bank_id": "CED",
+      "source_id": "abf46b68-8e57-44ec-b706-5e98dfd94349",
+      "valid_from": null,
+      "evidence_ids": [
+        "abf46b68-8e57-44ec-b706-5e98dfd94349/routes-0-to_bank_id"
+      ],
+      "to_entity_id": "ELM",
+      "from_entity_id": "ROUTE-CED-ELM-G2"
+    },
+    {
+      "id": "a6484d41-8e4e-4dd1-ac7f-d1701a342a57",
+      "type": "CONNECTS_TO",
+      "status": "DOCUMENTED",
+      "bank_id": "CED",
+      "source_id": "6c4b1602-8898-4bff-8500-913b1d1d0e68",
+      "valid_from": null,
+      "evidence_ids": [
+        "6c4b1602-8898-4bff-8500-913b1d1d0e68/row-3"
+      ],
+      "to_entity_id": "ELM",
+      "from_entity_id": "G2"
+    },
+    {
+      "id": "f7dae3c1-fd46-4221-919f-e6ce0bea9287",
+      "type": "USES",
+      "status": "DOCUMENTED",
+      "bank_id": "CED",
+      "source_id": "6c4b1602-8898-4bff-8500-913b1d1d0e68",
+      "valid_from": null,
+      "evidence_ids": [
+        "6c4b1602-8898-4bff-8500-913b1d1d0e68/row-2"
+      ],
+      "to_entity_id": "G2",
+      "from_entity_id": "CED"
+    }
+  ],
+  "historical_incidents": [
+    {
+      "id": "7fb9e9c8-1611-4c0d-ae8e-461113208ad8",
+      "status": "SUSPECTED",
+      "bank_id": "CED",
+      "case_ids": [
+        "eb83cd1f-9929-443a-a0f3-75b5155035e8"
+      ],
+      "route_id": "ROUTE-CED-ELM-G2",
+      "evidence_ids": [
+        "metric/elm_g2/2026-10-16T00:55:49.073999_00:00"
+      ],
+      "finding_summary": "Persisted operational suspicion; cause unverified.",
+      "first_observed_at": "2026-10-16T01:55:49.114583+01:00"
+    }
+  ]
+}

@@ -108,7 +108,17 @@ _CAUSAL_ASSERTION = re.compile(
 
 def asserts_verified_cause(text: str) -> bool:
     """Reject explicit causal/incident confirmation in advisory generated prose."""
-    return any(
-        _CAUSAL_ASSERTION.search(clause) and not _NONASSERTIVE.search(clause)
-        for clause in _CLAUSES.split(normalize(text))
-    )
+    for clause in _CLAUSES.split(normalize(text)):
+        for match in _CAUSAL_ASSERTION.finditer(clause):
+            # Qualifiers apply only to this assertion, never to the whole clause.
+            # A later affirmative assertion must still be checked independently.
+            if re.search(r"\bnot\s+(?:(?:a|an|the)\s+)?$", clause[: match.start()]):
+                continue
+            if match.group().startswith("root cause ") and re.match(
+                r"\s+(?:unverified|unconfirmed|uncertain|unknown|"
+                r"not\s+(?:verified|confirmed|established|known))\b",
+                clause[match.end() :],
+            ):
+                continue
+            return True
+    return False

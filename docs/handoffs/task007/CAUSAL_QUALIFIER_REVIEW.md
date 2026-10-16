@@ -1,0 +1,21 @@
+# PR#10 — local causal qualifier correction
+
+Reviewed parent: `19452cd3e3db3c33355799199efe9efd348be425`, same `feat/integration-verification-a3` branch and PR#10. The clean starting checkout and GitHub PR head were verified. PR#9 remains untouched; no automatic merge.
+
+`asserts_verified_cause()` previously skipped an entire clause if any `_NONASSERTIVE` word appeared anywhere in it. That allowed an earlier may/might/unverified qualifier to excuse a later categorical root-cause or incident-confirmation assertion. The clause-wide bypass is removed. Each matched assertion is checked independently: immediate prefix negation is retained, and a root-cause copula can be immediately followed by an explicit unresolved/negated status. A subsequent affirmative assertion is still rejected.
+
+Eight added cases cover the two reported because/since examples, a preceding unverified qualifier, a later unrelated hedge, a negated/unresolved assertion followed by a separate affirmative assertion, and legitimate local unresolved/negated wording. All eight previous cases remain, including “not a verified cause” and “The root cause is unverified.” Financial check functions, `_NONASSERTIVE`, shared clause splitting, evidence validation, source trust and bank authority are unchanged. This remains a conservative lexical defense, not semantic certification.
+
+## Executed checks
+
+- Reproduced the reported acceptance defect before the fix. After correction, `apps/backend/.venv/bin/pytest apps/backend/tests/test_causal_negation.py -q`: **16 passed** in0.10s.
+- `python3 work/task007-causal-review/run_tests.py -k 'actual_backend_worker_http or causal_negation' -x -q`: **18 passed,193deselected** in12.36s. Includes16lexical cases and both actual PostgreSQL-backed connected/disconnected backend Uvicorn/standalone G2 worker/merged AI service smoke modes. The wrapper's migration/grant/disabled four-act replay/refusal/telemetry/private-session/live auth/readiness/worker checks also passed.
+- Ruff check and format over backend src/tests/migrations/scripts passed91files; git diff--check passed.
+
+The existing Task007 verifier, S2 request, snapshot digests, provenance, frontend/runbook and earlier evidence remain intact. Full regression and standalone recovery rerun results follow. No new infrastructure, migration, contract, worker, frontend, AI service or financial logic changes.
+
+Full backend rerun: `python3 work/task007-causal-review/run_tests.py -q`: **211 passed in125.29s**, zero failures/errors/skips (104real PostgreSQL,107non-server). Native PostgreSQL16.2, fresh disposable database; migrations through0005_case_ai, reviewed runtime grants, private-read denials, offline SQL/current/check, complete AI-disabled four-act replay/repeat refusal, telemetry and authenticated API/worker smoke passed again. See [backend XML](causal-review/backend-tests.xml), [focused XML](causal-review/focused-tests.xml) and adjacent logs. The16focused unit cases are also included in the18-test focused and211-test full runs.
+
+`python3 work/task007-causal-review/runtime.py` also passed: actual API/G1/G2/merged AI mock, fresh PostgreSQL, unavailable first AI attempt→RETRY_WAIT→automatic recovery on attempt2→persisted FINDINGS_READY served by investigator GET. Nine observations/one tentative hypothesis/two unknowns/one check remained synthetic, with UNKNOWN and empty customer updates. [Sanitized runtime result](causal-review/runtime-result.json) contains actual IDs/states and no reports, credentials or simulator-private truth. This rerun did not start Caddy/frontends or invoke Groq; those unchanged components remain outside this correction. Its services/private session files and database socket were cleaned up. The existing reviewed S2 request and its hash were preserved.
+
+Only production file changed: `apps/backend/src/veriq_cedar/veriq/ai/safety.py`, only `asserts_verified_cause()`. Added eight parameters in `apps/backend/tests/test_causal_negation.py`; all prior tests/artifacts/code remain. Updated CURRENT_STATE and added this report plus focused/full XML/text, grant-smoke log and sanitized runtime evidence under `causal-review/`. Normal follow-up commit/push to existing PR#10; final exact containing SHA in publication response/Git history. No merge.

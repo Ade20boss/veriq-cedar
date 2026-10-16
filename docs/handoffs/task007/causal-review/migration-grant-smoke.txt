@@ -1,0 +1,95 @@
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0
+INFO [alembic.runtime.migration] Running upgrade 0003_financial_g1 -> 0004_pitch_g2, Pitch staff complaints case work and institutional sources
+Revision ID: 0004_pitch_g2
+Revises: 0003_financial_g1
+INFO [alembic.runtime.migration] Running upgrade 0004_pitch_g2 -> 0005_case_ai, Optional versioned case AI stage on existing durable jobs.
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+0005_case_ai (head)
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+No new upgrade operations detected.
+{"fictional_environment": true, "accepted_event_receipts": ["4d205e05-7f50-4b49-b464-ed2897fd8ec0", "30faa367-c8c9-4ffe-ad50-15c165ca5330"]}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g2.py", line 146, in <module>
+    main()
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/g2.py", line 117, in main
+    asyncio.run(replay(Settings(), MigrationSettings()))
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kernelghost/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar/apps/backend/src/veriq_cedar/composition/pitch_replay.py", line 39, in replay
+    raise ValueError(
+ValueError: Pitch replay requires a fresh disposable database; no reset is performed
+Fictional investigator session provisioned; one-hour expiry. Token is only in the private file.
+INFO:     Started server process [689]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:54149 (Press CTRL+C to quit)
+{"timestamp": "2026-10-16T02:45:12.073249+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "93e3f35b513b4b9ca8abad6a675fcd93", "method": "GET", "route": "/health", "status_code": 200, "duration_ms": 34.65}
+{"timestamp": "2026-10-16T02:45:12.131569+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "6be9ca9a46e84ee9804ccfcccc15f16c", "method": "GET", "route": "/ready", "status_code": 200, "duration_ms": 56.4}
+{"timestamp": "2026-10-16T02:45:12.163011+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "55698ea874ac40cfbd515eac89995e22", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 401, "duration_ms": 28.31}
+{"timestamp": "2026-10-16T02:45:12.195174+00:00", "level": "INFO", "logger": "veriq_cedar.http", "event": "request.completed", "request_id": "e0057905d7a642f69d0c1e1bb072f3f2", "method": "GET", "route": "/v1/veriq/banks/{bankId}/operations", "status_code": 200, "duration_ms": 30.38}
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [689]
+INFO [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO [alembic.runtime.migration] Generating static SQL
+INFO [alembic.runtime.migration] Will assume transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade  -> 0001_domain_schemas, Create separate data namespaces only; no business tables or runtime roles.
+INFO [alembic.runtime.migration] Running upgrade 0001_domain_schemas -> 0002_proactive_g0, Persist proactive incident G0 and permitted Cedar inbox
+Revision ID: 0002_proactive_g0
+Revises: 0001_domain_schemas
+INFO [alembic.runtime.migration] Running upgrade 0002_proactive_g0 -> 0003_financial_g1, Cedar financial core and restricted network
+Revision ID: 0003_financial_g1
+Revises: 0002_proactive_g0
+INFO [alembic.runtime.migration] Running upgrade 0003_financial_g1 -> 0004_pitch_g2, Pitch staff complaints case work and institutional sources
+Revision ID: 0004_pitch_g2
+Revises: 0003_financial_g1
+INFO [alembic.runtime.migration] Running upgrade 0004_pitch_g2 -> 0005_case_ai, Optional versioned case AI stage on existing durable jobs.

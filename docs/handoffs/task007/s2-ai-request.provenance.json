@@ -1,0 +1,57 @@
+{
+  "synthetic": true,
+  "tested_main": "7983ec8de7d9a83ee5bc4f3f7582103a369ccf08",
+  "producer_parent_commit": "52b0fc7a47b4455293c2a6e7a4aaf317172d1e23",
+  "contract": "contracts/openapi.yaml#/components/schemas/AIInvestigationInput",
+  "payload_file": "s2-ai-request.v1.json",
+  "payload_file_sha256": "d0196fdee24f9166c51d63586db4c6dc9813afac77c75c275ad32a6c7367e54f",
+  "persisted_request_digest": "b127ec17507cdc0f8435d82fbd71900ff59b85fbf148a9e583aff8f652831ab2",
+  "case_id": "eb83cd1f-9929-443a-a0f3-75b5155035e8",
+  "investigation_id": "53d004b2-1b68-490b-9147-f79f97a854e8",
+  "job_id": "b7041962-879c-41cb-850f-2dc468cf48a5",
+  "run_id": "a569a70e-edc7-4980-a614-828870fe4461",
+  "revision": 1,
+  "provider_mode": "mock",
+  "findings_count": {
+    "observations": 9,
+    "hypotheses": 1,
+    "unknowns": 2,
+    "recommended_checks": 1
+  },
+  "financial_outcome": "UNKNOWN",
+  "request_matches_persisted_evidence": true,
+  "job_state": "SUCCEEDED",
+  "attempts": 2,
+  "source_uploads": [
+    {
+      "source_id": "f5b62832-ef1b-4492-99ff-41002c4ce875",
+      "status": "PARSED",
+      "job_id": "57d280c1-4267-481d-ba09-b2964d0e3bae"
+    },
+    {
+      "source_id": "6c4b1602-8898-4bff-8500-913b1d1d0e68",
+      "status": "PARSED",
+      "job_id": "d0a0339c-8126-47ca-9a81-3da90f4100e8"
+    },
+    {
+      "source_id": "abf46b68-8e57-44ec-b706-5e98dfd94349",
+      "status": "PARSED",
+      "job_id": "b399d2db-40d4-4476-a3c1-859f96444fb9"
+    },
+    {
+      "source_id": "a6ec27b8-cfd8-4164-b646-7eb2e49a03a5",
+      "status": "UPLOADED",
+      "job_id": "74f59f13-9204-4a1b-9150-1d5f914db1a5"
+    },
+    {
+      "source_id": "292cab06-c905-4a8c-880f-7144741f7998",
+      "status": "UPLOADED",
+      "job_id": "8af82dab-0118-4267-9905-738ff41058fb"
+    }
+  ],
+  "exact_persisted_request": true,
+  "identifiers_and_flags_rewritten": false,
+  "report": "Literal synthetic verifier input included as unverified CUSTOMER_REPORT; not a real customer report.",
+  "export_boundary": "Existing build_request and immutable CaseAI snapshot through restricted Veriq role; no simulator truth or credentials.",
+  "live_provider": "Not invoked; Habeeb owns provider quality evaluation."
+}
