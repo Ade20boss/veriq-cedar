@@ -138,14 +138,39 @@ class MockProvider:
 
     def _case(self, payload: dict[str, Any]) -> dict[str, Any]:
         eligible = [ev for ev in payload["evidence"] if ev["verified_for_purpose"]]
+        # Task005/006 evidence contains bank transfer stages and route snapshots.
+        # Convert to the mock's existing vocabulary without fabricating finality
+        # or missing baseline measurements. Preserve evidence IDs/route provenance.
+        normalized = []
+        for ev in eligible:
+            d = ev["data"]
+            kind = ev["kind"]
+            equivalent = None
+            if kind in {"TRANSFER_STATE", "TRANSFER_STAGE"}:
+                if d.get("stage") == "RESPONSE_TIMEOUT":
+                    equivalent = "GATEWAY_RESPONSE_TIMEOUT"
+                elif d.get("stage") == "DEBIT_POSTED":
+                    equivalent = "SENDER_DEBIT_POSTED"
+            elif kind == "ROUTE_METRIC_SNAPSHOT":
+                equivalent = "ROUTE_METRIC"
+                d = {**d, "window_attempts": d.get("attempts"),
+                     "window_timeouts": d.get("timeouts")}
+            normalized.append({**ev, "kind": equivalent or kind, "data": d})
         observations = []
         for ev in eligible:
+            if (ev["kind"] == "DOCUMENTED_RELATIONSHIP"
+                    and ev["data"].get("status") == "DOCUMENTED"):
+                observations.append({
+                    "text": "A source-backed service relationship is documented, not a verified cause.",
+                    "evidence_ids": [ev["id"]],
+                })
+        for ev in normalized:
             if ev["kind"] == "SENDER_DEBIT_POSTED":
                 observations.append({"text": "A sender-side debit was recorded.", "evidence_ids": [ev["id"]]})
             elif ev["kind"] == "GATEWAY_RESPONSE_TIMEOUT":
                 observations.append({"text": "A gateway response timeout was recorded.", "evidence_ids": [ev["id"]]})
-        timeouts = [e for e in eligible if e["kind"] == "GATEWAY_RESPONSE_TIMEOUT"]
-        metrics = [e for e in eligible if e["kind"] == "ROUTE_METRIC"]
+        timeouts = [e for e in normalized if e["kind"] == "GATEWAY_RESPONSE_TIMEOUT"]
+        metrics = [e for e in normalized if e["kind"] == "ROUTE_METRIC"]
         hypothesis = []
         if timeouts:
             timeout = timeouts[0]
@@ -155,15 +180,17 @@ class MockProvider:
                                     and m["data"].get("route_id") == timeout["data"].get("route_id")), None)
             if matching_metric:
                 d = matching_metric["data"]
-                if all(isinstance(d.get(field), int) for field in (
-                    "window_attempts", "window_timeouts", "baseline_attempts", "baseline_timeouts"
-                )) and d["window_attempts"] > 0 and d["baseline_attempts"] > 0:
-                    observations.append({
-                        "text": (f"Route telemetry recorded {d['window_timeouts']} timeouts across "
-                                 f"{d['window_attempts']} attempts, compared with "
-                                 f"{d['baseline_timeouts']} across {d['baseline_attempts']} baseline attempts."),
-                        "evidence_ids": [matching_metric["id"]],
-                    })
+                attempts, count = d.get("window_attempts"), d.get("window_timeouts")
+                if (type(attempts) is int and type(count) is int and attempts > 0
+                        and 0 <= count <= attempts):
+                    text = f"Route telemetry recorded {count} timeouts across {attempts} attempts"
+                    base_attempts, base_count = d.get("baseline_attempts"), d.get("baseline_timeouts")
+                    if (type(base_attempts) is int and type(base_count) is int
+                            and base_attempts > 0 and 0 <= base_count <= base_attempts):
+                        text += (f", compared with {base_count} across "
+                                 f"{base_attempts} baseline attempts")
+                    observations.append({"text": text + ".",
+                                         "evidence_ids": [matching_metric["id"]]})
                 hypothesis = [{
                     "text": "Observed route conditions may have contributed to the gateway timeout; root cause is unverified.",
                     "evidence_ids": [timeout["id"], matching_metric["id"]],
