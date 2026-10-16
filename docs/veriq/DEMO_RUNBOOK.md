@@ -66,10 +66,30 @@ Passed:
 
 - `pnpm exec tsc --noEmit` in `apps/web/veriq`.
 - Dev-server route smoke checks returned HTTP 200 for `/demo`, every synthetic onboarding step, and `/w/cedar-demo/overview?mode=synthetic`.
+- Non-synthetic `/onboarding/institution`, `/select-workspace` and `/w/cedar-demo/overview` redirected to `/sign-in`; an unapproved synthetic slug also redirected to `/sign-in`.
+- Headless Firefox rendered the demo at 390×844 and 1366×900 without application console/startup errors. The screenshots confirmed the entry screen remains readable and usable at both sizes.
 - `git diff --check`.
 
 Blocked by platform environment:
 
 - `pnpm build` cannot run in a normal shell because `@payloadcms/figma` requires the platform-owned `FIGMA_EID`. No secret or placeholder was added.
+
+## Final readiness verdict
+
+| Feature | Verdict | Evidence / boundary |
+| --- | --- | --- |
+| Sign In and Sign Up | WORKING | Existing Payload-backed routes render and unauthenticated protected routes redirect to sign-in. |
+| Institution Registration | SYNTHETIC DEMO | Explicit Cedar/Northstar choice, details and acknowledgement persist in browser-local demo state; no production membership is created. |
+| Bank Connection Selection | SYNTHETIC DEMO | Synthetic Demo Connector is selectable; real connector options correctly say integration required. |
+| Permission Review | SYNTHETIC DEMO | Five simulated read-only capabilities are reviewed and acknowledged; no backend grant is claimed. |
+| Bank Synchronization Animation | SYNTHETIC DEMO | Deterministic six-stage animation and technical log run locally; no real connector state is implied. |
+| Institutional Knowledge Onboarding | SYNTHETIC DEMO | Five named fixture categories are registered locally with provenance/review disclaimer. |
+| Intelligence Overview | SYNTHETIC DEMO | Existing Veriq shell/dashboard loads under the explicit synthetic workspace route. |
+| Operational Monitoring | SYNTHETIC DEMO | Existing workspace view uses synthetic records; it is not connected to the FastAPI investigator session. |
+| Incidents | SYNTHETIC DEMO | Existing institution-scoped incident UI is preserved with synthetic records and labels. |
+| Investigations and Evidence Explorer | SYNTHETIC DEMO | Existing investigation/evidence UI is navigable with synthetic records; no claim of live Veriq evidence. |
+| Existing FastAPI Integration | PARTIALLY WORKING | Cedar customer/staff applications have the verified FastAPI/Caddy integration; Veriq onboarding/workspace does not reuse that investigator session. |
+
+Overall: **READY WITH LIMITATIONS**. The safest recording path is the explicit synthetic Veriq journey above. If the Figma build environment is unavailable, use the running Next dev server; if the Veriq workspace demo is unavailable, record the separately documented Cedar customer-to-investigation flow.
 
 No migrations, seeders, database changes, accepted contract changes, Cedar changes, Payload admin route changes or credentials were used.

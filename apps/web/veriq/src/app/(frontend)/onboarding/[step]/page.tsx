@@ -14,13 +14,13 @@ export default async function OnboardingPage({
   params: Promise<{ step: string }>
   searchParams: Promise<{ institutionId?: string | string[]; mode?: string | string[] }>
 }) {
-  const user = await appAuth.getCurrentUser()
-  if (!user) redirect("/sign-in")
-
   const { step } = await params
   const query = await searchParams
   const mode = typeof query.mode === "string" ? query.mode : ""
   if (mode === "synthetic") return <SyntheticOnboarding requestedStep={step} />
+  const user = await appAuth.getCurrentUser()
+  if (!user) redirect("/sign-in")
+
   const institutionId =
     typeof query.institutionId === "string" ? query.institutionId : ""
   const membership = (user.memberships ?? []).find(
