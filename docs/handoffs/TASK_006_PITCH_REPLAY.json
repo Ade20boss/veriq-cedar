@@ -4,29 +4,29 @@
   "act_i": {
     "sources": [
       {
-        "source_id": "41c18ce3-e10b-44b0-930c-f20da480e8a4",
+        "source_id": "60b26634-499e-42df-a808-87b6aabc71e4",
         "status": "PARSED",
-        "job_id": "d8adcdf6-cea4-4021-82cb-fe7d8ba15209"
+        "job_id": "d93d6217-4c4f-4a15-94b5-dd68ff6b42e2"
       },
       {
-        "source_id": "a1175414-a5c2-4f2e-a2ef-18973da47116",
+        "source_id": "c4016bc2-325f-44ba-8456-2c57c48d81e2",
         "status": "PARSED",
-        "job_id": "c4970669-bbb6-4c4e-b271-332291473c21"
+        "job_id": "97cf23dd-0571-44aa-9cd4-3090391981d5"
       },
       {
-        "source_id": "0287e6fc-cf1e-4264-bd8b-8d7ac8f0d442",
+        "source_id": "dff2a6d1-c959-4960-aee9-1aa0174bfd5c",
         "status": "PARSED",
-        "job_id": "24762d97-762e-49c4-b20d-f232f6a93882"
+        "job_id": "72117466-d07a-4e5d-9f27-c06b9201dd0e"
       },
       {
-        "source_id": "75b35003-dd0b-4868-8acc-ebf3b7a73d87",
+        "source_id": "2f5cff5f-5a55-49d2-80e8-734774dca326",
         "status": "UPLOADED",
-        "job_id": "39b514bb-30c9-40c0-8d77-3cd0fca72b0e"
+        "job_id": "a5b7ed83-985c-461d-9278-1eecf7d5ab68"
       },
       {
-        "source_id": "a0ec9898-5e27-4198-bc30-f9f4e87613e1",
+        "source_id": "544e08c1-1c5a-46a7-affb-bbfb4b1b6623",
         "status": "UPLOADED",
-        "job_id": "3f8a8f88-6b35-45af-994d-df4663dbd041"
+        "job_id": "c023b01f-19e3-4573-8b68-b0835e4a78a2"
       }
     ],
     "context": {
@@ -39,14 +39,14 @@
       },
       "relationship_counts": {
         "ORIGINATES_AT": 2,
-        "USES": 4,
         "CONNECTS_TO": 2,
+        "USES": 4,
         "DESTINATION": 2
       },
       "source_count": 5,
       "candidate_count": 0,
       "verified_count": 0,
-      "updated_at": "2026-10-15T23:02:32.598850+01:00"
+      "updated_at": "2026-10-16T01:13:55.285336+01:00"
     },
     "relationship_count": 10
   },
@@ -72,30 +72,30 @@
       }
     ],
     "incident": {
-      "id": "90c5a6f5-45f3-40b1-9a0d-1623b27069a6",
+      "id": "fff37b02-8a96-41a6-bdc1-f54a58138a5b",
       "bank_id": "CED",
       "route_id": "ROUTE-CED-ELM-G2",
       "status": "SUSPECTED",
-      "first_observed_at": "2026-10-15T23:02:32.660529+01:00",
+      "first_observed_at": "2026-10-16T01:13:55.354628+01:00",
       "finding_summary": "Deterministic route timeout threshold exceeded; operational issue suspected, cause unverified.",
       "evidence_ids": [
-        "metric/elm_g2/2026-10-15T22:02:32.634517_00:00"
+        "metric/elm_g2/2026-10-16T00:13:55.327986_00:00"
       ],
       "case_ids": []
     }
   },
   "act_iii": {
     "transfer": {
-      "id": "b48702d3-c9f6-4036-9a75-1ac564772802",
-      "reference": "CED-d0150e66-6a50-4357-bed3-8a610f964807",
+      "id": "93cbab4b-b693-4385-889b-d7032e8e1c87",
+      "reference": "CED-89a9f16f-7280-41a8-8a81-9a4e3d97879f",
       "amount_kobo": 5000000,
       "beneficiary_bank_id": "ELM",
       "beneficiary_account_id": "ELM-ACC-009",
       "processing_stage": "RESPONSE_TIMEOUT",
       "financial_outcome": "UNKNOWN",
-      "last_evidence_id": "gateway/bf1dca49-c138-45ef-8994-502743e4e100/OBSERVED_TIMEOUT",
-      "created_at": "2026-10-15T23:02:32.907622+01:00",
-      "updated_at": "2026-10-15T23:02:33.000966+01:00"
+      "last_evidence_id": "gateway/6cac8d8a-3eb7-4e22-87a5-48da70788974/OBSERVED_TIMEOUT",
+      "created_at": "2026-10-16T01:13:55.669327+01:00",
+      "updated_at": "2026-10-16T01:13:55.778272+01:00"
     },
     "balance_before_kobo": 10000000,
     "balance_after_kobo": 5000000,
@@ -103,33 +103,33 @@
   },
   "act_iv": {
     "complaint": {
-      "id": "b5e5a416-5f12-40c0-98b8-951bd2fc9ebe",
-      "reference": "CED-CASE-9642e58a-813c-468f-ab10-9258b4e5c44b",
-      "transfer_id": "b48702d3-c9f6-4036-9a75-1ac564772802",
+      "id": "490d7634-e5b4-4de1-9bdc-a692b95c5fdb",
+      "reference": "CED-CASE-d36cf9e5-9fab-45ed-89dd-721481319a65",
+      "transfer_id": "93cbab4b-b693-4385-889b-d7032e8e1c87",
       "customer_report": "My fictional Elm transfer timed out. Please investigate.",
       "status": "OPEN",
       "customer_safe_updates": [],
-      "created_at": "2026-10-15T23:02:33.028389+01:00"
+      "created_at": "2026-10-16T01:13:55.807072+01:00"
     },
     "investigation_status": "EVIDENCE_READY_AI_UNAVAILABLE",
     "financial_outcome": "UNKNOWN",
     "incident_ids": [
-      "90c5a6f5-45f3-40b1-9a0d-1623b27069a6"
+      "fff37b02-8a96-41a6-bdc1-f54a58138a5b"
     ],
     "evidence_ids": [
-      "transfer/b48702d3-c9f6-4036-9a75-1ac564772802/2026-10-15T23:02:33.000966+01:00",
-      "f7e8315b-c9b2-426a-8a12-2f60594454bc",
-      "95905545-da4f-46f9-a474-7a64659586bd",
-      "4324755a-681f-4589-b490-90a399d37a19",
-      "db48aee5-669e-4e1c-8ab1-ce0a7d92c4ed",
-      "457b4bb0-a213-4fec-a7c5-98c6ce2d9624",
-      "case/b5e5a416-5f12-40c0-98b8-951bd2fc9ebe",
-      "metric/elm_g2/2026-10-15T22:02:32.634517_00:00",
-      "a1175414-a5c2-4f2e-a2ef-18973da47116/row-3",
-      "0287e6fc-cf1e-4264-bd8b-8d7ac8f0d442/routes-0-service_id",
-      "a1175414-a5c2-4f2e-a2ef-18973da47116/row-2",
-      "0287e6fc-cf1e-4264-bd8b-8d7ac8f0d442/routes-0-from_bank_id",
-      "0287e6fc-cf1e-4264-bd8b-8d7ac8f0d442/routes-0-to_bank_id"
+      "transfer/93cbab4b-b693-4385-889b-d7032e8e1c87/2026-10-16T01:13:55.778272+01:00",
+      "eeeedb69-f43c-4117-b35c-38fb5142e358",
+      "a504c6a4-5ed3-4047-bd13-7485e0e93f33",
+      "ae5d51b3-dfa4-4fa5-8197-8a3bfcc108c8",
+      "5c53d847-f72d-4ca1-a4bb-a0e3137936d4",
+      "52a6c674-2db4-468e-873f-3a392af842c5",
+      "case/490d7634-e5b4-4de1-9bdc-a692b95c5fdb",
+      "metric/elm_g2/2026-10-16T00:13:55.327986_00:00",
+      "c4016bc2-325f-44ba-8456-2c57c48d81e2/row-3",
+      "c4016bc2-325f-44ba-8456-2c57c48d81e2/row-2",
+      "dff2a6d1-c959-4960-aee9-1aa0174bfd5c/routes-0-to_bank_id",
+      "dff2a6d1-c959-4960-aee9-1aa0174bfd5c/routes-0-service_id",
+      "dff2a6d1-c959-4960-aee9-1aa0174bfd5c/routes-0-from_bank_id"
     ]
   },
   "verification": {

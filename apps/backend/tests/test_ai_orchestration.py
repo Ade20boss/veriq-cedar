@@ -16,6 +16,7 @@ import pytest
 from jsonschema import Draft202012Validator
 from sqlalchemy import select, text
 from sqlalchemy.exc import DBAPIError
+from test_ai_client_errors import ai_envelopes as envelope_fixture
 from test_pitch import (  # noqa: F401
     CONTRACT,
     ROOT,
@@ -39,6 +40,7 @@ from veriq_cedar.veriq.knowledge.service import Knowledge
 from veriq_cedar.veriq.persistence.operational import Job
 from veriq_cedar.veriq.persistence.pitch import CaseAI, CaseInvestigation
 
+ai_envelopes = envelope_fixture
 pitch = pitch_fixture
 pytestmark = pytest.mark.postgres
 
@@ -195,6 +197,8 @@ def test_persisted_analysis_exact_contract_no_network_transaction_and_no_custome
         (401, "AI_AUTH_FAILED"),
         (429, "AI_RATE_LIMITED"),
         (503, "AI_UNAVAILABLE"),
+        ("provider_rate", "AI_RATE_LIMITED"),
+        ("provider_auth", "AI_AUTH_FAILED"),
         ("malformed", "AI_INVALID_SCHEMA"),
         ("schema", "AI_INVALID_SCHEMA"),
         ("oversize", "AI_RESPONSE_TOO_LARGE"),
@@ -211,10 +215,15 @@ def test_persisted_analysis_exact_contract_no_network_transaction_and_no_custome
         ("deadline", "AI_TIMEOUT"),
     ],
 )
-def test_ai_failure_preserves_evidence_and_durable_retry(pitch, failure, code, capsys):
+def test_ai_failure_preserves_evidence_and_durable_retry(
+    pitch, failure, code, capsys, ai_envelopes
+):
     p = pitch
 
     async def handler(request):
+        if failure in {"provider_rate", "provider_auth"}:
+            envelope = ai_envelopes["429" if failure == "provider_rate" else "401"]
+            return httpx.Response(envelope["status"], json=envelope["body"])
         if failure == "offline":
             raise httpx.ConnectError("DO-NOT-LOG private-service-secret")
         if failure == "timeout":

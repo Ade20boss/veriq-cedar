@@ -54,3 +54,53 @@ def test_ai_url_validation(value):
 def test_ai_timeout_bounded(value):
     with pytest.raises(ValidationError):
         config(AI_TIMEOUT_SECONDS=value)
+
+
+@pytest.mark.parametrize(
+    "origin", ["http://localhost:8001", "http://127.0.0.1:8900", "http://[::1]:8001"]
+)
+def test_loopback_origins_work_without_allowlist(origin):
+    assert config(AI_BASE_URL=origin).ai_base_url.get_secret_value() == origin
+
+
+@pytest.mark.parametrize(
+    "origin",
+    [
+        "https://public.example",
+        "http://veriq-ai:8001",
+        "http://10.0.0.7:8001",
+        "http://localhost.evil:8001",
+    ],
+)
+def test_non_loopback_requires_explicit_trust(origin):
+    with pytest.raises(ValidationError) as error:
+        config(AI_BASE_URL=origin)
+    assert "AI_TRUSTED_ORIGINS" in str(error.value) and origin not in str(error.value)
+
+
+def test_exact_internal_origin_allowlist_and_empty_unconfigured_url():
+    assert configured_ai(config(AI_ENABLED=True, AI_BASE_URL="")) is None
+    settings = config(
+        AI_BASE_URL="http://veriq-ai:8001", AI_TRUSTED_ORIGINS=["http://veriq-ai:8001"]
+    )
+    assert settings.ai_base_url.get_secret_value() == "http://veriq-ai:8001"
+    # Origin identity includes scheme and port; a generic private IP is not trust proof.
+    for url in ("https://veriq-ai:8001", "http://veriq-ai:8002", "http://10.0.0.8:8001"):
+        with pytest.raises(ValidationError):
+            config(AI_BASE_URL=url, AI_TRUSTED_ORIGINS=["http://veriq-ai:8001"])
+
+
+@pytest.mark.parametrize(
+    "origin",
+    ["http://*.internal:8001", "http://ai/path", "https://user:secret@ai", "http://ai?key=secret"],
+)
+def test_allowlist_origins_must_be_exact_valid_origins(origin):
+    with pytest.raises(ValidationError):
+        config(AI_TRUSTED_ORIGINS=[origin])
+
+
+def test_internal_origin_allowlist_loads_from_private_environment(monkeypatch):
+    monkeypatch.setenv("AI_TRUSTED_ORIGINS", '["https://veriq-ai.internal:8443"]')
+    assert config(AI_BASE_URL="https://veriq-ai.internal:8443").ai_trusted_origins == [
+        "https://veriq-ai.internal:8443"
+    ]

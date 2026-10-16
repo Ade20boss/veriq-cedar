@@ -1,6 +1,7 @@
 """Bounded private HTTP client; no credentials, bodies or exception text in diagnostics."""
 
 import asyncio
+import json
 
 import httpx
 from pydantic import ValidationError
@@ -14,6 +15,51 @@ from veriq_cedar.veriq.ai.safety import (
 )
 
 MAX_BYTES = 262144
+MAX_ERROR_BYTES = 8192
+# Exact safe codes/statuses emitted by the existing AI service; messages are never trusted.
+SERVICE_ERRORS = {
+    (503, "MODEL_RATE_LIMITED"): "AI_RATE_LIMITED",
+    (502, "MODEL_AUTH_FAILED"): "AI_AUTH_FAILED",
+    (503, "MODEL_TIMEOUT"): "AI_TIMEOUT",
+    (503, "MODEL_UNAVAILABLE"): "AI_UNAVAILABLE",
+    (503, "MODEL_NOT_CONFIGURED"): "AI_UNAVAILABLE",
+    (503, "MODEL_PROVIDER_INVALID"): "AI_UNAVAILABLE",
+    (503, "SERVICE_NOT_CONFIGURED"): "AI_UNAVAILABLE",
+    (502, "MODEL_NOT_FOUND"): "AI_UNAVAILABLE",
+    (502, "MODEL_UPSTREAM_ERROR"): "AI_UNAVAILABLE",
+    (502, "MODEL_MALFORMED_JSON"): "AI_INVALID_SCHEMA",
+    (502, "AI_INVALID_OUTPUT"): "AI_INVALID_SCHEMA",
+    (401, "UNAUTHORIZED"): "AI_AUTH_FAILED",
+}
+
+
+async def error_code(response: httpx.Response) -> str:
+    fallback = {401: "AI_AUTH_FAILED", 403: "AI_AUTH_FAILED", 429: "AI_RATE_LIMITED"}.get(
+        response.status_code, "AI_UNAVAILABLE"
+    )
+    # Do not inspect redirects or arbitrary success statuses as trusted service failures.
+    if response.status_code not in {401, 403, 429, 502, 503}:
+        return fallback
+    if (
+        response.headers.get("content-encoding", "identity").lower() != "identity"
+        or response.headers.get("content-type", "").split(";", 1)[0].strip().lower()
+        != "application/json"
+    ):
+        return fallback
+    content = bytearray()
+    async for part in response.aiter_bytes(chunk_size=MAX_ERROR_BYTES + 1):
+        if len(content) + len(part) > MAX_ERROR_BYTES:
+            return fallback
+        content.extend(part)
+    try:
+        envelope = json.loads(content)
+        error = envelope.get("error") if isinstance(envelope, dict) else None
+        code = error.get("code") if isinstance(error, dict) else None
+        if not isinstance(code, str):
+            return fallback
+        return SERVICE_ERRORS.get((response.status_code, code), fallback)
+    except (ValueError, UnicodeError, RecursionError):
+        return fallback
 
 
 class AIError(Exception):
@@ -100,16 +146,12 @@ class AIClient:
                     headers={
                         "X-Internal-Service-Key": self.service_key,
                         "Content-Type": "application/json",
+                        "Accept-Encoding": "identity",
                     },
                     content=body,
                 ) as response:
                     if response.status_code != 200:
-                        code = {
-                            401: "AI_AUTH_FAILED",
-                            403: "AI_AUTH_FAILED",
-                            429: "AI_RATE_LIMITED",
-                        }.get(response.status_code, "AI_UNAVAILABLE")
-                        raise AIError(code)
+                        raise AIError(await error_code(response))
                     content = bytearray()
                     async for part in response.aiter_bytes():
                         content.extend(part)
