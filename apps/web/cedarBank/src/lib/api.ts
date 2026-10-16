@@ -82,11 +82,12 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const customerApi = {
   getAccount: () => request<Account>("/v1/cedar/accounts/me"),
   getBanks: () => request<Bank[]>("/v1/cedar/banks"),
-  enquireName: (input: { bank_id: string; account_id: string }) =>
+  enquireName: (input: { bank_id: string; account_id: string }, signal?: AbortSignal) =>
     request<NameEnquiryResult>("/v1/cedar/name-enquiries", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
+      signal,
     }),
   createTransfer: (
     input: {

@@ -19,6 +19,7 @@ import {
   type RouteHealth,
   type SourceListItem,
 } from "./lib/veriq-api"
+import { isCurrentInvestigationResponse } from "./lib/investigation-guards.js"
 
 type RoleKey = "sarah" | "michael" | "bob" | "grace"
 type Screen = "signin" | "loading" | "app"
@@ -4585,7 +4586,7 @@ function VeriqWorkbench({ reference, navigate }: { reference: string; approvedEv
     try {
       const result = await veriqApi.investigation(reference)
       if (requestId !== requestSequence.current) return
-      if (result.case_id !== reference) {
+      if (!isCurrentInvestigationResponse(requestId, requestSequence.current, reference, result.case_id)) {
         setError("The returned investigation does not match the requested case.")
         return
       }

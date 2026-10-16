@@ -28,6 +28,7 @@ import {
   TransactionRow,
 } from "../components/SharedComponents"
 import type { Screen } from "../types"
+import { getTransactionInsight } from "../transaction-insights.js"
 
 export function HomeScreen({
   balance,
@@ -386,53 +387,8 @@ function TransactionInsights({
   hasComplaint: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
-  const isCompleted =
-    transaction.financialOutcome === "credit_confirmed" ||
-    transaction.status === "Completed"
-  const isFailed =
-    transaction.financialOutcome === "failure_confirmed" ||
-    transaction.status === "Failed"
-  const isReversed =
-    transaction.financialOutcome === "reversal_posted" ||
-    transaction.status === "Reversal posted"
-  const hasTimeout = transaction.evidence?.some(
-    (item) => item.eventType === "response_timeout",
-  )
-
-  const summary = isCompleted
-    ? `Authorized records confirm that ${transaction.title} received this transfer.`
-    : isFailed
-      ? "Authorized records confirm that this payment instruction did not complete."
-      : isReversed
-        ? "A matching reversal has been verified on your Cedar account."
-        : hasTimeout
-          ? "Your account was debited, but the beneficiary credit has not been confirmed."
-          : "Your transfer is being processed. We haven't received a final confirmation yet."
-
-  const reason = hasTimeout
-    ? "The backend reported a response timeout. This is not proof that the transfer failed or that the beneficiary was credited."
-    : isCompleted
-      ? "The final beneficiary-credit response was received and verified through an authorized status source."
-      : isFailed
-        ? "The final payment status was received from an authorized source and records the instruction as unsuccessful."
-        : isReversed
-          ? "Cedar's ledger shows a confirmed reversal credit matching the original debit."
-          : "No specific cause has been identified. The bank is waiting for the next verified processing event."
-
-  const bankAction =
-    isCompleted || isFailed || isReversed
-      ? "The latest authorized outcome has been recorded on this transaction."
-      : hasComplaint
-        ? "The transaction is linked to an active complaint. Complaint creation does not verify the transfer outcome."
-      : "Cedar will check the latest authorized status when you request an update."
-
-  const guidance = isCompleted
-    ? "No action is required. You can still report an issue if the recipient disputes receipt."
-    : isFailed || isReversed
-      ? "Review the confirmed outcome and contact Cedar support if you need more help."
-      : hasComplaint
-        ? "Track your complaint for verified updates and avoid sending a duplicate transfer while the outcome remains unknown."
-        : "Check the latest status, avoid a duplicate transfer, or report an issue if you need assistance."
+  const { isCompleted, isFailed, isReversed, hasTimeout, summary, reason, bankAction, guidance } =
+    getTransactionInsight(transaction, hasComplaint)
 
   const level = transaction.explanationLevel ?? (isCompleted ? 3 : 1)
   const label =

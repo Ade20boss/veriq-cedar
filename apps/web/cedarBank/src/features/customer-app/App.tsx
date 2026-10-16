@@ -31,6 +31,9 @@ import {
   SupportScreen,
 } from "./screens/SupportScreens"
 import type { Screen } from "./types"
+import { isCurrentNameEnquiry } from "./flow-guards.js"
+import { parsePendingTransfer } from "./pending-transfer-runtime.js"
+import type { PendingTransfer } from "./pending-transfer"
 import {
   ApiError,
   customerApi,
@@ -41,48 +44,14 @@ import {
   type Transfer,
 } from "../../lib/api"
 
-type PendingTransfer = {
-  idempotencyKey: string
-  payload: {
-    beneficiary_bank_id: string
-    beneficiary_account_id: string
-    amount_kobo: number
-    narration?: string
-  }
-  beneficiaryName: string
-  createdAt: number
-}
-
 const PENDING_TRANSFER_STORAGE_KEY = "cedar.pending-transfer.v1"
-const PENDING_TRANSFER_MAX_AGE_MS = 24 * 60 * 60 * 1000
 
-function readPendingTransfer(): PendingTransfer | null {
+function readPendingTransfer(accountId: string): PendingTransfer | null {
   if (typeof window === "undefined") return null
-  try {
-    const value = JSON.parse(
-      window.localStorage.getItem(PENDING_TRANSFER_STORAGE_KEY) ?? "null",
-    ) as Partial<PendingTransfer> | null
-    const payload = value?.payload
-    if (
-      !value ||
-      typeof value.idempotencyKey !== "string" ||
-      typeof value.beneficiaryName !== "string" ||
-      typeof value.createdAt !== "number" ||
-      Date.now() - value.createdAt > PENDING_TRANSFER_MAX_AGE_MS ||
-      !payload ||
-      typeof payload.beneficiary_bank_id !== "string" ||
-      typeof payload.beneficiary_account_id !== "string" ||
-      !Number.isSafeInteger(payload.amount_kobo) ||
-      payload.amount_kobo <= 0
-    ) {
-      window.localStorage.removeItem(PENDING_TRANSFER_STORAGE_KEY)
-      return null
-    }
-    return value as PendingTransfer
-  } catch {
-    window.localStorage.removeItem(PENDING_TRANSFER_STORAGE_KEY)
-    return null
-  }
+  const raw = window.localStorage.getItem(PENDING_TRANSFER_STORAGE_KEY)
+  const value = parsePendingTransfer(raw, accountId)
+  if (!value) window.localStorage.removeItem(PENDING_TRANSFER_STORAGE_KEY)
+  return value
 }
 
 function storePendingTransfer(value: PendingTransfer) {
@@ -122,6 +91,19 @@ export default function CustomerApp() {
   )
   const [balanceStale, setBalanceStale] = useState(false)
   const transferInFlight = useRef(false)
+  const nameEnquiryGeneration = useRef(0)
+  const nameEnquiryController = useRef<AbortController | null>(null)
+  const bankRef = useRef(bank)
+  const recipientAccountRef = useRef(recipientAccount)
+  bankRef.current = bank
+  recipientAccountRef.current = recipientAccount
+
+  const invalidateNameEnquiry = () => {
+    nameEnquiryGeneration.current += 1
+    nameEnquiryController.current?.abort()
+    nameEnquiryController.current = null
+    setBeneficiaryName("")
+  }
 
   const loadSession = useCallback(async () => {
     setLoading(true)
@@ -134,7 +116,7 @@ export default function CustomerApp() {
       setBanks(nextBanks)
       setBalanceStale(false)
       setSessionError("")
-      const recovered = readPendingTransfer()
+      const recovered = readPendingTransfer(nextAccount.id)
       if (recovered) {
         setPendingTransfer(recovered)
         setIdempotencyKey(recovered.idempotencyKey)
@@ -274,7 +256,7 @@ export default function CustomerApp() {
       setFormError("Enter a valid amount.")
       return
     }
-    const recovered = pendingTransfer ?? readPendingTransfer()
+    const recovered = pendingTransfer ?? (account ? readPendingTransfer(account.id) : null)
     const amountKobo = recovered?.payload.amount_kobo ?? parseNairaToKobo(amount)
     if (!amountKobo) {
       setFormError("Enter a valid amount.")
@@ -292,6 +274,7 @@ export default function CustomerApp() {
       narration,
     }
     const intent: PendingTransfer = recovered ?? {
+      originatingAccountId: account.id,
       idempotencyKey: key,
       payload,
       beneficiaryName,
@@ -462,12 +445,12 @@ export default function CustomerApp() {
             bank={bank}
             setBank={(value) => {
               setBank(value)
-              setBeneficiaryName("")
+              invalidateNameEnquiry()
             }}
             account={recipientAccount}
             setAccount={(value) => {
               setRecipientAccount(value)
-              setBeneficiaryName("")
+              invalidateNameEnquiry()
             }}
             amount={amount}
             setAmount={(value) => {
@@ -496,22 +479,63 @@ export default function CustomerApp() {
                   "Enter a valid amount within your available balance",
                 )
               else if (!resolved) {
+                const requestedBank = bank
+                const requestedAccount = recipientAccount
+                const requestId = ++nameEnquiryGeneration.current
+                nameEnquiryController.current?.abort()
+                const controller = new AbortController()
+                nameEnquiryController.current = controller
                 setLoading(true)
                 customerApi
-                  .enquireName({ bank_id: bank, account_id: recipientAccount })
+                  .enquireName(
+                    { bank_id: requestedBank, account_id: requestedAccount },
+                    controller.signal,
+                  )
                   .then((result) => {
+                    if (
+                      !isCurrentNameEnquiry(
+                        {
+                          bankId: requestedBank,
+                          accountId: requestedAccount,
+                          generation: requestId,
+                        },
+                        {
+                          bankId: bankRef.current,
+                          accountId: recipientAccountRef.current,
+                          generation: nameEnquiryGeneration.current,
+                        },
+                      )
+                    ) return
                     setBeneficiaryName(result.beneficiary_name)
                     setFormError("")
                     navigate("review")
                   })
                   .catch((error: unknown) =>
-                    setFormError(
-                      error instanceof ApiError
-                        ? error.message
-                        : "Beneficiary name enquiry failed",
-                    ),
+                    isCurrentNameEnquiry(
+                      {
+                        bankId: requestedBank,
+                        accountId: requestedAccount,
+                        generation: requestId,
+                      },
+                      {
+                        bankId: bankRef.current,
+                        accountId: recipientAccountRef.current,
+                        generation: nameEnquiryGeneration.current,
+                      },
+                    ) &&
+                      (error as { name?: string } | null)?.name !== "AbortError" &&
+                      setFormError(
+                        error instanceof ApiError
+                          ? error.message
+                          : "Beneficiary name enquiry failed",
+                      ),
                   )
-                  .finally(() => setLoading(false))
+                  .finally(() => {
+                    if (requestId === nameEnquiryGeneration.current) {
+                      nameEnquiryController.current = null
+                      setLoading(false)
+                    }
+                  })
               } else {
                 setFormError("")
                 navigate("review")
