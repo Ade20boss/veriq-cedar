@@ -23,6 +23,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 from typing import Any, Callable, Iterable
 
 import httpx
@@ -54,9 +55,11 @@ REQUIRED_FIXTURES = {
     "extract_unknown_alias.json": EXTRACTION,
     "extract_prompt_injection.json": EXTRACTION,
     "case_confirmed.json": CASE,
+    "case_task005_shape.json": CASE,
 }
 QUICK = ("extract_incident.json", "case_unknown.json")
-FULL = tuple(REQUIRED_FIXTURES)
+FULL = tuple(name for name in REQUIRED_FIXTURES if name != "case_task005_shape.json")
+ALL_FIXTURES = tuple(REQUIRED_FIXTURES)
 # Compare exact trusted source references rather than model-generated confidence.
 SUSPECT_TERMS = re.compile(r"\b(?:successful|succeeded|credited|refunded|reversed|settled)\b", re.I)
 
@@ -69,6 +72,29 @@ class Finding:
 
     def as_dict(self) -> dict[str, str]:
         return {"severity": self.severity, "rule": self.rule, "detail": self.detail}
+
+
+def trusted_live_url(url: str) -> str:
+    """Allow credential-bearing evaluations only to literal loopback origins.
+
+    No DNS lookups, remote hostnames, redirects, credentials in URL, or proxy
+    inheritance. A remote allowlist requires separate authorized review.
+    """
+    try:
+        parsed = urlsplit(url)
+        if (
+            parsed.scheme != "http"
+            or parsed.hostname not in {"127.0.0.1", "::1"}
+            or parsed.username is not None or parsed.password is not None
+            or parsed.path not in {"", "/"}
+            or parsed.query or parsed.fragment
+            or parsed.port is None
+            or not 1 <= parsed.port <= 65535
+        ):
+            raise ValueError("Loopback-only live evaluator")
+    except (ValueError, TypeError):
+        raise ValueError("Loopback-only live evaluator") from None
+    return url.rstrip("/")
 
 
 def load_fixture(name: str) -> dict[str, Any]:
@@ -267,6 +293,8 @@ def _safe_error_message(body: Any) -> str | None:
 def test_one(client: Any, name: str, url: str, *, save_responses: bool) -> tuple[dict[str, Any], bool]:
     payload = load_fixture(name)
     endpoint = REQUIRED_FIXTURES[name]
+    if url:
+        url = trusted_live_url(url)  # Direct helper callers are also fenced.
     started = time.monotonic()
     try:
         resp = client.post(endpoint if not url else url.rstrip("/") + endpoint,
@@ -331,7 +359,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mode", choices=("offline", "live"), default="offline",
                         help="offline=in-process deterministic mock; live=authorized running Veriq server")
     parser.add_argument("--suite", choices=("quick", "full"), default="quick")
-    parser.add_argument("--case", choices=FULL, action="append", help="Evaluate only the specified fixture (repeatable)")
+    parser.add_argument("--case", choices=ALL_FIXTURES, action="append", help="Evaluate only the specified fixture (repeatable)")
     parser.add_argument("--url", default="http://127.0.0.1:8001", help="Local Veriq FastAPI address in live mode")
     parser.add_argument("--timeout", type=float, default=90)
     parser.add_argument("--interval", type=float, default=1.5, help="Seconds between live requests; no automatic retries")
@@ -380,6 +408,11 @@ def main(argv: list[str] | None = None) -> int:
             finally:
                 del active_service_key.value
     else:
+        try:
+            args.url = trusted_live_url(args.url)
+        except ValueError:
+            print("Refusing untrusted live evaluation destination", file=sys.stderr)
+            return 2
         file_env = dotenv_values(ROOT / ".env")
         key = os.environ.get("INTERNAL_SERVICE_KEY") or file_env.get("INTERNAL_SERVICE_KEY")
         if not key or key == "replace-with-a-long-random-service-secret":
@@ -387,10 +420,12 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         active_service_key.value = key
         try:
-            with httpx.Client(timeout=args.timeout) as client:
+            with httpx.Client(timeout=args.timeout, follow_redirects=False, trust_env=False) as client:
                 try:
                     health = client.get(args.url.rstrip("/") + "/health")
-                    health.raise_for_status()
+                    if health.status_code != 200:
+                        print("Refusing live evaluation: unexpected health status", file=sys.stderr)
+                        return 2
                     mode = health.json().get("mode")
                 except (httpx.RequestError, httpx.HTTPStatusError, ValueError) as exc:
                     print(f"Cannot reach Veriq /health: {type(exc).__name__}", file=sys.stderr)

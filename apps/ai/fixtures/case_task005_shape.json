@@ -1,0 +1,137 @@
+{
+  "case_id": "SYN-CASE-005",
+  "bank_id": "CED",
+  "financial_outcome": "UNKNOWN",
+  "question": "What does the permitted transfer and G2 route evidence establish?",
+  "evidence": [
+    {
+      "id": "transfer/SYN-T-005/state",
+      "source_system": "cedar.transfer_orchestrator",
+      "kind": "TRANSFER_STATE",
+      "observed_at": "2026-10-15T22:06:10+01:00",
+      "occurred_at": "2026-10-15T22:06:10+01:00",
+      "citation": "cedar.transfer_orchestrator/transfer/SYN-T-005/state",
+      "verified_for_purpose": true,
+      "data": {
+        "transfer_id": "SYN-T-005",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "stage": "RESPONSE_TIMEOUT",
+        "financial_outcome": "UNKNOWN",
+        "amount_kobo": 5000000,
+        "beneficiary_bank_id": "ELM",
+        "beneficiary_account_id": "ELM-ACC-009"
+      }
+    },
+    {
+      "id": "stage/debit",
+      "source_system": "cedar.transfer_orchestrator",
+      "kind": "TRANSFER_STAGE",
+      "observed_at": "2026-10-15T22:06:10+01:00",
+      "occurred_at": "2026-10-15T22:06:10+01:00",
+      "citation": "cedar.transfer_orchestrator/stage/debit",
+      "verified_for_purpose": true,
+      "data": {
+        "transfer_id": "SYN-T-005",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "stage": "DEBIT_POSTED",
+        "financial_outcome": "UNKNOWN"
+      }
+    },
+    {
+      "id": "stage/submitted",
+      "source_system": "cedar.transfer_orchestrator",
+      "kind": "TRANSFER_STAGE",
+      "observed_at": "2026-10-15T22:06:10+01:00",
+      "occurred_at": "2026-10-15T22:06:10+01:00",
+      "citation": "cedar.transfer_orchestrator/stage/submitted",
+      "verified_for_purpose": true,
+      "data": {
+        "transfer_id": "SYN-T-005",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "stage": "SUBMITTED",
+        "financial_outcome": "UNKNOWN"
+      }
+    },
+    {
+      "id": "stage/timeout",
+      "source_system": "cedar.transfer_orchestrator",
+      "kind": "TRANSFER_STAGE",
+      "observed_at": "2026-10-15T22:06:10+01:00",
+      "occurred_at": "2026-10-15T22:06:10+01:00",
+      "citation": "cedar.transfer_orchestrator/stage/timeout",
+      "verified_for_purpose": true,
+      "data": {
+        "transfer_id": "SYN-T-005",
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "stage": "RESPONSE_TIMEOUT",
+        "financial_outcome": "UNKNOWN"
+      }
+    },
+    {
+      "id": "case/SYN-CASE-005",
+      "source_system": "cedar.complaints",
+      "kind": "CUSTOMER_REPORT",
+      "observed_at": "2026-10-15T22:06:10+01:00",
+      "occurred_at": "2026-10-15T22:06:10+01:00",
+      "citation": "cedar.complaints/case/SYN-CASE-005",
+      "verified_for_purpose": false,
+      "data": {
+        "case_id": "SYN-CASE-005",
+        "customer_report": "My fictional transfer timed out; please investigate."
+      }
+    },
+    {
+      "id": "metric/elm-g2-window",
+      "source_system": "cedar.synthetic.metrics",
+      "kind": "ROUTE_METRIC_SNAPSHOT",
+      "observed_at": "2026-10-15T22:06:10+01:00",
+      "occurred_at": "2026-10-15T22:06:10+01:00",
+      "citation": "cedar.synthetic.metrics/metric/elm-g2-window",
+      "verified_for_purpose": true,
+      "data": {
+        "route_id": "ROUTE-CED-ELM-G2",
+        "service_id": "G2",
+        "attempts": 25,
+        "timeouts": 7,
+        "window_start": "2026-10-15T22:01:00+01:00",
+        "window_end": "2026-10-15T22:06:10+01:00",
+        "correlation_rule": "exact bank/route/service; window plus five minutes; suspected only"
+      }
+    },
+    {
+      "id": "src/routes-0-service_id",
+      "source_system": "veriq.knowledge",
+      "kind": "DOCUMENTED_RELATIONSHIP",
+      "observed_at": "2026-10-15T22:06:10+01:00",
+      "occurred_at": "2026-10-15T22:06:10+01:00",
+      "citation": "veriq.knowledge/src/routes-0-service_id",
+      "verified_for_purpose": true,
+      "data": {
+        "from_entity_id": "ROUTE-CED-ELM-G2",
+        "to_entity_id": "G2",
+        "type": "USES",
+        "status": "DOCUMENTED"
+      }
+    }
+  ],
+  "known_relationships": [
+    {
+      "id": "SYN-REL-005",
+      "bank_id": "CED",
+      "from_entity_id": "ROUTE-CED-ELM-G2",
+      "to_entity_id": "G2",
+      "type": "USES",
+      "status": "DOCUMENTED",
+      "evidence_ids": [
+        "src/routes-0-service_id"
+      ],
+      "source_id": "SYN-SRC-005",
+      "valid_from": null
+    }
+  ],
+  "historical_incidents": []
+}
