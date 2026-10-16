@@ -22,7 +22,7 @@ For synthetic-only recording, open:
 http://127.0.0.1:3002/demo
 ```
 
-For the live Cedar context panel, run the backend and same-origin gateway in separate terminals:
+For the live Cedar context panel, run the backend and same-origin gateway in separate terminals. In this checkout the customer app uses port 3001 and Cedar Operations uses port 3000:
 
 ```bash
 cd apps/backend
@@ -32,7 +32,7 @@ cd ../
 caddy run --config infra/pitch/Caddyfile
 ```
 
-Open `http://localhost:8082/demo` for Veriq. The browser must have the privately provisioned investigator cookie for `/v1/veriq`; there is no public browser login or token bootstrap. Install that cookie only through the approved local operator procedure, never in source code or localStorage.
+Open `http://localhost:8081/` for Cedar Operations, `http://localhost:8080/` for Cedar Customer Banking, and `http://localhost:8082/demo` for Veriq. The browser must have the privately provisioned investigator cookie for `/v1/veriq`; there is no public browser login or token bootstrap. Install that cookie only through the approved local operator procedure, never in source code or localStorage.
 
 The app can also run inside the Figma Make lifecycle. A normal shell build requires the platform-owned `FIGMA_EID`; do not invent that value or add dummy Payload/Figma secrets.
 
