@@ -1,5 +1,7 @@
 # Veriq + Cedar current handoff
 
+Frontend addendum, 16 October 2026: standalone Veriq frontend pitch fixes are on `feat/veriq-frontend-pitch-fixes` from main `7983ec8`; see `VERIQ_FRONTEND_PR_STATUS.md` for exact scope, test results, build blocker, session status, and next safe action. This is separate from Cedar PR #11 and does not change the backend milestones below.
+
 Task006 optional case AI orchestration implemented and PR#8 review corrections verified,16October2026 (Africa/Lagos). Stop after feature push/PR for technical review; no automatic merge or additional milestone. Primary guide: AI_BACKEND_INTEGRATION_STATUS.md. PITCH_BACKEND_STATUS.md and Task002–005 reports describe preserved earlier milestones; their AI-unavailable statements are historical for the disabled path.
 
 Checkout: /home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar. Origin https://github.com/Ade20boss/veriq-cedar.git. Branch feat/veriq-ai-orchestration-a2 from fetched main0aa03daad28548bd84848e12fd79fe244c7f979c after GitHub confirmed PR#5 MERGED, including final worker logger fixbb918d9. No teammate merge performed. Feature containing commit: git rev-parse HEAD; final chat records actual feature SHA/PR. Do not infer publication from this file alone; verify origin branch/head/PR.
