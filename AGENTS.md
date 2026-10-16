@@ -4,7 +4,7 @@ These instructions apply to every coding tool and all paths. The repository/spec
 
 ## Current scope
 
-Task 005 explicitly authorizes the bounded integrated pitch backend on feat/pitch-backend-g2 from latest main (G0, AI, frontend and G1 PRs merged). Implement approved operational read APIs, Cedar-owned durable complaints, bank-neutral automatic BANK_CASE handoff using existing jobs, minimum real source upload/context pipeline, secure private investigator sessions and a four-act PostgreSQL/HTTP replay. Preserve existing tests and teammate implementations; no apps/ai or frontend modifications. Commit/push feature branch and PR to main; no automatic merge. P0 precedes optional AI/status verification. Never fake AI extraction/findings, confirmed incidents, customer communications or financial finality. No proposed v1.1 endpoint promotion, new infrastructure product, ledger correction or destructive reset. See docs/handoffs/PITCH_BACKEND_STATUS.md for exact implemented/missing features.
+Task 006 authorizes optional evidence-grounded case AI orchestration on feat/veriq-ai-orchestration-a2 from main0aa03da (merged PR #5). Extend existing PostgreSQL jobs with a separate CASE_AI stage, immutable scoped request snapshots, bounded private HTTP calls outside transactions, independent v1.0 response/evidence/financial validation and revision/generation fencing. Preserve deterministic investigations and all prior tests when AI is disabled/unavailable. Existing case GET exposes only approved ai_result/status fields. No AI service/frontend edits, source extraction, ledger/status reveal, v1.1 analysis endpoints, new infrastructure or automatic customer publication. Mock output must be explicitly synthetic; do not claim real-provider success without an actual invocation. See docs/handoffs/AI_BACKEND_INTEGRATION_STATUS.md. Push dedicated feature PR against main; do not auto-merge.
 
 ## Recover before editing
 
@@ -48,3 +48,5 @@ Run checks appropriate to actual changes. Later implementation retains T01–T16
 - Read docs/REPOSITORY_ARCHITECTURE.md, BANK_ADAPTER_CONTRACT.md, EVENT_PROCESSING.md, FRONTEND_ALIGNMENT.md, STAFF_AND_UI_CONTRACTS.md and proposal README when continuing. Markdown is canonical; frozen source documents and canonical contracts stay unchanged.
 
 Current scope clarification: the Cedar Operations attachment is a proposed requirements source, not authorization to build every module. Read docs/MINIMUM_DEMO_SCOPE.md from repository root for the 26-addition P0 proposal and the 13 excluded secondary operations. Canonical APIs are unchanged; Task 003 authorized internal G0; Task 004 authorized G1; Task 005 additionally authorizes only the pitch subset described above. The remaining P0/secondary HTTP proposals are still unapproved.
+
+Task 006 additionally authorizes the existing v1.0 internal analyze-case integration described above; it does not approve other proposed v1.1 operations.

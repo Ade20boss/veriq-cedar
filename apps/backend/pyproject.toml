@@ -16,12 +16,12 @@ dependencies = [
   "psycopg[binary]==3.3.6",
   "uvicorn==0.54.0",
   "python-multipart==0.0.32",
+  "httpx==0.28.1",
 ]
 
 [dependency-groups]
 dev = [
     "pytest==9.1.1",
-    "httpx==0.28.1",
     "ruff==0.17.0",
     "pyyaml==6.0.3",
     "jsonschema==4.26.0",

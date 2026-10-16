@@ -1,5 +1,7 @@
 # Veriq + Cedar
 
+Task 006 adds optional private case AI orchestration over durable, permitted evidence. See [AI integration status](docs/handoffs/AI_BACKEND_INTEGRATION_STATUS.md) for configuration, safety, provider limitations and current verification. The following milestone descriptions are historical.
+
 Task 005 supplies the integrated backend pitch: genuine source uploads/context, persistent proactive read APIs, protected Cedar complaints and automatic case evidence investigations. Run the four-act CLI with actual PostgreSQL; see [pitch status and frontend wiring](docs/handoffs/PITCH_BACKEND_STATUS.md) and [backend instructions](apps/backend/README.md). G1's S2 financial outcome remains UNKNOWN; AI findings/status reveal are not simulated. Older milestone descriptions below are historical.
 
 
