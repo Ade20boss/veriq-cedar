@@ -3,6 +3,7 @@ import { appAuth } from "@/lib/app-auth"
 import { ArrowRight, Building2 } from "lucide-react"
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import SyntheticOnboarding from "../../components/synthetic-onboarding"
 
 export const dynamic = "force-dynamic"
 
@@ -11,13 +12,15 @@ export default async function OnboardingPage({
   searchParams,
 }: {
   params: Promise<{ step: string }>
-  searchParams: Promise<{ institutionId?: string | string[] }>
+  searchParams: Promise<{ institutionId?: string | string[]; mode?: string | string[] }>
 }) {
   const user = await appAuth.getCurrentUser()
   if (!user) redirect("/sign-in")
 
   const { step } = await params
   const query = await searchParams
+  const mode = typeof query.mode === "string" ? query.mode : ""
+  if (mode === "synthetic") return <SyntheticOnboarding requestedStep={step} />
   const institutionId =
     typeof query.institutionId === "string" ? query.institutionId : ""
   const membership = (user.memberships ?? []).find(
