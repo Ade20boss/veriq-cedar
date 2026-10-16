@@ -254,3 +254,24 @@ Chronological recording sequence:
 Fallback: if private browser session setup is unavailable, record the honest session-required customer state and the synthetic Veriq onboarding. Do not replace the transfer or investigation states with local fixtures. If telemetry freshness is challenged, show the actual `INSUFFICIENT_DATA` state and explain that no producer was run for this rehearsal.
 
 Final rehearsal result (2026-10-16): all three applications and the FastAPI backend were running simultaneously; gateway roots returned HTTP `200`; protected reads and exact transfer/case linkage passed. The only operator preparation is private customer/investigator cookie setup.
+
+## Emergency local readiness checkpoint — 16 October 2026
+
+Verified on hostname `Barry`, repository `/home/barry/Desktop/veriq-cedar`, commit `783ced650d1a030da2742c36ed760f41af5b53c1` on `feat/frontend-foundation`. Existing local services were absent at the start of this checkpoint, so the documented commands were started without migrations, seeds, replay, reset, telemetry, or AI configuration.
+
+Running services:
+
+- PostgreSQL temporary local cluster: `127.0.0.1:5433`, accepting connections; all configured database roles connected; Alembic revision `0004_pitch_g2`, 32 domain tables.
+- FastAPI: `127.0.0.1:8000`; `/health` and `/ready` returned HTTP 200.
+- Cedar Customer: `localhost:3001`, behind `http://localhost:8080/`.
+- Cedar Operations: `localhost:3000`, behind `http://localhost:8081/`.
+- Veriq: `localhost:3002`, behind `http://localhost:8082/demo`.
+- Caddy: `8080`, `8081`, `8082`; configuration validated successfully with the existing formatting warning.
+- g1 payment-recovery worker and g2 complaint/investigation worker: running as separate processes.
+- AI: disabled/not started; no AI migration or configuration was applied.
+
+Read-only database verification matched the approved existing records: transfer `5525e2e0-849a-4571-a14c-b7df2f3db49c` is `RESPONSE_TIMEOUT`/`UNKNOWN`; complaint `15d3a206-53a4-4a81-8206-aea76f87faa6` references that transfer; the case is `EVIDENCE_READY_AI_UNAVAILABLE`/`UNKNOWN` with seven evidence records, `incident_ids: []`, and no AI result. Cedar has five sources, seven entities, ten documented relationships, zero verified relationships, two route signatures, and one incident.
+
+Unauthenticated protected checks returned the expected HTTP 401 for both customer account and investigator case reads. No private customer or investigator session files were present, so no session was minted and no database state was changed. Authenticated browser/API rehearsal therefore remains pending the operator’s approved private procedure: install the customer `cedar_demo_session` only in the customer browser context and a separate bank-scoped investigator `cedar_demo_session` only in the Veriq/staff context. Payload `app-session` login is not a substitute.
+
+Route smoke checks returned HTTP 200 for all three recording URLs. Firefox exists locally, but Playwright is absent and the attempted headless screenshot did not complete reliably; no authenticated visual/browser interaction is claimed. The operator must perform the final manual 1366px browser rehearsal and inspect console/network errors before recording. Do not expose or paste cookie values.
