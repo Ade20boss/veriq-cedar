@@ -47,8 +47,17 @@ export type Incident = {
   status: string
   first_observed_at?: string
   last_observed_at?: string
-  finding?: string
-  case_ids?: string[]
+  finding_summary?: string
+  evidence_ids: string[]
+  case_ids: string[]
+}
+export type CaseInvestigation = {
+  case_id: string
+  status: string
+  financial_outcome: string
+  evidence: Array<Record<string, unknown>>
+  incident_ids: string[]
+  ai_result: unknown | null
 }
 
 export class VeriqApiError extends Error {
@@ -86,6 +95,8 @@ export const veriqApi = {
   getRelationships: (bankId = "CED") => request<KnowledgeRelationship[]>(path(bankId, "/relationships")),
   getOperations: (bankId = "CED") => request<RouteHealth[]>(path(bankId, "/operations")),
   getIncidents: (bankId = "CED") => request<Incident[]>(path(bankId, "/incidents")),
+  getIncident: (incidentId: string, bankId = "CED") => request<Incident>(path(bankId, `/incidents/${encodeURIComponent(incidentId)}`)),
+  getCase: (caseId: string, bankId = "CED") => request<CaseInvestigation>(path(bankId, `/cases/${encodeURIComponent(caseId)}`)),
   uploadSource: (file: File, bankId = "CED") => {
     const form = new FormData()
     form.append("file", file)

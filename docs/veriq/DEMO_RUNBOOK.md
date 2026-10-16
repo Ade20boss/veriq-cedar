@@ -49,6 +49,8 @@ The app can also run inside the Figma Make lifecycle. A normal shell build requi
 
 To show real institutional context, open **Knowledge Explorer** from the sidebar. With the authorized investigator session it loads `/v1/veriq/banks/CED/sources`, `/context`, `/relationships`, `/operations` and `/incidents`. Choose the five files from `fixtures/onboarding/` to upload them sequentially with `source_kind=PITCH_FIXTURE`; the UI displays backend status, source IDs, checksums, actual context counts, documented relationships and route health. Without the investigator session it shows a clearly labeled unavailable state.
 
+From the same Cedar workspace, open **Operational Monitoring** for the live route snapshot, **Incidents** for the backend incident registry/detail, and **Investigations** for an exact authorized case ID when an incident links one. A case detail displays backend status, financial outcome, evidence IDs and `AI unavailable`; it never creates a case locally. If no case ID is linked, the page says that no authorized case is selected.
+
 The selected institution and setup progress are stored under a namespaced browser-local key so refresh/navigation does not silently assign Cedar or lose the demo state. Clearing site storage restarts the synthetic walkthrough.
 
 ## Live versus simulated
@@ -98,6 +100,8 @@ Live backend rehearsal on the local disposable database:
 - Received HTTP 202 for every upload; the first three returned `PARSED`, and both unstructured documents returned `UPLOADED`.
 - Verified five sources, context version 5, seven entities, ten `DOCUMENTED` relationships, zero verified claims and actual route/incident projections.
 - Verified the new Veriq route `/w/cedar-demo/knowledge?mode=synthetic` returns HTTP 200. Browser live reads require the private investigator cookie and the `localhost:8082` same-origin gateway.
+- Verified `/w/cedar-demo/monitoring?mode=synthetic`, `/incidents?mode=synthetic` and `/investigations?mode=synthetic` return HTTP 200 through the same gateway.
+- Rendered the live monitoring page at 1366×900 and 390×844 in headless Firefox. Without a browser-installed investigator cookie it showed the intended “Live Cedar data unavailable” state rather than synthetic metrics.
 
 Blocked by platform environment:
 

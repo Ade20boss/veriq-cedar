@@ -61,6 +61,11 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import LiveVeriqData from "./live-veriq-data"
+import {
+  LiveCaseInvestigation,
+  LiveIncidents,
+  LiveOperationalMonitoring,
+} from "./live-operational-intelligence"
 
 type ButtonProps = {
   children: ReactNode
@@ -5746,6 +5751,14 @@ export default function VeriqApp({
     } else if (label === "Incidents") {
       setView("incidents")
       if (institution) setRoute(`/w/${institutionSlug}/incidents`)
+    } else if (label.startsWith("INC:")) {
+      setSelectedIncidentId(label.slice(4))
+      setView("incident-detail")
+      if (institution) setRoute(`/w/${institutionSlug}/incidents/${label.slice(4)}`)
+    } else if (label.startsWith("CASE:")) {
+      setSelectedInvestigationId(label.slice(5))
+      setView("investigation-detail")
+      if (institution) setRoute(`/w/${institutionSlug}/investigations/${label.slice(5)}`)
     } else if (label.startsWith("INC-")) {
       setSelectedIncidentId(label)
       setView("incident-detail")
@@ -6068,18 +6081,9 @@ export default function VeriqApp({
                 reviewRecords={reviewRecords}
               />
             )}
-            {view === "incidents" && (
-              <IncidentsList
-                incidents={incidentRecords}
-                institution={institution}
-                onCreate={(incident) =>
-                  setIncidentRecords((records) => [incident, ...records])
-                }
-                onOpen={navigate}
-                onSelectInstitution={setInstitution}
-              />
-            )}
-            {view === "incident-detail" &&
+            {view === "incidents" && (institution === "Cedar Bank — Demo Workspace" ? <LiveIncidents onBack={() => navigate("Incidents")} onOpen={navigate} /> : <IncidentsList incidents={incidentRecords} institution={institution} onCreate={(incident) => setIncidentRecords((records) => [incident, ...records])} onOpen={navigate} onSelectInstitution={setInstitution} />)}
+            {view === "incident-detail" && institution === "Cedar Bank — Demo Workspace" && <LiveIncidents incidentId={selectedIncidentId} onBack={() => navigate("Incidents")} onOpen={navigate} />}
+            {view === "incident-detail" && institution !== "Cedar Bank — Demo Workspace" &&
               (institution ? (
                 <IncidentDetail
                   incident={incidentRecords.find(
@@ -6102,25 +6106,10 @@ export default function VeriqApp({
                   onSelectInstitution={setInstitution}
                 />
               ))}
-            {view === "monitoring" && (
-              <OperationalMonitoring
-                institution={institution}
-                onNavigate={navigate}
-                onSelectInstitution={setInstitution}
-              />
-            )}
-            {view === "investigations" && (
-              <InvestigationsList
-                institution={institution}
-                onCreate={(record) =>
-                  setInvestigationRecords((records) => [record, ...records])
-                }
-                onOpen={navigate}
-                onSelectInstitution={setInstitution}
-                records={investigationRecords}
-              />
-            )}
-            {view === "investigation-detail" && (
+            {view === "monitoring" && (institution === "Cedar Bank — Demo Workspace" ? <LiveOperationalMonitoring /> : <OperationalMonitoring institution={institution} onNavigate={navigate} onSelectInstitution={setInstitution} />)}
+            {view === "investigations" && (institution === "Cedar Bank — Demo Workspace" ? <LiveCaseInvestigation onBack={() => navigate("Incidents")} /> : <InvestigationsList institution={institution} onCreate={(record) => setInvestigationRecords((records) => [record, ...records])} onOpen={navigate} onSelectInstitution={setInstitution} records={investigationRecords} />)}
+            {view === "investigation-detail" && institution === "Cedar Bank — Demo Workspace" && <LiveCaseInvestigation caseId={selectedInvestigationId} onBack={() => navigate("Incidents")} />}
+            {view === "investigation-detail" && institution !== "Cedar Bank — Demo Workspace" && (
               institution ? (
                 <InvestigationDetail
                   onBack={() => navigate("Investigations")}
