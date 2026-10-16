@@ -118,7 +118,7 @@ export function SignInForm({ invitation }: SignInFormProps) {
       )}
 
       <button
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-control)] bg-[var(--brand-navy)] px-4 text-sm font-semibold text-white transition hover:bg-[var(--brand-navy-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-control)] bg-[var(--brand-navy)] px-4 text-sm font-semibold !text-white transition hover:bg-[var(--brand-navy-hover)] disabled:cursor-not-allowed disabled:opacity-60"
         disabled={submitting}
         type="submit"
       >
