@@ -25,6 +25,12 @@ http://127.0.0.1:3002/demo
 For the live Cedar context panel, run the backend and same-origin gateway in separate terminals. In this checkout the customer app uses port 3001 and Cedar Operations uses port 3000:
 
 ```bash
+cd apps/web/cedarBank
+PORT=3001 pnpm dev
+
+cd ../Cedar\ Bank\ Operations\ Design
+PORT=3000 pnpm dev
+
 cd apps/backend
 uv run --locked uvicorn veriq_cedar.main:create_app --factory --host 127.0.0.1 --port 8000 --no-access-log
 
