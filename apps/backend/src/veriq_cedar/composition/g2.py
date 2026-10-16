@@ -17,6 +17,7 @@ from veriq_cedar.cedar.complaints.delivery import ComplaintDelivery
 from veriq_cedar.platform.database.session import DatabaseDomain, DatabaseRegistry
 from veriq_cedar.platform.logging import configure_logging
 from veriq_cedar.platform.settings import MigrationSettings, Settings
+from veriq_cedar.veriq.ai_client.client import VeriqAIClient
 from veriq_cedar.veriq.investigations.cases import CaseReceiver
 from veriq_cedar.veriq.investigations.worker import Worker
 from veriq_cedar.veriq.operations.service import database_now
@@ -36,11 +37,25 @@ def mint_staff(session, bank="CED"):
     return token
 
 
-def components(registry):
+def configured_ai_client(settings: Settings) -> VeriqAIClient | None:
+    if not settings.veriq_ai_enabled:
+        return None
+    key = settings.veriq_ai_internal_key
+    if key is None or not key.get_secret_value():
+        raise ValueError("VERIQ_AI_INTERNAL_KEY required when AI worker is enabled")
+    return VeriqAIClient(
+        settings.veriq_ai_base_url,
+        key.get_secret_value(),
+        timeout_seconds=settings.veriq_ai_timeout_seconds,
+    )
+
+
+def components(registry, ai_client: VeriqAIClient | None = None):
     v = registry.sessions[DatabaseDomain.VERIQ]
     c = registry.sessions[DatabaseDomain.CEDAR]
     return ComplaintDelivery(c, CaseReceiver(v)), Worker(
-        v, "CED", "pitch-worker-" + secrets.token_hex(6), CedarResultSink(c, "CED")
+        v, "CED", "pitch-worker-" + secrets.token_hex(6), CedarResultSink(c, "CED"),
+        ai_client=ai_client,
     )
 
 
@@ -55,7 +70,9 @@ def main():
         registry = DatabaseRegistry(settings)
         try:
             registry.check_ready()
-            delivery, worker = components(registry)
+            delivery, worker = components(
+                registry, ai_client=configured_ai_client(settings)
+            )
             while True:
                 delivered = delivery.run_once()
                 worked = worker.run_once()
