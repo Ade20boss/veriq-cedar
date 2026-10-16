@@ -204,3 +204,53 @@ Limitations:
 - Browser automation with cookie installation and console collection was not available in this environment; authenticated API checks were run directly with the private session file, without printing its token.
 - `localhost:8081` returned HTTP 502 during this checkpoint because the Cedar Operations dev server was not running. Cedar Operations was not modified; start its existing app on port 3000 before recording the staff act.
 - Complaint and investigator data are synthetic backend records; no real banking system or customer data is involved.
+
+## Final three-application rehearsal checklist
+
+Run these commands in separate terminals from the repository root. Existing private sessions must be provisioned before recording; do not print their values.
+
+```bash
+# Terminal 1 — FastAPI backend
+cd apps/backend
+uv run --locked uvicorn veriq_cedar.main:create_app --factory --host 127.0.0.1 --port 8000 --no-access-log
+
+# Terminal 2 — Cedar Customer Banking
+cd apps/web/cedarBank
+PORT=3001 pnpm dev
+
+# Terminal 3 — Cedar Bank Operations
+cd "apps/web/Cedar Bank Operations Design"
+PORT=3000 pnpm dev
+
+# Terminal 4 — Veriq Intelligence
+cd apps/web/veriq
+PORT=3002 pnpm dev
+
+# Terminal 5 — same-origin gateway
+caddy run --config infra/pitch/Caddyfile
+```
+
+Readiness checklist:
+
+- `http://localhost:8080/` — Cedar Customer Banking.
+- `http://localhost:8081/` — Cedar Bank Operations.
+- `http://localhost:8082/demo` — Veriq Intelligence.
+- Customer cookie is provisioned only for the customer browser context.
+- Investigator cookie is provisioned separately for the investigator browser context and bank scope `CED`.
+- No token, cookie value or private operator command appears in the recording.
+- Backend context reads show source count `5`, context version `5`, entities `7`, documented relationships `10`, candidate claims `0`, verified claims `0`.
+- Monitoring shows `ROUTE-CED-ELM-G2` and `ROUTE-CED-BIRCH-G3`, both currently `INSUFFICIENT_DATA`.
+- The approved telemetry producer was not run during this rehearsal; do not present stale route metrics as freshly generated.
+
+Chronological recording sequence:
+
+1. **Veriq onboarding/context:** open `/demo`, complete the explicitly synthetic Cedar institution walkthrough, then enter the Cedar demonstration workspace. Show Knowledge Explorer and its backend-backed source/context counts; distinguish documented relationships from verified claims.
+2. **Veriq monitoring:** open Operational Monitoring and show both route IDs with their actual `INSUFFICIENT_DATA` status. Open Incidents and show the existing `SUSPECTED` incident. Say that the finding is a suspected operational issue and the cause is unverified.
+3. **Customer transfer:** switch to `http://localhost:8080/`, confirm Ada and the backend balance, select Elm Bank, enter `ELM-ACC-009` and `50000` NGN, complete review, and show the transfer result. Preserve `RESPONSE_TIMEOUT` and `UNKNOWN` exactly.
+4. **Customer complaint:** open transfer details, refresh status, submit or open the existing complaint, and show case `15d3a206-53a4-4a81-8206-aea76f87faa6`. Confirm its `transfer_id` is `5525e2e0-849a-4571-a14c-b7df2f3db49c` before describing the linkage.
+5. **Cedar Operations:** switch to `http://localhost:8081/`, use the separately authorized staff session, and open the customer case/investigation. Do not treat the employee picker as authentication.
+6. **Veriq exact case:** return to the authorized Cedar-scoped investigator view and open `/v1/veriq/banks/CED/cases/15d3a206-53a4-4a81-8206-aea76f87faa6` through the existing UI. Show `EVIDENCE_READY_AI_UNAVAILABLE`, financial outcome `UNKNOWN`, seven evidence items, no incident link, and no AI result.
+
+Fallback: if private browser session setup is unavailable, record the honest session-required customer state and the synthetic Veriq onboarding. Do not replace the transfer or investigation states with local fixtures. If telemetry freshness is challenged, show the actual `INSUFFICIENT_DATA` state and explain that no producer was run for this rehearsal.
+
+Final rehearsal result (2026-10-16): all three applications and the FastAPI backend were running simultaneously; gateway roots returned HTTP `200`; protected reads and exact transfer/case linkage passed. The only operator preparation is private customer/investigator cookie setup.
