@@ -16,6 +16,14 @@ from veriq_cedar.veriq.ai.safety import asserts_verified_cause
         ("A verified cause has been established.", True),
         ("The root cause is a gateway defect.", True),
         ("The root cause is unverified.", False),
+        ("The G2 route may be involved because the root cause is a gateway defect.", True),
+        ("The findings might be preliminary since the incident is confirmed.", True),
+        ("The source is unverified because the incident is confirmed.", True),
+        ("The root cause is a gateway defect because other findings may be preliminary.", True),
+        ("The root cause is unverified since the incident is confirmed.", True),
+        ("This is not a verified cause because the root cause is a gateway defect.", True),
+        ("The G2 route may be involved because the root cause is unverified.", False),
+        ("The root cause is not verified.", False),
     ],
 )
 def test_local_causal_negation_preserves_assertion_rejection(text, unsafe):
