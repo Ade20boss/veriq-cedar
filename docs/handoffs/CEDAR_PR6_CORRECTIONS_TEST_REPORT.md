@@ -7,9 +7,9 @@ This report covers the focused Cedar Customer Banking and Cedar Bank Operations 
 
 | Test | Expected | Actual | Result |
 | --- | --- | --- | --- |
-| Name-enquiry latest snapshot | Account A response is discarded after Account B is selected | Generation, bank and account guards reject the stale response; latest response is accepted | PASS |
+| Name-enquiry latest snapshot | Account A response is discarded after Account B is selected | Dynamic deferred-response test resolves Account B first and rejects the stale Account A response | PASS |
 | Name-enquiry bank switch | A response for the previous bank cannot populate the new bank | Snapshot guard rejects the response and the obsolete request is aborted | PASS |
-| Name-enquiry failure ordering | Stale failure cannot overwrite the current request error state | Error is applied only for the current snapshot; abort errors are ignored | PASS |
+| Name-enquiry failure ordering | Stale failure cannot overwrite the current request error state | Dynamic rejected-response test leaves the current error state unchanged | PASS |
 | Transaction Insights timeout | `RESPONSE_TIMEOUT` + `UNKNOWN` shows debit/unknown explanation | Uses `processingStage`; no credit, failure, reversal, refund or root-cause claim is generated | PASS |
 | Transaction Insights other stage | Non-timeout stages do not receive timeout copy | `SUBMITTED` remains a normal processing explanation | PASS |
 | Pending transfer same-account recovery | Same account retains the original payload and idempotency key | Account-scoped record parses and preserves the original key | PASS |
@@ -38,6 +38,8 @@ Using the existing private demo sessions without printing token values or creati
 
 ## Browser checks and limitations
 
-Headless Firefox rendered the customer and Operations gateway entry screens at 1366px. No application error or exception appeared in the browser process output; only Firefox platform/network warnings were present. Authenticated browser click automation, cookie installation and console collection were not available because Playwright/Selenium is not installed. The authenticated journey was therefore verified at the API level and through static/build checks, not claimed as a complete browser E2E test.
+Focused automated tests: `node --test tests/customer-regressions.test.mjs` passed 4 tests; `node --test tests/investigation-switching.test.mjs` passed 1 test. These are executable dynamic guard tests using deferred success/failure responses, not source inspection.
+
+Headless Firefox rendered the customer and Operations gateway entry screens at 1366px. No application error or exception appeared in the browser process output; only Firefox platform/network warnings were present. Authenticated browser click automation, cookie installation and console collection were not available because Playwright/Selenium is not installed and the installed Firefox Marionette endpoint does not expose HTTP WebDriver. The authenticated journey was therefore verified at the API level and through static/build checks, not claimed as a complete browser E2E test.
 
 The branch was not pushed. No new transfer, complaint, seed, reset, replay or migration was executed.

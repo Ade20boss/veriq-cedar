@@ -6,15 +6,60 @@ import { getTransactionInsight } from "../src/features/customer-app/transaction-
 
 const current = (bankId, accountId, generation) => ({ bankId, accountId, generation })
 
-test("name enquiry accepts only the latest bank/account snapshot", () => {
+function deferred() {
+  let resolve
+  let reject
+  const promise = new Promise((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+  return { promise, resolve, reject }
+}
+
+test("out-of-order name enquiries accept only the latest snapshot", async () => {
   const elmA = { bankId: "ELM", accountId: "ELM-ACC-001", generation: 1 }
   const elmB = { bankId: "ELM", accountId: "ELM-ACC-002", generation: 2 }
   const birchB = { bankId: "BIR", accountId: "BIR-ACC-002", generation: 3 }
 
+  const first = deferred()
+  const second = deferred()
+  let selected = current(elmA.bankId, elmA.accountId, elmA.generation)
+  const accepted = []
+  const consume = (snapshot, request) =>
+    request.promise.then((result) => {
+      if (isCurrentNameEnquiry(snapshot, selected)) accepted.push(result)
+    })
+
+  consume(elmA, first)
+  selected = current(elmB.bankId, elmB.accountId, elmB.generation)
+  consume(elmB, second)
+  second.resolve({ bankId: "ELM", accountId: "ELM-ACC-002", name: "Latest" })
+  await second.promise
+  first.resolve({ bankId: "ELM", accountId: "ELM-ACC-001", name: "Stale" })
+  await first.promise
+
+  assert.deepEqual(accepted, [{ bankId: "ELM", accountId: "ELM-ACC-002", name: "Latest" }])
   assert.equal(isCurrentNameEnquiry(elmA, current("ELM", "ELM-ACC-002", 2)), false)
-  assert.equal(isCurrentNameEnquiry(elmA, current("BIR", "ELM-ACC-001", 1)), false)
   assert.equal(isCurrentNameEnquiry(elmB, current("ELM", "ELM-ACC-002", 2)), true)
+
+  selected = current(birchB.bankId, birchB.accountId, birchB.generation)
+  assert.equal(isCurrentNameEnquiry(elmB, selected), false)
   assert.equal(isCurrentNameEnquiry(birchB, current("BIR", "BIR-ACC-002", 3)), true)
+})
+
+test("stale name-enquiry failures cannot replace the latest request", async () => {
+  const first = deferred()
+  let selected = current("ELM", "ELM-ACC-001", 1)
+  let error = ""
+  first.promise.catch((caught) => {
+    if (isCurrentNameEnquiry({ bankId: "ELM", accountId: "ELM-ACC-001", generation: 1 }, selected)) {
+      error = caught.message
+    }
+  })
+  selected = current("ELM", "ELM-ACC-002", 2)
+  first.reject(new Error("stale failure"))
+  await first.promise.catch(() => {})
+  assert.equal(error, "")
 })
 test("transaction insights use processing stage and preserve UNKNOWN", () => {
   const timeout = getTransactionInsight(
