@@ -17,3 +17,12 @@ http://localhost:8081 {
         reverse_proxy 127.0.0.1:3001
     }
 }
+http://localhost:8082 {
+    @backend path /v1/* /infra/* /health /ready
+    handle @backend {
+        reverse_proxy 127.0.0.1:8000
+    }
+    handle {
+        reverse_proxy 127.0.0.1:3002
+    }
+}

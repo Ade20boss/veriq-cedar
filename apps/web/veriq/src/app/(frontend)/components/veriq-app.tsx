@@ -60,6 +60,7 @@ import {
   XCircle,
   type LucideIcon,
 } from "lucide-react"
+import LiveVeriqData from "./live-veriq-data"
 
 type ButtonProps = {
   children: ReactNode
@@ -5704,6 +5705,7 @@ export default function VeriqApp({
     | "investigation-detail"
     | "reviews"
     | "review-detail"
+    | "knowledge"
     | "foundations"
     | "shell"
     | "placeholder"
@@ -5759,6 +5761,9 @@ export default function VeriqApp({
     } else if (label === "Review Queue") {
       setView("reviews")
       if (institution) setRoute(`/w/${institutionSlug}/reviews`)
+    } else if (label === "Knowledge Explorer") {
+      setView("knowledge")
+      if (institution) setRoute(`/w/${institutionSlug}/knowledge`)
     } else if (label.startsWith("REV-")) {
       setSelectedReviewId(label)
       setView("review-detail")
@@ -5951,6 +5956,10 @@ export default function VeriqApp({
       } else if (reviewMatch) {
         setActivePage("Review Queue")
         setView("reviews")
+      }
+      if (/\/w\/[^/]+\/knowledge$/.test(window.location.pathname)) {
+        setActivePage("Knowledge Explorer")
+        setView("knowledge")
       }
     }
     restoreRoute()
@@ -6173,6 +6182,7 @@ export default function VeriqApp({
                   reviews={[]}
                 />
               ))}
+            {view === "knowledge" && (institution === "Cedar Bank — Demo Workspace" ? <LiveVeriqData bankId="CED" /> : <section className="showcase-section"><span className="demo-label">No live connector configured</span><h2>Institutional context unavailable</h2><p className="muted-copy">This selected institution is not the privately provisioned Cedar demonstration tenant. No other institution is mapped to Cedar's backend context.</p></section>)}
             {view === "foundations" && <FoundationsView />}
             {view === "shell" && <ShellPreview />}
             {view === "placeholder" && (
