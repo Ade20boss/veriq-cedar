@@ -1,19 +1,28 @@
 # Local HTTP only. Run the existing customer frontend on 3000 and staff frontend on 3001.
 http://localhost:8080 {
-    @backend path /v1/* /infra/* /health /ready
-    handle @backend {
-        reverse_proxy 127.0.0.1:8000
-    }
-    handle {
-        reverse_proxy 127.0.0.1:3000
-    }
+	@backend path /v1/* /infra/* /health /ready
+	handle @backend {
+		reverse_proxy 127.0.0.1:8000
+	}
+	handle {
+		reverse_proxy 127.0.0.1:3000
+	}
 }
 http://localhost:8081 {
-    @backend path /v1/* /infra/* /health /ready
-    handle @backend {
-        reverse_proxy 127.0.0.1:8000
-    }
-    handle {
-        reverse_proxy 127.0.0.1:3001
-    }
+	@backend path /v1/* /infra/* /health /ready
+	handle @backend {
+		reverse_proxy 127.0.0.1:8000
+	}
+	handle {
+		reverse_proxy 127.0.0.1:3001
+	}
+}
+http://localhost:8082 {
+	@backend path /v1/* /infra/* /health /ready
+	handle @backend {
+		reverse_proxy 127.0.0.1:8000
+	}
+	handle {
+		reverse_proxy 127.0.0.1:3002
+	}
 }
