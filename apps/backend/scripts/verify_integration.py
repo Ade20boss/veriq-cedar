@@ -4,6 +4,7 @@ Requires fresh migrated/granted DB URLs and MIGRATION_DATABASE_URL in environmen
 Run from apps/backend with the repository's Python environment. Never resets data.
 """
 
+import argparse
 import json
 import os
 import secrets
@@ -27,6 +28,15 @@ BACKEND = ROOT / "apps/backend"
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--request-artifact",
+        type=Path,
+        help="Write the exact permitted synthetic v1.0 request to a new JSON file after success",
+    )
+    args = parser.parse_args()
+    if args.request_artifact and args.request_artifact.exists():
+        parser.error("Request artifact must be a new file; existing evidence is never overwritten")
     if os.environ.get("ENVIRONMENT") != "test":
         raise SystemExit("Requires ENVIRONMENT=test and a fresh disposable database")
     ai_port = int(os.environ.get("INTEGRATION_AI_PORT", "8002"))
@@ -264,6 +274,7 @@ def main():
                             and run.provider_mode == "mock"
                             and job.state == "SUCCEEDED"
                         )
+                        request_artifact = run.request
                         output["ai_enabled"] = {
                             "case_id": case_id,
                             "investigation_id": inv.id,
@@ -330,6 +341,13 @@ def main():
                     assert client.get(path, cookies=cookies["customer"]).status_code == 403
                 assert g1.poll() is None and g2.poll() is None
                 output["standalone_g1_g2_alive"] = True
+                if args.request_artifact:
+                    # This verifier creates only its own fresh, fictional S2 workflow.
+                    # Preserve the immutable allowlisted snapshot, including unverified
+                    # synthetic report and genuine provenance, without adding wire fields.
+                    with args.request_artifact.open("x") as artifact:
+                        json.dump(request_artifact, artifact, indent=2)
+                        artifact.write("\n")
                 print(json.dumps(output, indent=2))
             finally:
                 for process in reversed(processes):

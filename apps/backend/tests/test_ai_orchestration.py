@@ -33,8 +33,9 @@ from veriq_cedar.cedar.complaints.service import ComplaintInput, Complaints
 from veriq_cedar.composition.g2 import components
 from veriq_cedar.integration.cases import CaseEvent
 from veriq_cedar.main import create_app
-from veriq_cedar.veriq.ai.client import AIClient, AIError
+from veriq_cedar.veriq.ai.client import AIClient, AIError, validate_result
 from veriq_cedar.veriq.ai.orchestration import build_request
+from veriq_cedar.veriq.ai.safety import NEUTRAL_CUSTOMER_DRAFT
 from veriq_cedar.veriq.investigations.cases import CaseReceiver
 from veriq_cedar.veriq.knowledge.service import Knowledge
 from veriq_cedar.veriq.persistence.operational import Job
@@ -473,17 +474,87 @@ def test_actual_backend_worker_http_and_ai_service_smoke(pitch, tmp_path, connec
                 findings = public["ai_result"]
                 assert findings["observations"] and findings["hypotheses"]
                 assert findings["unknowns"] and findings["recommended_checks"]
-                eligible = {e["id"] for e in public["evidence"] if e["verified_for_purpose"]}
+                eligible = {e["id"]: e for e in public["evidence"] if e["verified_for_purpose"]}
                 assert all(
-                    set(f["evidence_ids"]) <= eligible
+                    f["evidence_ids"] and set(f["evidence_ids"]) <= eligible.keys()
                     for f in [*findings["observations"], *findings["hypotheses"]]
                 )
-                assert any("documented" in o["text"] for o in findings["observations"])
-                assert all(h["alternatives"] for h in findings["hypotheses"])
-                assert "MOCK_PROVIDER" in public["ai_result"]["unknowns"][-1]
+                timeouts = {
+                    eid
+                    for eid, e in eligible.items()
+                    if e["kind"] in {"TRANSFER_STATE", "TRANSFER_STAGE"}
+                    and e["data"].get("stage") == "RESPONSE_TIMEOUT"
+                }
+                debits = {
+                    eid
+                    for eid, e in eligible.items()
+                    if e["kind"] == "TRANSFER_STAGE" and e["data"].get("stage") == "DEBIT_POSTED"
+                }
+                metrics = {
+                    eid for eid, e in eligible.items() if e["kind"] == "ROUTE_METRIC_SNAPSHOT"
+                }
+                documented = {
+                    eid
+                    for eid, e in eligible.items()
+                    if e["kind"] == "DOCUMENTED_RELATIONSHIP"
+                    and e["data"]["status"] == "DOCUMENTED"
+                }
+                assert timeouts and debits and metrics and documented
+                assert all(
+                    eligible[eid]["data"]["route_id"] == "ROUTE-CED-ELM-G2"
+                    and eligible[eid]["data"]["service_id"] == "G2"
+                    for eid in timeouts | debits | metrics
+                )
+                # Derive supported observations from the actual persisted evidence,
+                # rather than accepting arbitrary nonempty mock prose/counts.
+                observed = {eid for o in findings["observations"] for eid in o["evidence_ids"]}
+                assert observed == timeouts | debits | metrics | documented
+                assert all(
+                    set(h["evidence_ids"]) & timeouts
+                    and set(h["evidence_ids"]) & metrics
+                    and set(h["evidence_ids"]) <= timeouts | metrics
+                    and h["alternatives"]
+                    for h in findings["hypotheses"]
+                )
+                assert "MOCK_PROVIDER" in findings["unknowns"][-1]
+                assert findings["customer_safe_update_draft"] == NEUTRAL_CUSTOMER_DRAFT
                 with p.v() as session:
                     run = session.get(CaseAI, ("CED", jid))
-                    assert run.provider_mode == "mock" and run.result == public["ai_result"]
+                    inv = session.get(CaseInvestigation, ("CED", run.case_investigation_id))
+                    request = build_request(session, inv)
+                    assert request.model_dump(mode="json") == run.request
+                    assert run.request["evidence"] == public["evidence"]
+                    assert run.provider_mode == "mock" and run.result == findings
+                    assert run.completed_at and session.get(Job, ("CED", jid)).state == "SUCCEEDED"
+                    assert {i["id"] for i in run.request["historical_incidents"]} == set(
+                        public["incident_ids"]
+                    )
+                    assert run.request["historical_incidents"]
+                    assert all(
+                        i["route_id"] == "ROUTE-CED-ELM-G2"
+                        and i["status"] == "SUSPECTED"
+                        and set(i["evidence_ids"]) <= metrics
+                        for i in run.request["historical_incidents"]
+                    )
+                    assert {
+                        eid for r in run.request["known_relationships"] for eid in r["evidence_ids"]
+                    } == documented
+                    assert all(
+                        r["status"] == "DOCUMENTED"
+                        and r["bank_id"] == "CED"
+                        and "G3" not in (r["from_entity_id"], r["to_entity_id"])
+                        for r in run.request["known_relationships"]
+                    )
+                # Mutate copies of the actual result: neither fabricated financial
+                # prose nor a changed outcome may pass independent backend validation.
+                fabricated = copy.deepcopy(findings)
+                fabricated["observations"][0]["text"] = "The recipient received the money."
+                with pytest.raises(AIError, match="AI_UNSAFE_FINANCIAL_TEXT"):
+                    validate_result(request, json.dumps(fabricated).encode(), "mock")
+                fabricated = {**findings, "financial_outcome": "CREDIT_CONFIRMED"}
+                with pytest.raises(AIError, match="AI_IDENTITY_MISMATCH"):
+                    validate_result(request, json.dumps(fabricated).encode(), "mock")
+                assert Complaints(p.c).get(p.ada, case["id"])["customer_safe_updates"] == []
             else:
                 assert public["ai_result"] is None
                 with p.v() as session:
