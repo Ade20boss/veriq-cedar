@@ -470,8 +470,16 @@ def test_actual_backend_worker_http_and_ai_service_smoke(pitch, tmp_path, connec
                 pytest.fail("Cross-service case analysis did not reach expected state")
             assert public["financial_outcome"] == "UNKNOWN" and len(public["evidence"]) == 13
             if connected:
-                assert public["ai_result"]["observations"] == []
-                assert public["ai_result"]["hypotheses"] == []
+                findings = public["ai_result"]
+                assert findings["observations"] and findings["hypotheses"]
+                assert findings["unknowns"] and findings["recommended_checks"]
+                eligible = {e["id"] for e in public["evidence"] if e["verified_for_purpose"]}
+                assert all(
+                    set(f["evidence_ids"]) <= eligible
+                    for f in [*findings["observations"], *findings["hypotheses"]]
+                )
+                assert any("documented" in o["text"] for o in findings["observations"])
+                assert all(h["alternatives"] for h in findings["hypotheses"])
                 assert "MOCK_PROVIDER" in public["ai_result"]["unknowns"][-1]
                 with p.v() as session:
                     run = session.get(CaseAI, ("CED", jid))

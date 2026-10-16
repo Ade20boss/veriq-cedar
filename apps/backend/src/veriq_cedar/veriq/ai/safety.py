@@ -108,7 +108,12 @@ _CAUSAL_ASSERTION = re.compile(
 
 def asserts_verified_cause(text: str) -> bool:
     """Reject explicit causal/incident confirmation in advisory generated prose."""
-    return any(
-        _CAUSAL_ASSERTION.search(clause) and not _NONASSERTIVE.search(clause)
-        for clause in _CLAUSES.split(normalize(text))
-    )
+    for clause in _CLAUSES.split(normalize(text)):
+        if _NONASSERTIVE.search(clause):
+            continue
+        for match in _CAUSAL_ASSERTION.finditer(clause):
+            # An explicit denial of this assertion is not confirmation. Restrict
+            # the exception to its immediate prefix; a later assertion still fails.
+            if not re.search(r"\bnot\s+(?:(?:a|an|the)\s+)?$", clause[: match.start()]):
+                return True
+    return False

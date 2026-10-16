@@ -1,0 +1,163 @@
+{
+  "synthetic": true,
+  "ai_disabled": {
+    "source_count": 5,
+    "sources": [
+      {
+        "source_id": "f94eeb3c-e118-4b7f-ad0c-2b0e8a4bd324",
+        "status": "PARSED",
+        "job_id": "bbc44601-5287-44eb-b6d5-d32ad16d1c11"
+      },
+      {
+        "source_id": "cfca3225-3337-4799-9b4b-ea9bff6d0b00",
+        "status": "PARSED",
+        "job_id": "9a0bc48e-26f6-43af-b2a8-9db55c32d1aa"
+      },
+      {
+        "source_id": "764a4f58-832d-492f-beaa-1ea0bb550616",
+        "status": "PARSED",
+        "job_id": "453e3682-b511-4cb3-85ae-8d2b9d884d93"
+      },
+      {
+        "source_id": "cfb392e4-4558-4030-9400-9c2f88d0db31",
+        "status": "UPLOADED",
+        "job_id": "f63a4c01-6c03-4bf1-bfb8-bb550cb427cd"
+      },
+      {
+        "source_id": "3f42c718-c383-467e-85c7-5ffa13ce4f4d",
+        "status": "UPLOADED",
+        "job_id": "0f002153-7a81-4d13-a309-932c0b7596f9"
+      }
+    ],
+    "case_id": "176e885b-04e9-437d-b27c-496521c6f317",
+    "incident_ids": [
+      "33ef7a9b-f56b-46b9-b7a2-1a7f293ce2ac"
+    ],
+    "evidence_ids": [
+      "transfer/fa45888b-0e32-4839-962b-ac36da4c7601/2026-10-16T01:45:32.041141+01:00",
+      "020515de-6e99-4d7a-bb53-e9b12f8129e0",
+      "7d500010-8c03-4872-bdfb-43626c158440",
+      "9ab537aa-bc43-4002-bacf-8a37f7225b0b",
+      "94bdfedf-a532-42ba-95c5-1a5285539486",
+      "8b55ca62-2e95-43a2-869c-458fb8471d5c",
+      "case/176e885b-04e9-437d-b27c-496521c6f317",
+      "metric/elm_g2/2026-10-16T00:45:31.687840_00:00",
+      "cfca3225-3337-4799-9b4b-ea9bff6d0b00/row-2",
+      "764a4f58-832d-492f-beaa-1ea0bb550616/routes-0-from_bank_id",
+      "cfca3225-3337-4799-9b4b-ea9bff6d0b00/row-3",
+      "764a4f58-832d-492f-beaa-1ea0bb550616/routes-0-service_id",
+      "764a4f58-832d-492f-beaa-1ea0bb550616/routes-0-to_bank_id"
+    ],
+    "entity_count": 7,
+    "relationship_count": 10,
+    "operations": {
+      "G2": "DEGRADED",
+      "G3": "NORMAL"
+    },
+    "incident_before_complaint": true,
+    "transfer_id": "fa45888b-0e32-4839-962b-ac36da4c7601",
+    "processing_stage": "RESPONSE_TIMEOUT",
+    "financial_outcome": "UNKNOWN",
+    "investigation_status": "EVIDENCE_READY_AI_UNAVAILABLE",
+    "verification": {
+      "balanced_single_debit": true,
+      "private_reads_denied": 2,
+      "automatic_case_without_investigate_request": true,
+      "ai_result": null
+    }
+  },
+  "retry": {
+    "state": "RETRY_WAIT",
+    "error_code": "AI_UNAVAILABLE",
+    "attempts": 1,
+    "generation": 1
+  },
+  "ai_enabled": {
+    "case_id": "f0f0fb48-aa59-44ba-bad4-d388abc8781b",
+    "investigation_id": "dcf6be26-12e4-4af3-a662-1245e0240fbe",
+    "job_id": "3601a342-2307-4679-92fa-333d4f5d36d0",
+    "run_id": "159af68e-1722-44bf-8022-a1b00b35efa2",
+    "revision": 1,
+    "request_digest": "a9b82c67483a8b745733a13bc425c6c1d476a3aebdb2318bfdb257ae9f46a322",
+    "provider_mode": "mock",
+    "synthetic_label": true,
+    "financial_outcome": "UNKNOWN",
+    "states_observed": [
+      "REQUESTED",
+      "AI_PENDING",
+      "EVIDENCE_READY_AI_UNAVAILABLE",
+      "FINDINGS_READY"
+    ],
+    "evidence": [
+      {
+        "id": "transfer/fa45888b-0e32-4839-962b-ac36da4c7601/2026-10-16T01:45:32.041141+01:00",
+        "kind": "TRANSFER_STATE"
+      },
+      {
+        "id": "020515de-6e99-4d7a-bb53-e9b12f8129e0",
+        "kind": "TRANSFER_STAGE"
+      },
+      {
+        "id": "7d500010-8c03-4872-bdfb-43626c158440",
+        "kind": "TRANSFER_STAGE"
+      },
+      {
+        "id": "9ab537aa-bc43-4002-bacf-8a37f7225b0b",
+        "kind": "TRANSFER_STAGE"
+      },
+      {
+        "id": "94bdfedf-a532-42ba-95c5-1a5285539486",
+        "kind": "TRANSFER_STAGE"
+      },
+      {
+        "id": "8b55ca62-2e95-43a2-869c-458fb8471d5c",
+        "kind": "TRANSFER_STAGE"
+      },
+      {
+        "id": "case/f0f0fb48-aa59-44ba-bad4-d388abc8781b",
+        "kind": "CUSTOMER_REPORT"
+      },
+      {
+        "id": "metric/elm_g2/2026-10-16T00:45:31.687840_00:00",
+        "kind": "ROUTE_METRIC_SNAPSHOT"
+      },
+      {
+        "id": "cfca3225-3337-4799-9b4b-ea9bff6d0b00/row-2",
+        "kind": "DOCUMENTED_RELATIONSHIP"
+      },
+      {
+        "id": "764a4f58-832d-492f-beaa-1ea0bb550616/routes-0-from_bank_id",
+        "kind": "DOCUMENTED_RELATIONSHIP"
+      },
+      {
+        "id": "cfca3225-3337-4799-9b4b-ea9bff6d0b00/row-3",
+        "kind": "DOCUMENTED_RELATIONSHIP"
+      },
+      {
+        "id": "764a4f58-832d-492f-beaa-1ea0bb550616/routes-0-service_id",
+        "kind": "DOCUMENTED_RELATIONSHIP"
+      },
+      {
+        "id": "764a4f58-832d-492f-beaa-1ea0bb550616/routes-0-to_bank_id",
+        "kind": "DOCUMENTED_RELATIONSHIP"
+      }
+    ],
+    "findings_count": {
+      "observations": 9,
+      "hypotheses": 1,
+      "unknowns": 2,
+      "recommended_checks": 1
+    },
+    "request_matches_persisted_evidence": true,
+    "job_state": "SUCCEEDED",
+    "attempts": 2,
+    "complaint_delivery_state": "SUCCEEDED",
+    "customer_safe_updates": []
+  },
+  "customer_frontend_shell_http": 200,
+  "gateway": {
+    "both_readiness_routes": true,
+    "persisted_investigator_result": true
+  },
+  "standalone_g1_g2_alive": true
+}

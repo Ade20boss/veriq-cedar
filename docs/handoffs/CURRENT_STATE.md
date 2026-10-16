@@ -1,3 +1,19 @@
+# Current Task007 handoff —16 October2026
+
+Task007 backend integration verification complete on `feat/integration-verification-a3`, based on main `7983ec8de7d9a83ee5bc4f3f7582103a369ccf08` after merged PR#7. Existing checkout `/home/kernelghost/Documents/Codex/2026-10-15/files-pasted-by-the-user-veriq/outputs/veriq-cedar`; origin `https://github.com/Ade20boss/veriq-cedar.git`. PR#8 backend retained; PR#9 excluded. Exact containing feature SHA/PR in final publication response and Git history; verify remote before resuming. Stop for technical review, no automatic merge.
+
+Only production fix: narrowly recognize explicit immediate negation of a causal assertion so actual updated mock wording passes while affirmative claims still fail. Eight new regressions and stronger actual-service assertions. No canonical contract, migration, worker, financial logic, AI service or frontend edits. New backend verification script, sanitized evidence and operator runbook.
+
+Verified:203backend tests passed179.26s (104realPG/99non-server, zero skips/errors/failures),105unchanged AI tests passed4.98s,6offline fixtures plus separate Task005-shape fixture passed. Ruff check/format91files, locked42packages, migration0005_case_ai/current/check/offlineSQL, reviewed explicit grants/private denial, complete disabled replay/repeat refusal/telemetry/live auth and worker smoke passed. Fresh disposable native PG16.2; Docker Compose unexecuted.
+
+Actual separate-process API/G1/G2/AI mock/Caddy recovery replay passed: new HTTP complaint→durable outbox→deterministic evidence→CASE_AI→AI_UNAVAILABLE retry→automatic recovery on attempt2→persisted FINDINGS_READY served by existing investigator GET.9observations/1hypothesis/2unknowns/1check with synthetic label, actual evidence/citations/provenance; UNKNOWN and no customer publication preserved. Source/evidence IDs, observed transitions and sanitized actual results in `task007/runtime-result.json`. Services started by verifier and PG stopped; private files removed. Other service on8001 untouched; mock used8002.
+
+Limits: no local approved Groq configuration, live smoke SKIPPED. Customer Next shell/gateway HTTP200 verified, but `apps/web/cedarBank/src/lib/api.ts` remains placeholder functions. Operations `src/App.tsx` remains local fixture UI; frozen dependency install rejected pnpm release-age policy (`node-releases@2.0.59`), so3001notstarted. Frontends unchanged. End-to-end browser integration is not complete; Usaamah owns wiring. See `INTEGRATION_VERIFICATION_STATUS.md`, `TASK_007_COMMANDS.md`, `PITCH_OPERATOR_RUNBOOK.md` for exact tests, failures, process commands, setup and next action. No additional features authorized.
+
+---
+
+The following Task006 record is historical; its sparse-mock limitation is superseded by merged PR#7 and Task007 above.
+
 # Veriq + Cedar current handoff
 
 Task006 optional case AI orchestration implemented and PR#8 review corrections verified,16October2026 (Africa/Lagos). Stop after feature push/PR for technical review; no automatic merge or additional milestone. Primary guide: AI_BACKEND_INTEGRATION_STATUS.md. PITCH_BACKEND_STATUS.md and Task002–005 reports describe preserved earlier milestones; their AI-unavailable statements are historical for the disabled path.
