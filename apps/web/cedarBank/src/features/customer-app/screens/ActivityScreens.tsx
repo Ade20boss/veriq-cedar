@@ -325,7 +325,7 @@ export function DetailsScreen({
           />
           <InfoRow
             label="Narration"
-            value={transaction.narration || "Card payment"}
+            value={transaction.narration || "Not provided"}
           />
         </div>
         <TransactionInsights
@@ -335,41 +335,15 @@ export function DetailsScreen({
         <div className="timeline-card">
           <h3>Transaction timeline</h3>
           <TimelineItem
-            done
-            title="Debit recorded"
-            copy={`${naira(transaction.amount)} debit verified by Cedar Bank`}
-            time="10:30 AM"
-          />
-          <TimelineItem
-            done
-            title="Instruction submitted"
-            copy="Payment instruction acknowledged"
-            time="10:30 AM"
-          />
-          {transaction.evidence?.some(
-            (item) => item.eventType === "response_timeout",
-          ) && (
-            <TimelineItem
-              done
-              title="Payment response reviewed"
-              copy="The final response was not received in the expected window"
-              time="10:31 AM"
-            />
-          )}
-          <TimelineItem
-            done={transaction.status === "Completed"}
+            done={transaction.financialOutcome !== "unknown"}
             active={open}
             title={
-              transaction.status === "Completed"
-                ? "Beneficiary credit confirmed"
-                : "Awaiting verified outcome"
+              transaction.processingStage
+                ? `Backend-reported stage: ${transaction.processingStage}`
+                : "Transfer status"
             }
-            copy={
-              transaction.status === "Completed"
-                ? "Authorized confirmation received"
-                : "No confirmed beneficiary credit yet"
-            }
-            time={transaction.status === "Completed" ? "10:37 AM" : "Latest"}
+            copy={`Financial outcome: ${(transaction.financialOutcome || "unknown").replaceAll("_", " ").toUpperCase()}. No individual event timeline was returned by the backend.`}
+            time={transaction.updatedAt || transaction.date}
           />
         </div>
         {open && (
@@ -424,7 +398,6 @@ function TransactionInsights({
   const hasTimeout = transaction.evidence?.some(
     (item) => item.eventType === "response_timeout",
   )
-  const incident = transaction.incidentStatus ?? "none"
 
   const summary = isCompleted
     ? `Authorized records confirm that ${transaction.title} received this transfer.`
@@ -433,32 +406,25 @@ function TransactionInsights({
       : isReversed
         ? "A matching reversal has been verified on your Cedar account."
         : hasTimeout
-          ? "Your account was debited and the payment instruction was acknowledged, but the beneficiary credit has not been confirmed."
+          ? "Your account was debited, but the beneficiary credit has not been confirmed."
           : "Your transfer is being processed. We haven't received a final confirmation yet."
 
-  const reason =
-    incident === "confirmed"
-      ? "A temporary payment-processing disruption has been confirmed. This explains the delayed response, but it does not establish whether this individual transfer completed."
-      : incident === "suspected"
-        ? "Our monitoring identified unusual payment-response delays on this route. Your transaction may be affected, but the cause is still under investigation."
-        : hasTimeout
-          ? "The final payment response was not received within the expected window. This communication timeout is not proof that the transfer failed."
-          : isCompleted
-            ? "The final beneficiary-credit response was received and verified through an authorized status source."
-            : isFailed
-              ? "The final payment status was received from an authorized source and records the instruction as unsuccessful."
-              : isReversed
-                ? "Cedar's ledger shows a confirmed reversal credit matching the original debit."
-                : "No specific cause has been identified. The bank is waiting for the next verified processing event."
+  const reason = hasTimeout
+    ? "The backend reported a response timeout. This is not proof that the transfer failed or that the beneficiary was credited."
+    : isCompleted
+      ? "The final beneficiary-credit response was received and verified through an authorized status source."
+      : isFailed
+        ? "The final payment status was received from an authorized source and records the instruction as unsuccessful."
+        : isReversed
+          ? "Cedar's ledger shows a confirmed reversal credit matching the original debit."
+          : "No specific cause has been identified. The bank is waiting for the next verified processing event."
 
   const bankAction =
     isCompleted || isFailed || isReversed
       ? "The latest authorized outcome has been recorded on this transaction."
       : hasComplaint
-        ? "The transaction is linked to an active case and additional status verification has been requested."
-        : incident === "confirmed"
-          ? "Cedar's payment operations team has recorded the incident and is verifying this transfer's individual outcome."
-          : "Cedar will check the latest authorized status when you request an update."
+        ? "The transaction is linked to an active complaint. Complaint creation does not verify the transfer outcome."
+      : "Cedar will check the latest authorized status when you request an update."
 
   const guidance = isCompleted
     ? "No action is required. You can still report an issue if the recipient disputes receipt."
@@ -471,9 +437,7 @@ function TransactionInsights({
   const level = transaction.explanationLevel ?? (isCompleted ? 3 : 1)
   const label =
     level === 3
-      ? incident === "confirmed" && !isCompleted
-        ? "Verified cause · outcome pending"
-        : "Verified finding"
+      ? "Verified finding"
       : level === 2
         ? "Possible cause · under investigation"
         : "Status explanation"
@@ -506,17 +470,11 @@ function TransactionInsights({
         <div className="insight-details">
           <InsightItem
             label={
-              incident === "suspected"
-                ? "Possible reason"
-                : incident === "confirmed"
-                  ? "Verified cause"
-                  : hasTimeout
-                    ? "Observed issue"
-                    : "Why this may be happening"
+              hasTimeout ? "Observed issue" : "Why this may be happening"
             }
             copy={reason}
             tone={
-              incident === "suspected" || hasTimeout ? "warning" : "neutral"
+              hasTimeout ? "warning" : "neutral"
             }
           />
           <InsightItem label="What Cedar is doing" copy={bankAction} />

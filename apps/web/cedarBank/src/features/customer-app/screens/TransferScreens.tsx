@@ -250,14 +250,18 @@ export function AuthorizeScreen({
   beneficiaryName,
   error,
   loading,
+  recovery,
   onBack,
+  onStartNewTransfer,
   onSubmit,
 }: {
   amount: number
   beneficiaryName: string
   error: string
   loading: boolean
+  recovery: boolean
   onBack: () => void
+  onStartNewTransfer: () => void
   onSubmit: () => void
 }) {
   return (
@@ -273,6 +277,13 @@ export function AuthorizeScreen({
           authenticates the existing server-provisioned session; this screen does
           not verify a banking PIN.
         </p>
+        {recovery && (
+          <div className="info-box">
+            The previous request may already have been recorded. Retry keeps
+            the original request and idempotency key so the backend can safely
+            return its result.
+          </div>
+        )}
         {error && <span className="field-error centered">{error}</span>}
         <Button
           loading={loading}
@@ -280,6 +291,11 @@ export function AuthorizeScreen({
         >
           {loading ? "Submitting securely…" : "Authorize transfer"}
         </Button>
+        {recovery && (
+          <Button variant="ghost" onClick={onStartNewTransfer}>
+            Start a different transfer
+          </Button>
+        )}
         <p className="safety centered">
           <ShieldCheck size={15} /> Never enter a real banking PIN in this demo.
         </p>

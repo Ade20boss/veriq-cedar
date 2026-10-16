@@ -41,6 +41,58 @@ import {
   type Transfer,
 } from "../../lib/api"
 
+type PendingTransfer = {
+  idempotencyKey: string
+  payload: {
+    beneficiary_bank_id: string
+    beneficiary_account_id: string
+    amount_kobo: number
+    narration?: string
+  }
+  beneficiaryName: string
+  createdAt: number
+}
+
+const PENDING_TRANSFER_STORAGE_KEY = "cedar.pending-transfer.v1"
+const PENDING_TRANSFER_MAX_AGE_MS = 24 * 60 * 60 * 1000
+
+function readPendingTransfer(): PendingTransfer | null {
+  if (typeof window === "undefined") return null
+  try {
+    const value = JSON.parse(
+      window.localStorage.getItem(PENDING_TRANSFER_STORAGE_KEY) ?? "null",
+    ) as Partial<PendingTransfer> | null
+    const payload = value?.payload
+    if (
+      !value ||
+      typeof value.idempotencyKey !== "string" ||
+      typeof value.beneficiaryName !== "string" ||
+      typeof value.createdAt !== "number" ||
+      Date.now() - value.createdAt > PENDING_TRANSFER_MAX_AGE_MS ||
+      !payload ||
+      typeof payload.beneficiary_bank_id !== "string" ||
+      typeof payload.beneficiary_account_id !== "string" ||
+      !Number.isSafeInteger(payload.amount_kobo) ||
+      payload.amount_kobo <= 0
+    ) {
+      window.localStorage.removeItem(PENDING_TRANSFER_STORAGE_KEY)
+      return null
+    }
+    return value as PendingTransfer
+  } catch {
+    window.localStorage.removeItem(PENDING_TRANSFER_STORAGE_KEY)
+    return null
+  }
+}
+
+function storePendingTransfer(value: PendingTransfer) {
+  window.localStorage.setItem(PENDING_TRANSFER_STORAGE_KEY, JSON.stringify(value))
+}
+
+function clearStoredPendingTransfer() {
+  window.localStorage.removeItem(PENDING_TRANSFER_STORAGE_KEY)
+}
+
 export default function CustomerApp() {
   const [screen, setScreen] = useState<Screen>("splash")
   const [previous, setPrevious] = useState<Screen>("home")
@@ -65,6 +117,9 @@ export default function CustomerApp() {
   const [sessionError, setSessionError] = useState("")
   const [beneficiaryName, setBeneficiaryName] = useState("")
   const [idempotencyKey, setIdempotencyKey] = useState("")
+  const [pendingTransfer, setPendingTransfer] = useState<PendingTransfer | null>(
+    null,
+  )
   const [balanceStale, setBalanceStale] = useState(false)
   const transferInFlight = useRef(false)
 
@@ -79,7 +134,22 @@ export default function CustomerApp() {
       setBanks(nextBanks)
       setBalanceStale(false)
       setSessionError("")
-      setScreen("home")
+      const recovered = readPendingTransfer()
+      if (recovered) {
+        setPendingTransfer(recovered)
+        setIdempotencyKey(recovered.idempotencyKey)
+        setBank(recovered.payload.beneficiary_bank_id)
+        setRecipientAccount(recovered.payload.beneficiary_account_id)
+        setAmount((recovered.payload.amount_kobo / 100).toFixed(2))
+        setNarration(recovered.payload.narration ?? "")
+        setBeneficiaryName(recovered.beneficiaryName)
+        setFormError(
+          "An earlier transfer request is unresolved. Retry the same request to recover its backend result, or explicitly start a different transfer.",
+        )
+        setScreen("authorize")
+      } else {
+        setScreen("home")
+      }
     } catch (error) {
       setSessionError(
         error instanceof ApiError && error.status === 401
@@ -200,8 +270,13 @@ export default function CustomerApp() {
 
   const submitTransfer = async () => {
     if (transferInFlight.current) return
-    const amountKobo = parseNairaToKobo(amount)
-    if (!amountKobo || !account) {
+    if (!account) {
+      setFormError("Enter a valid amount.")
+      return
+    }
+    const recovered = pendingTransfer ?? readPendingTransfer()
+    const amountKobo = recovered?.payload.amount_kobo ?? parseNairaToKobo(amount)
+    if (!amountKobo) {
       setFormError("Enter a valid amount.")
       return
     }
@@ -209,24 +284,32 @@ export default function CustomerApp() {
     transferInFlight.current = true
     setLoading(true)
     setScreen("submitting")
-    const key = idempotencyKey || crypto.randomUUID()
+    const key = recovered?.idempotencyKey || idempotencyKey || crypto.randomUUID()
+    const payload = recovered?.payload ?? {
+      beneficiary_bank_id: bank,
+      beneficiary_account_id: recipientAccount,
+      amount_kobo: amountKobo,
+      narration,
+    }
+    const intent: PendingTransfer = recovered ?? {
+      idempotencyKey: key,
+      payload,
+      beneficiaryName,
+      createdAt: Date.now(),
+    }
+    setPendingTransfer(intent)
     setIdempotencyKey(key)
+    storePendingTransfer(intent)
     try {
-      const result = await customerApi.createTransfer(
-        {
-          beneficiary_bank_id: bank,
-          beneficiary_account_id: recipientAccount,
-          amount_kobo: amountKobo,
-          narration,
-        },
-        key,
-      )
+      const result = await customerApi.createTransfer(payload, key)
       const mapped = transferToTransaction(result, {
-        title: beneficiaryName,
-        narration,
+        title: intent.beneficiaryName,
+        narration: payload.narration,
       })
       setTransactions((current) => [mapped, ...current])
       setSelectedId(mapped.id)
+      clearStoredPendingTransfer()
+      setPendingTransfer(null)
       setIdempotencyKey("")
       try {
         setAccount(await customerApi.getAccount())
@@ -380,23 +463,19 @@ export default function CustomerApp() {
             setBank={(value) => {
               setBank(value)
               setBeneficiaryName("")
-              setIdempotencyKey("")
             }}
             account={recipientAccount}
             setAccount={(value) => {
               setRecipientAccount(value)
               setBeneficiaryName("")
-              setIdempotencyKey("")
             }}
             amount={amount}
             setAmount={(value) => {
               setAmount(value)
-              setIdempotencyKey("")
             }}
             narration={narration}
             setNarration={(value) => {
               setNarration(value)
-              setIdempotencyKey("")
             }}
             resolved={resolved}
             beneficiaryName={beneficiaryName}
@@ -459,7 +538,15 @@ export default function CustomerApp() {
             beneficiaryName={beneficiaryName}
             error={formError}
             loading={loading}
-            onBack={() => navigate("review")}
+            recovery={Boolean(pendingTransfer)}
+            onBack={() => (pendingTransfer ? setFormError("This request is unresolved. Retry it or start a different transfer.") : navigate("review"))}
+            onStartNewTransfer={() => {
+              clearStoredPendingTransfer()
+              setPendingTransfer(null)
+              setIdempotencyKey("")
+              setFormError("")
+              navigate("transfer")
+            }}
             onSubmit={submitTransfer}
           />
         )}
